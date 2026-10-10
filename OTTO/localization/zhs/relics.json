@@ -1,0 +1,8 @@
+{
+  "OTTO_TALISMAN.title": "棍亩",
+  "OTTO_TALISMAN.description": "每场战斗开始时，获得 {IntangiblePower} 层无实体。",
+  "OTTO_TALISMAN.flavor": "",
+  "OTTO_UPGRADED_TALISMAN.title": "老棍和棍亩",
+  "OTTO_UPGRADED_TALISMAN.description": "每场战斗开始时，获得 {IntangiblePower} 层无实体。",
+  "OTTO_UPGRADED_TALISMAN.flavor": ""
+}

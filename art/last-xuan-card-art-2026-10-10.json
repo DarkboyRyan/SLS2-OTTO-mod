@@ -1,0 +1,14 @@
+{
+  "version": "v0.6.85",
+  "card": "要我告诉你多少遍，你的青春由我last炫来无限复活",
+  "asset": "OTTO/images/cards/last_xuan.png",
+  "source_unchanged": true,
+  "packed_texture_loaded": true,
+  "build_errors": 0,
+  "installed_files_verified": true,
+  "files": {
+    "OTTO.dll": "3616c3c0053ebd120a61b20d1c76985c488db093cb3711cc451301161f5b9d70",
+    "OTTO.pck": "7ec0b57f7d43978842bae6d5c7818ff8bc3cdb77aef0797ee9ba2a47a7738c13",
+    "OTTO.json": "67058745c9c05eeb9b0cf223d6dce79c384d437018f65279066464d9256343d6"
+  }
+}

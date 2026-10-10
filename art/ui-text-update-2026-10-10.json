@@ -1,0 +1,342 @@
+[
+  {
+    "table": "zhs/cards",
+    "key": "OTTO_KING_JIJI.description",
+    "text": "无在场伙伴时，随机召唤一位未入狱伙伴。\n全体伙伴行动1次；随后每位行动者给予{Ancient:diff()}点古神值。"
+  },
+  {
+    "table": "zhs/cards",
+    "key": "OTTO_CALL_FRIENDS.description",
+    "text": "随机召唤一位未入狱伙伴，替换原伙伴。\n有动物园的羁绊时可共存。"
+  },
+  {
+    "table": "zhs/cards",
+    "key": "OTTO_PHANTOM_HAZE.description",
+    "text": "造成 {Damage:diff()} 点伤害。\n本回合此前触发过至少 {Threshold:diff()} 次易拉罐时，获得1层无实体。"
+  },
+  {
+    "table": "zhs/cards",
+    "key": "OTTO_RANA.description",
+    "text": "造成 {Damage:diff()} 点伤害。\n本回合此前每触发1次易拉罐，追加攻击1次。"
+  },
+  {
+    "table": "zhs/cards",
+    "key": "OTTO_SAKIKO.description",
+    "text": "每回合首次手动打出易拉罐牌时，获得1点能量（任意手牌位置）。"
+  },
+  {
+    "table": "zhs/cards",
+    "key": "OTTO_ANCIENT_HAM.description",
+    "text": "立即进入古神形态。"
+  },
+  {
+    "table": "zhs/cards",
+    "key": "OTTO_NANAMI.description",
+    "text": "本场战斗，古神变身门槛固定为100。"
+  },
+  {
+    "table": "zhs/cards",
+    "key": "OTTO_AI_YA_MI_NO.description",
+    "text": "获得 {Block:diff()} 点格挡。\n从弃牌堆选择1张古神牌加入手牌。"
+  },
+  {
+    "table": "zhs/cards",
+    "key": "OTTO_AMINOS.description",
+    "text": "本场战斗，古神形态持续时间+1轮；当前形态也延长1轮。"
+  },
+  {
+    "table": "zhs/cards",
+    "key": "OTTO_LAUGHTER_CARD.description",
+    "text": "触发易拉罐时，免费追加打出该牌1次。不可叠加。"
+  },
+  {
+    "table": "zhs/cards",
+    "key": "OTTO_SUONA_POWER_CARD.description",
+    "text": "每回合第3张手动打出的牌追加打出1次。不可叠加。"
+  },
+  {
+    "table": "zhs/cards",
+    "key": "OTTO_LOST_PARADISE_CARD.description",
+    "text": "召唤火星包。每次打出攻击牌后，它立即行动1次。不可叠加。"
+  },
+  {
+    "table": "zhs/cards",
+    "key": "OTTO_LAW_ABIDING.description",
+    "text": "召唤山泥若。\n本场战斗首次入狱时，改为立即行动3次。"
+  },
+  {
+    "table": "zhs/cards",
+    "key": "OTTO_I_AM_CHINESE.description",
+    "text": "召唤火星包，并选择力量或敏捷模式：行动只给予所选属性，数值翻倍。{IfUpgraded:show:随后立即行动1次。|}"
+  },
+  {
+    "table": "zhs/cards",
+    "key": "OTTO_GONG_GONG.description",
+    "text": "召唤炫狗，对目标行动{Repeat:diff()}次。每次击杀追加1次行动，目标死亡后随机换敌。炫狗入狱时不可打出。"
+  },
+  {
+    "table": "zhs/cards",
+    "key": "OTTO_KFC.description",
+    "text": "需要山泥若在场。\n直到你的下回合开始，它的治疗改为对全体敌人造成正常治疗量{Multiplier:diff()}倍的伤害。立即行动1次。"
+  },
+  {
+    "table": "zhs/cards",
+    "key": "OTTO_ATOMIC_BOMB.description",
+    "text": "需要山泥若在场。\n对全体敌人造成其正常治疗量{Multiplier:diff()}倍的伤害，然后使其入狱。"
+  },
+  {
+    "table": "zhs/cards",
+    "key": "OTTO_DA_SI_MA_CARD.description",
+    "text": "本回合最后手动打出的非X费攻击或技能，下回合抽牌后免费追加打出1次。不可叠加。"
+  },
+  {
+    "table": "zhs/cards",
+    "key": "OTTO_V5.description",
+    "text": "你的回合结束时，免费自动打出3张随机全职业{IfUpgraded:show:升级过的|}格挡牌。允许重复。"
+  },
+  {
+    "table": "zhs/cards",
+    "key": "OTTO_ZOO_BOND_CARD.description",
+    "text": "召唤全部未入狱伙伴。\n本场战斗，不同伙伴可共存，每种最多一位。"
+  },
+  {
+    "table": "zhs/cards",
+    "key": "OTTO_AUG.description",
+    "text": "消耗另一张手牌。\n本场战斗，炫狗伤害和格挡各增加 {Boost:diff()}（可叠加）。"
+  },
+  {
+    "table": "zhs/cards",
+    "key": "OTTO_HEADER.description",
+    "text": "造成 {Damage:diff()} 点伤害。\n本场战斗，山泥若治疗增加 {Boost:diff()}（可叠加）。"
+  },
+  {
+    "table": "zhs/cards",
+    "key": "OTTO_MA_MAI_PI.description",
+    "text": "施加1层虚弱和1层易伤。\n本场战斗，火星包给予的力量与敏捷各增加1（可叠加）。"
+  },
+  {
+    "table": "zhs/powers",
+    "key": "OTTO_ANCIENT_METER.cardRulesDescription",
+    "text": "积攒100点变身，每次变身后门槛+25。变身清空古神值，形态中不积攒。\n古神形态：免伤、伤害翻倍，持续至下回合开始；不防直接击杀。"
+  },
+  {
+    "table": "zhs/powers",
+    "key": "OTTO_ANCIENT_METER.rulesDescription",
+    "text": "100点变身，每次变身后门槛+25。变身清空古神值，形态中不积攒。"
+  },
+  {
+    "table": "zhs/powers",
+    "key": "OTTO_ANCIENT_METER.description",
+    "text": "达到{Threshold}点时变身并清空古神值，形态中不积攒。"
+  },
+  {
+    "table": "zhs/powers",
+    "key": "OTTO_ANCIENT_FORM.description",
+    "text": "免伤，伤害翻倍；不防直接击杀。\n再经过 {Amount} 次你的回合开始后退出。"
+  },
+  {
+    "table": "zhs/powers",
+    "key": "OTTO_ANCIENT_THRESHOLD.description",
+    "text": "下次变身需{Amount}点古神值。每次重新变身后门槛+25。"
+  },
+  {
+    "table": "zhs/powers",
+    "key": "OTTO_NANAMI_POWER.description",
+    "text": "本场战斗，古神变身门槛固定为100。"
+  },
+  {
+    "table": "zhs/powers",
+    "key": "OTTO_FIRST_CAN_ENERGY.description",
+    "text": "每回合首次手动打出易拉罐牌时，获得 {Amount} 点能量（任意位置）。叠加不刷新次数。"
+  },
+  {
+    "table": "zhs/powers",
+    "key": "OTTO_ZOO_SUMMARY.title",
+    "text": "动物园伙伴"
+  },
+  {
+    "table": "zhs/powers",
+    "key": "OTTO_ZOO_SUMMARY.description",
+    "text": "伙伴在你的回合末行动：炫狗4伤害、4格挡；山泥若回复2生命；火星包给予1力量、1敏捷。\n强化与模式会改变行动效果。入狱伙伴不能普通召回。"
+  },
+  {
+    "table": "zhs/powers",
+    "key": "OTTO_LAUGHTER.description",
+    "text": "触发易拉罐时，免费追加打出该牌1次。"
+  },
+  {
+    "table": "zhs/card_keywords",
+    "key": "OTTOMOD-OTTO_CAN.description",
+    "text": "手动从手牌两端打出，结算后抽1张牌。自动出牌不触发。"
+  },
+  {
+    "table": "eng/cards",
+    "key": "OTTO_KING_JIJI.description",
+    "text": "If no companion is present, summon a random free companion.\nAll companions act once, then gain {Ancient:diff()} Ancient Meter per companion that acted."
+  },
+  {
+    "table": "eng/cards",
+    "key": "OTTO_CALL_FRIENDS.description",
+    "text": "Summon a random free companion, replacing the current one.\nZoo Bond allows different companions to coexist."
+  },
+  {
+    "table": "eng/cards",
+    "key": "OTTO_PHANTOM_HAZE.description",
+    "text": "Deal {Damage:diff()} damage.\nIf you triggered Can at least {Threshold:diff()} times earlier this turn, gain 1 Intangible."
+  },
+  {
+    "table": "eng/cards",
+    "key": "OTTO_RANA.description",
+    "text": "Deal {Damage:diff()} damage. Repeat once per Can trigger earlier this turn."
+  },
+  {
+    "table": "eng/cards",
+    "key": "OTTO_SAKIKO.description",
+    "text": "Each turn, gain 1 Energy the first time you manually play a Can card (from any hand position)."
+  },
+  {
+    "table": "eng/cards",
+    "key": "OTTO_ANCIENT_HAM.description",
+    "text": "Enter Ancient Form immediately."
+  },
+  {
+    "table": "eng/cards",
+    "key": "OTTO_NANAMI.description",
+    "text": "The Ancient Form threshold is fixed at 100 this combat."
+  },
+  {
+    "table": "eng/cards",
+    "key": "OTTO_AI_YA_MI_NO.description",
+    "text": "Gain {Block:diff()} Block.\nReturn 1 Ancient card from your discard pile to your hand."
+  },
+  {
+    "table": "eng/cards",
+    "key": "OTTO_AMINOS.description",
+    "text": "Ancient Form lasts 1 extra round this combat. Also extend the current form by 1 round."
+  },
+  {
+    "table": "eng/cards",
+    "key": "OTTO_LAUGHTER_CARD.description",
+    "text": "When you trigger Can, play that card one additional time for free. Does not stack."
+  },
+  {
+    "table": "eng/cards",
+    "key": "OTTO_SUONA_POWER_CARD.description",
+    "text": "Each turn, play your third manually played card one additional time. Does not stack."
+  },
+  {
+    "table": "eng/cards",
+    "key": "OTTO_LOST_PARADISE_CARD.description",
+    "text": "Summon Huo Xing Bao. After each Attack you play, it acts once. Does not stack."
+  },
+  {
+    "table": "eng/cards",
+    "key": "OTTO_LAW_ABIDING.description",
+    "text": "Summon Shan Ni Ruo.\nThe first time it would be imprisoned this combat, it acts 3 times instead."
+  },
+  {
+    "table": "eng/cards",
+    "key": "OTTO_I_AM_CHINESE.description",
+    "text": "Summon Huo Xing Bao and choose Strength or Dexterity Mode: actions grant only that stat, doubled.{IfUpgraded:show: Then it acts once.|}"
+  },
+  {
+    "table": "eng/cards",
+    "key": "OTTO_GONG_GONG.description",
+    "text": "Summon Xuan Gou and have it act on the target {Repeat:diff()} times. Each kill adds 1 action; choose a random new enemy when the target dies. Unplayable while Xuan Gou is imprisoned."
+  },
+  {
+    "table": "eng/cards",
+    "key": "OTTO_KFC.description",
+    "text": "Requires Shan Ni Ruo.\nUntil your next turn, its healing deals {Multiplier:diff()} times its normal healing to all enemies instead. It acts once immediately."
+  },
+  {
+    "table": "eng/cards",
+    "key": "OTTO_ATOMIC_BOMB.description",
+    "text": "Requires Shan Ni Ruo.\nDeal {Multiplier:diff()} times its normal healing to all enemies, then imprison it."
+  },
+  {
+    "table": "eng/cards",
+    "key": "OTTO_DA_SI_MA_CARD.description",
+    "text": "After drawing next turn, replay this turn's last manually played non-X Attack or Skill once for free. Does not stack."
+  },
+  {
+    "table": "eng/cards",
+    "key": "OTTO_V5.description",
+    "text": "At the end of your turn, auto-play 3 random {IfUpgraded:show:upgraded |}Block cards from all character pools for free. Duplicates allowed."
+  },
+  {
+    "table": "eng/cards",
+    "key": "OTTO_ZOO_BOND_CARD.description",
+    "text": "Summon all free companions.\nDifferent companions can coexist this combat, one of each kind."
+  },
+  {
+    "table": "eng/cards",
+    "key": "OTTO_AUG.description",
+    "text": "Exhaust another card.\nXuan Gou gains {Boost:diff()} damage and Block this combat (stackable)."
+  },
+  {
+    "table": "eng/cards",
+    "key": "OTTO_HEADER.description",
+    "text": "Deal {Damage:diff()} damage.\nShan Ni Ruo gains {Boost:diff()} healing this combat (stackable)."
+  },
+  {
+    "table": "eng/cards",
+    "key": "OTTO_MA_MAI_PI.description",
+    "text": "Apply 1 Weak and 1 Vulnerable.\nHuo Xing Bao grants 1 more Strength and Dexterity this combat (stackable)."
+  },
+  {
+    "table": "eng/powers",
+    "key": "OTTO_ANCIENT_METER.cardRulesDescription",
+    "text": "Transform at 100 Meter; each new transformation raises the threshold by 25. Transforming clears Meter; none is gained in the form.\nAncient Form: immune to damage, double damage until your next turn. Direct kills still apply."
+  },
+  {
+    "table": "eng/powers",
+    "key": "OTTO_ANCIENT_METER.rulesDescription",
+    "text": "Transform at 100 Meter; each new transformation raises the threshold by 25. Transforming clears Meter; none is gained in the form."
+  },
+  {
+    "table": "eng/powers",
+    "key": "OTTO_ANCIENT_METER.description",
+    "text": "Transform at {Threshold} Meter and clear it. No Meter is gained in the form."
+  },
+  {
+    "table": "eng/powers",
+    "key": "OTTO_ANCIENT_FORM.description",
+    "text": "Immune to damage; deal double damage. Direct kills still apply.\nEnds after {Amount} more starts of your turn."
+  },
+  {
+    "table": "eng/powers",
+    "key": "OTTO_ANCIENT_THRESHOLD.description",
+    "text": "The next transformation requires {Amount} Meter. Each new transformation raises the threshold by 25."
+  },
+  {
+    "table": "eng/powers",
+    "key": "OTTO_NANAMI_POWER.description",
+    "text": "The Ancient Form threshold is fixed at 100 this combat."
+  },
+  {
+    "table": "eng/powers",
+    "key": "OTTO_FIRST_CAN_ENERGY.description",
+    "text": "Each turn, gain {Amount} Energy on your first manual Can play (any hand position). Stacking does not refresh the trigger."
+  },
+  {
+    "table": "eng/powers",
+    "key": "OTTO_ZOO_SUMMARY.title",
+    "text": "Zoo Companions"
+  },
+  {
+    "table": "eng/powers",
+    "key": "OTTO_ZOO_SUMMARY.description",
+    "text": "At your turn end: Xuan Dog deals 4 damage and grants 4 Block; Shan Ni Ruo heals 2 HP; Huo Xing Bao grants 1 Strength and Dexterity.\nTraining and modes change their actions. Ordinary summons cannot free imprisoned companions."
+  },
+  {
+    "table": "eng/powers",
+    "key": "OTTO_LAUGHTER.description",
+    "text": "When you trigger Can, play that card one additional time for free."
+  },
+  {
+    "table": "eng/card_keywords",
+    "key": "OTTOMOD-OTTO_CAN.description",
+    "text": "Manually play from either end of your hand to draw 1 card after resolution. Auto-plays do not trigger Can."
+  }
+]

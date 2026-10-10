@@ -1,0 +1,14 @@
+{
+  "version": "v0.6.75",
+  "card": "七海娜娜米",
+  "asset": "OTTO/images/cards/nanami.png",
+  "source_unchanged": true,
+  "packed_texture_loaded": true,
+  "build_errors": 0,
+  "installed_files_verified": true,
+  "files": {
+    "OTTO.dll": "a6924d5de90f3251f041e45665e16da9eb422fc7e88bd3602e6a03c06f9d11bc",
+    "OTTO.pck": "f4414b89c49a7c31d9316d344b143dda0946f3810c9a48cd01541c1bed07e6d1",
+    "OTTO.json": "147e2a9f6c486eb4cbce1720c4ba7b2fb3672986e0724d9c0e5a4f9f91da0e72"
+  }
+}

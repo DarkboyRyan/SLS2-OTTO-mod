@@ -1,0 +1,17 @@
+{
+  "id": "OTTO",
+  "name": "OTTO",
+  "author": "sakana雫",
+  "description": "添加可选角色 OTTO、87 张专属设计卡、古神变身、动物园伙伴与监狱机制、易拉罐连招、少女乐队和先古牌 v5-otto。",
+  "version": "v0.6.103",
+  "min_game_version": "0.107.1",
+  "has_pck": true,
+  "has_dll": true,
+  "dependencies": [
+    {
+      "id": "BaseLib",
+      "min_version": "3.4.7"
+    }
+  ],
+  "affects_gameplay": true
+}

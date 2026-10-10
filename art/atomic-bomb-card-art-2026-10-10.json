@@ -1,0 +1,14 @@
+{
+  "version": "v0.6.74",
+  "card": "原子弹",
+  "asset": "OTTO/images/cards/atomic_bomb.png",
+  "source_unchanged": true,
+  "packed_texture_loaded": true,
+  "build_errors": 0,
+  "installed_files_verified": true,
+  "files": {
+    "OTTO.dll": "b788d19a81cdd143516c9d8498d9a7fb0be71b668447c6965eea2e93aa526dbb",
+    "OTTO.pck": "87cd61fec40d083e4964f2008df6a56a899ba22eef8a0a7d3164bf2060251eca",
+    "OTTO.json": "4b6ced0f9f4c2be323ace510260c70b5346de9ab8d0afc9b9ed56c74a5fe2f23"
+  }
+}

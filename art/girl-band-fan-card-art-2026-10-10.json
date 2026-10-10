@@ -1,0 +1,14 @@
+{
+  "version": "v0.6.76",
+  "card": "少女乐队痴",
+  "asset": "OTTO/images/cards/girl_band_fan.png",
+  "source_unchanged": true,
+  "packed_texture_loaded": true,
+  "build_errors": 0,
+  "installed_files_verified": true,
+  "files": {
+    "OTTO.dll": "e76d263775fc4704f87802c2b1f48bd5e56df719112774043d8f7f1bc7621240",
+    "OTTO.pck": "480a746981123402e495387827f06818038d6a446ce4b06a578469727ee880c4",
+    "OTTO.json": "515c302385c3b6ac2f4a15ebb6c66c093e950179ccc4242b55c9e024f2a539c1"
+  }
+}

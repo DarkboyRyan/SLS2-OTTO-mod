@@ -1,0 +1,14 @@
+{
+  "version": "v0.6.68",
+  "card": "么么哒米诺",
+  "asset": "OTTO/images/cards/mo_mo_mi_no.png",
+  "source_unchanged": true,
+  "packed_texture_loaded": true,
+  "build_errors": 0,
+  "installed_files_verified": true,
+  "files": {
+    "OTTO.dll": "c6e5824118e5dc85526a9dc742945ab11992b159a995c293d5e4a1de2ebde0a9",
+    "OTTO.pck": "fa6c5df0787b186dcc2e3fdd136548e0ec7bb1a8c93e5de4664e059bcdaa1d2c",
+    "OTTO.json": "84cb2b87d3337c83c87c7a5e25f78e23ad16f224d31940657ff0c95965f80411"
+  }
+}

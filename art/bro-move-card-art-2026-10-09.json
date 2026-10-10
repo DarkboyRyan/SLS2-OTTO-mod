@@ -1,0 +1,24 @@
+{
+  "version": "v0.6.25",
+  "card": "兄弟你动啊",
+  "image": "/Users/ryanding/Desktop/SLS2 mod/OTTO/OTTO/images/cards/bro_move.png",
+  "dimensions": [
+    502,
+    326
+  ],
+  "source_sha256": "ea741751faaa6c0812c1ea24c396465a359f41c75095c6b1b1022de52adc3d37",
+  "checks": {
+    "source_unchanged": true,
+    "build_errors": 0,
+    "packed_texture_loaded": true,
+    "archive_verified": true
+  },
+  "files": {
+    "OTTO.dll": "91dd89150984a3ec84dc5b6497f2de560c5463f3aed496eb1ad5c0b5c327af0b",
+    "OTTO.pck": "b9466abbaae33ff55a6d89bd0aa2481553aa4831e428a0d3cd8e677422efd3f2",
+    "OTTO.json": "9d37fcabd4e894221e906d51708b049a0c68a87396ddcaa1c0457712b747491b"
+  },
+  "archive": "/Users/ryanding/Desktop/SLS2 mod/OTTO/dist/OTTO-v0.6.25.zip",
+  "archive_sha256": "0b7706ee8e70ed8ab12fc4bdc37d30e1ee24c68616200e4dcbc5ed94e54d19aa",
+  "installed_backup": "/Users/ryanding/Desktop/SLS2 mod/.backups/installed-before-bro-move-art-2026-10-09"
+}

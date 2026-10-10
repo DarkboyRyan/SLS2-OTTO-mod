@@ -1,0 +1,27 @@
+{
+  "version": "v0.6.7",
+  "change": "Remove legacy fruit models and localization",
+  "registered_cards": 86,
+  "checks": {
+    "build_errors": 0,
+    "assertions_per_language": 136,
+    "languages": [
+      "zhs",
+      "eng"
+    ],
+    "removed_types": [
+      "OttoFruit",
+      "GoodBanana",
+      "RottenOrange",
+      "Durian"
+    ],
+    "other_card_implementations_unchanged": true
+  },
+  "sha256": {
+    "OTTO.dll": "24773078e84bf868576ef5f14a7ceb0e7feb24c05735eb5bd44046d88e1a532f",
+    "OTTO.pck": "9d65006d9bd58cdeabc5e7b457bc4d52c51c4ea148d67a30e2e5446ec80a73ea",
+    "OTTO.json": "0f42051815f36e621426f0ee9877e3c49c9a8cfc9eb6ed7279a582b64a2dc392"
+  },
+  "archive_sha256": "31be94d481ba329696b7cc8a46f429a35b7333b65cd903f500478ae5e79ca422",
+  "backup": "/Users/ryanding/Desktop/SLS2 mod/.backups/installed-before-fruit-removal-2026-10-08"
+}

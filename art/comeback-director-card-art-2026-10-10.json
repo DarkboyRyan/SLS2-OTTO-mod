@@ -1,0 +1,14 @@
+{
+  "version": "v0.6.67",
+  "card": "逆风局局长",
+  "asset": "OTTO/images/cards/comeback_director.png",
+  "source_unchanged": true,
+  "packed_texture_loaded": true,
+  "build_errors": 0,
+  "installed_files_verified": true,
+  "files": {
+    "OTTO.dll": "6db07ecf80d6e40718bd5ee20128279e2f35d476e549c7a5c1a8e7b75ca66816",
+    "OTTO.pck": "dacef4bb9eaafc43fe957b5cea1b4437337fcb210171c7f62c9781da3de9e7fe",
+    "OTTO.json": "c2e5a208afee1211c8128a0fce71ed22f01b35a9a2b89deb622ca2251b91e0d5"
+  }
+}

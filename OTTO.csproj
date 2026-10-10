@@ -1,0 +1,25 @@
+<Project Sdk="Godot.NET.Sdk/4.5.1">
+  <!-- 自动查找 Steam 游戏目录；从本机游戏引用 API，确保接口版本匹配。 -->
+  <Import Project="Sts2PathDiscovery.props" />
+  <PropertyGroup>
+    <!-- 跟随游戏的 .NET 9 目标框架；本机 .NET 10 SDK 可以编译这个目标。 -->
+    <TargetFramework>net9.0</TargetFramework>
+    <Version>0.6.103</Version>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <GodotDisabledSourceGenerators>GodotPluginsInitializer</GodotDisabledSourceGenerators>
+    <NoWarn>$(NoWarn);MSB3270</NoWarn>
+  </PropertyGroup>
+  <ItemGroup>
+    <!-- 游戏会提供这些 DLL，因此不把游戏本体打包进 Mod。 -->
+    <Reference Include="sts2" HintPath="$(Sts2DataDir)/sts2.dll" Private="false" />
+    <Reference Include="0Harmony" HintPath="$(Sts2DataDir)/0Harmony.dll" Private="false" />
+    <!-- 与本机创意工坊安装的 BaseLib 版本保持一致，避免自动升级带来接口变化。 -->
+    <PackageReference Include="Alchyr.Sts2.BaseLib" Version="3.4.7" PrivateAssets="All" />
+  </ItemGroup>
+  <Target Name="StageMod" AfterTargets="Build">
+    <!-- 普通编译只更新工作目录中的分发包；安装由 build.sh 的安装选项执行。 -->
+    <MakeDir Directories="$(MSBuildProjectDirectory)/dist/OTTO" />
+    <Copy SourceFiles="$(TargetPath);OTTO.json" DestinationFolder="$(MSBuildProjectDirectory)/dist/OTTO" />
+  </Target>
+</Project>

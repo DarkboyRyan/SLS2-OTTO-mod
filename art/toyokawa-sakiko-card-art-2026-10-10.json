@@ -1,0 +1,14 @@
+{
+  "version": "v0.6.58",
+  "card": "丰川翔子-official",
+  "asset": "OTTO/images/cards/toyokawa_sakiko.png",
+  "source_unchanged": true,
+  "packed_texture_loaded": true,
+  "build_errors": 0,
+  "installed_files_verified": true,
+  "files": {
+    "OTTO.dll": "c41f04c7f073a502ab5968e428419dcb1cabd075c41db5ce1107bdb62e521b6c",
+    "OTTO.pck": "0045cb93a90d157a91dc81cb0eff4ccd8853ce69287b6888c8e6c1f204e06c4e",
+    "OTTO.json": "31db004d6be7c21fcc1e642a65da7f27b1d658ddc298a2c6b1f60d4bfd6c6309"
+  }
+}

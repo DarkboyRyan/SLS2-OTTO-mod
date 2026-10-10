@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="zh-CN">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>OTTO 出拳动作预览</title>
+<style>
+/* 预览直接显示原图与 Godot 图集切片，不对 PNG 进行二次编辑。 */
+*{box-sizing:border-box}body{margin:0;background:#191a22;color:#eee9dc;font:16px system-ui}
+main{max-width:980px;margin:32px auto;padding:0 24px}h1{font-weight:550;margin:8px 0}p{color:#b9b5af;line-height:1.8}
+.tag{font-size:13px;color:#dcc084}.stage{height:430px;border:1px solid #595965;border-radius:14px;background:linear-gradient(#3d3e49,#65636b);position:relative;overflow:hidden;margin:22px 0}
+#body{position:absolute;left:46%;bottom:58px;transform-origin:0 0}.crop{position:absolute;overflow:hidden}.crop img{position:absolute;max-width:none}
+.shadow{position:absolute;bottom:48px;left:calc(46% - 57px);width:114px;height:18px;background:#14121a55;border-radius:50%}
+.target{position:absolute;right:14%;top:170px;border:1px dashed #b2a28a77;border-radius:50%;width:66px;height:66px}
+.status{position:absolute;top:20px;left:22px;color:#f1d39c}.controls{display:flex;gap:10px;flex-wrap:wrap;align-items:center}button,select{font:inherit;border:1px solid #665b45;background:#2d2b2a;color:#ede3cf;padding:10px 17px;border-radius:7px;cursor:pointer}button.active{background:#786542}
+.hint{font-size:13px}.frames{display:flex;gap:10px;margin-top:18px;flex-wrap:wrap}#clock{font-variant-numeric:tabular-nums;color:#c5bfb3;margin-left:auto}
+</style>
+<main><span class="tag">OTTO v0.1.3</span><h1>抬手蓄力 → 向右出拳 → 收回</h1><p>沿用黑金队服。出拳帧在 0.15 秒命中，整套动作 0.48 秒，随后恢复待机。</p>
+<div class="stage"><div class="status" id="status">正在载入动作资源…</div><div class="shadow"></div><div id="body"><div id="crop" class="crop"><img id="sprite" alt="OTTO 出拳动作"></div></div><div class="target"></div></div>
+<div class="controls"><button id="play" class="active">暂停</button><label>速度 <select id="speed"><option value="1">正常</option><option value="0.25">慢放 ×0.25</option></select></label><span id="clock"></span></div>
+<div class="frames"><button data-frame="0">待机</button><button data-frame="1">抬手 / 蓄力</button><button data-frame="2">开始伸臂</button><button data-frame="3">完全出拳</button></div>
+<p class="hint">此处为美术与动作节奏预览，读取场景生成器导出的同一组切片、脚底锚点和帧时间；实际触发由游戏内 BaseLib 完成。</p></main>
+<script>
+// 用场景生成器的元数据定位每帧，避免把伸出的拳头误当成人物中心而造成跳动。
+const idleUrl='../OTTO/images/character/otto_combat.png';
+const sheetUrl='../OTTO/images/character/otto_punch_sheet.png';
+const body=document.getElementById('body'),crop=document.getElementById('crop'),sprite=document.getElementById('sprite');
+const status=document.getElementById('status'),clock=document.getElementById('clock'),play=document.getElementById('play');
+const names=['待机','抬手 / 蓄力','开始伸臂','完全出拳'];
+let meta,playing=true,elapsed=0,last=0,current=-1;
+function pose(index){
+  if(index===current)return;current=index;
+  const frame=index===0?{region:[0,0,...meta.idle_size],anchor:meta.idle_anchor,unit:meta.idle_unit}:meta.frames[index-1];
+  const [x,y,w,h]=frame.region,u=frame.unit,size=index===0?meta.idle_size:meta.sheet_size;
+  crop.style.cssText=`left:${-frame.anchor[0]*u}px;top:${-frame.anchor[1]*u}px;width:${w*u}px;height:${h*u}px`;
+  sprite.src=index===0?idleUrl:sheetUrl;
+  sprite.style.cssText=`left:${-x*u}px;top:${-y*u}px;width:${size[0]*u}px;height:${size[1]*u}px`;
+  status.textContent=names[index];
+}
+// 身体前移和旋转与 Godot 中的五个关键帧相同；贴图仍是离散切换。
+function motion(t){
+  const times=[0,.075,.15,.28,.48],xs=[0,-5,20,12,0],rs=[0,-.012,.02,.01,0];
+  let k=0;while(k<times.length-2&&t>times[k+1])k++;
+  const f=Math.max(0,Math.min(1,(t-times[k])/(times[k+1]-times[k])));
+  body.style.transform=`translateX(${xs[k]+(xs[k+1]-xs[k])*f}px) rotate(${rs[k]+(rs[k+1]-rs[k])*f}rad)`;
+}
+function tick(now){
+  const dt=last?(now-last)/1000:0;last=now;
+  if(meta&&playing){
+    elapsed+=dt*Number(document.getElementById('speed').value);
+    const t=elapsed%1.5;
+    if(t<=.48){let k=0;while(k<meta.times.length-1&&t>=meta.times[k+1])k++;pose(meta.sequence[k]);motion(t);clock.textContent=t.toFixed(2)+' s';}
+    else{pose(0);motion(0);clock.textContent='待机';}
+  }
+  requestAnimationFrame(tick);
+}
+play.onclick=()=>{playing=!playing;play.textContent=playing?'暂停':'播放';play.classList.toggle('active',playing)};
+document.querySelectorAll('[data-frame]').forEach(b=>b.onclick=()=>{playing=false;play.textContent='播放';play.classList.remove('active');pose(Number(b.dataset.frame));motion(0);clock.textContent='逐帧查看';});
+fetch('punch-preview.json').then(r=>r.json()).then(data=>{meta=data;pose(0);requestAnimationFrame(tick)}).catch(()=>status.textContent='请通过本地 HTTP 服务打开预览');
+</script>
+</html>

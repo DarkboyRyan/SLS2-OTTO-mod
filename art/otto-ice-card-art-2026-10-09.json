@@ -1,0 +1,25 @@
+{
+  "version": "v0.6.12",
+  "card": "WOC!冰！",
+  "image": "/Users/ryanding/Desktop/SLS2 mod/OTTO/OTTO/images/cards/otto_ice.png",
+  "dimensions": [
+    476,
+    228
+  ],
+  "source_sha256": "a51ad840f6bbadce01fe6161832e95cdc4542547aa3a6b9960bc78485de2d2f1",
+  "checks": {
+    "source_unchanged": true,
+    "build_errors": 0,
+    "packed_texture_loaded": true,
+    "archive_verified": true,
+    "installed_files_verified": true
+  },
+  "files": {
+    "OTTO.dll": "716613284d6ee8d342f64d642107c1168e32c1a469a8f520a10827a24bb01f9e",
+    "OTTO.pck": "7515ed3826fb37aafea788d94e0094771989c522276befee7732ea405e752faf",
+    "OTTO.json": "1db9bfc201b711d30e3c50a7d1799aabc5f10f4e2326e136dc4dcec00e9e5433"
+  },
+  "archive": "/Users/ryanding/Desktop/SLS2 mod/OTTO/dist/OTTO-v0.6.12.zip",
+  "archive_sha256": "d5770b4938f9d3da9fb3424324927afec8d4c7fecf2e55f79c20086e81c11dc1",
+  "installed_backup": "/Users/ryanding/Desktop/SLS2 mod/.backups/installed-before-otto-ice-art-2026-10-09"
+}

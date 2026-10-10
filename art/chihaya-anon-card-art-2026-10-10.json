@@ -1,0 +1,14 @@
+{
+  "version": "v0.6.56",
+  "card": "千早爱音-official",
+  "asset": "OTTO/images/cards/chihaya_anon.png",
+  "source_unchanged": true,
+  "packed_texture_loaded": true,
+  "build_errors": 0,
+  "installed_files_verified": true,
+  "files": {
+    "OTTO.dll": "91cb0bf181cd7a3cfaafd376f4a9dc2cd2714e64aee58ed99c09f6e86f7fc59f",
+    "OTTO.pck": "79d7b91cdd22e9f7f4b30ae3f51c13bad2bd63667e6df0d780fa83e9532d5940",
+    "OTTO.json": "7e85bcc0fe15062914f18b4cb5eb7ba356733a89f5645eb0aa14e642a36b477e"
+  }
+}

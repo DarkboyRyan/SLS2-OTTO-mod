@@ -1,0 +1,16 @@
+{
+  "version": "v0.6.42",
+  "card": "其人之道",
+  "card_id": "OTTO_THEIR_OWN_WAY",
+  "asset": "OTTO/images/cards/their_own_way.png",
+  "source": "user-provided clipboard image",
+  "source_sha256": "c68b290f5ac267e9f118b6312f0ce57d9be622b7f6a39bf7947051187a9fdff0",
+  "width": 434,
+  "height": 250,
+  "edits": "none",
+  "usage": [
+    "normal card portrait",
+    "upgraded card portrait",
+    "enlarged card preview"
+  ]
+}

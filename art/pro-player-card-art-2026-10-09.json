@@ -1,0 +1,25 @@
+{
+  "version": "v0.6.13",
+  "card": "我觉得我是职业选手",
+  "image": "/Users/ryanding/Desktop/SLS2 mod/OTTO/OTTO/images/cards/pro_player.png",
+  "dimensions": [
+    1194,
+    1004
+  ],
+  "source_sha256": "0728418567773a8a6b07e5b1cc95987b2935e0750f293a65946f396f3aad4b0c",
+  "checks": {
+    "source_unchanged": true,
+    "build_errors": 0,
+    "packed_texture_loaded": true,
+    "archive_verified": true,
+    "installed_files_verified": true
+  },
+  "files": {
+    "OTTO.dll": "a32a6d983d089056d468e5b57667178d60059210691ec9fb4a6fa3f0ad3d9cd0",
+    "OTTO.pck": "5978e98db99605d460188b535835bce4e922bd841d163eba152d765f544606cd",
+    "OTTO.json": "0c837a6df115af6e28acc3c0954b233aece8d1d01a89b93b2c0cd0759cc49023"
+  },
+  "archive": "/Users/ryanding/Desktop/SLS2 mod/OTTO/dist/OTTO-v0.6.13.zip",
+  "archive_sha256": "8a858965d767158699674a175fcbee09363565d433f219b834bc93f947b6badd",
+  "installed_backup": "/Users/ryanding/Desktop/SLS2 mod/.backups/installed-before-pro-player-art-2026-10-09"
+}

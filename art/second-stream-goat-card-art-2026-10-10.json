@@ -1,0 +1,14 @@
+{
+  "version": "v0.6.55",
+  "card": "二路GOAT",
+  "asset": "OTTO/images/cards/second_stream_goat.png",
+  "source_unchanged": true,
+  "packed_texture_loaded": true,
+  "build_errors": 0,
+  "installed_files_verified": true,
+  "files": {
+    "OTTO.dll": "5cf63593ff7c29ce75672df4c6ce439068c87b2c9394aab8b59e6abd771447b7",
+    "OTTO.pck": "a89a182daea0604f51645ddf7c9e30f5081cc8b70b222bf1f1be72dfb80f18b8",
+    "OTTO.json": "6e863f4cb1cd794dfa6208d908ace7f9484f8afa39e7f6c1f4bf64b693754d7c"
+  }
+}

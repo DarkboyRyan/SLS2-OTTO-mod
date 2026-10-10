@@ -1,0 +1,131 @@
+using System.Reflection;
+using Godot;
+using MegaCrit.Sts2.Core.Combat;
+using MegaCrit.Sts2.Core.Commands;
+using MegaCrit.Sts2.Core.Context;
+using MegaCrit.Sts2.Core.Entities.Players;
+using MegaCrit.Sts2.Core.Entities.Relics;
+using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using MegaCrit.Sts2.Core.Hooks;
+using MegaCrit.Sts2.Core.Modding;
+using MegaCrit.Sts2.Core.Models;
+using MegaCrit.Sts2.Core.Models.Characters;
+using MegaCrit.Sts2.Core.Models.Monsters.Mocks;
+using MegaCrit.Sts2.Core.Models.Powers;
+using MegaCrit.Sts2.Core.Models.Relics;
+using MegaCrit.Sts2.Core.Models.RelicPools;
+using MegaCrit.Sts2.Core.Rooms;
+using MegaCrit.Sts2.Core.Runs;
+using MegaCrit.Sts2.Core.TestSupport;
+using MegaCrit.Sts2.Core.Unlocks;
+using MegaCrit.Sts2.Core.ValueProps;
+using OttoMod;
+
+// 一次性升级验收：仅建立隔离内存对局，不进入地图，也不写入用户的存档。
+[ModInitializer(nameof(Initialize))]
+public static class Probe
+{
+    private static int count;
+    public static void Initialize() => Callable.From(Check).CallDeferred();
+    private static void Verify(bool condition, string message)
+    {
+        if (!condition) throw new Exception(message);
+        count++;
+    }
+    // 用反射复现房间刚进入、尚未开始首回合的状态，随后切换到真实伤害结算阶段。
+    private static void SetInProgress(bool value) =>
+        typeof(CombatManager).GetProperty("IsInProgress")!.SetValue(CombatManager.Instance, value);
+
+    private static async void Check()
+    {
+        var tree = (SceneTree)Engine.GetMainLoop();
+        try
+        {
+            // 等待游戏和 BaseLib 注册完模型与 Harmony 补丁，再检查正式 DLL/PCK。
+            for (int i = 0; i < 40; i++) await tree.ToSignal(tree, SceneTree.SignalName.ProcessFrame);
+            var original = ModelDb.Relic<OttoTalisman>();
+            var upgraded = ModelDb.Relic<OttoUpgradedTalisman>();
+            Verify(original.Title.GetFormattedText() == "棍亩", "原始遗物名称保留");
+            Verify(original.DynamicVars["IntangiblePower"].BaseValue == 1, "原始遗物仍为1层");
+            Verify(upgraded.Title.GetFormattedText() == "老棍和棍亩", "升级遗物中文名称");
+            Verify(upgraded.DynamicVars["IntangiblePower"].BaseValue == 2 && upgraded.DynamicDescription.GetFormattedText().Contains("2"), "升级动态效果为2层");
+            Verify(upgraded.Rarity == RelicRarity.Starter && !upgraded.IsAllowedInShops, "升级遗物不会作为普通商店遗物");
+            Verify(upgraded.Icon != null && upgraded.Icon.GetWidth() == 492 && upgraded.Icon.GetHeight() == 230, "双人原图小图标正确加载");
+            Verify(upgraded.BigIcon != null && upgraded.IconOutline != null, "升级大图与轮廓加载");
+            Verify(upgraded.HoverTipsExcludingRelic.Any(), "升级遗物包含原版无实体说明");
+            Verify(upgraded.Pool is OttoRelicPool && original.Pool is OttoRelicPool, "两件专属遗物归属OTTO池");
+            Verify(!ModelDb.RelicPool<IroncladRelicPool>().AllRelics.Any(r => r is OttoTalisman or OttoUpgradedTalisman), "不污染铁甲战士遗物池");
+            Verify(ModelDb.Character<Ironclad>().StartingRelics.Single() is BurningBlood, "铁甲战士初始遗物不变");
+            foreach (var unlock in new[] { UnlockState.none, UnlockState.all })
+            {
+                var expected = ModelDb.RelicPool<IroncladRelicPool>().GetUnlockedRelics(unlock).Where(r => r.Rarity != RelicRarity.Starter).Select(r => r.Id).ToHashSet();
+                var actual = ModelDb.RelicPool<OttoRelicPool>().GetUnlockedRelics(unlock).Where(r => r.Rarity != RelicRarity.Starter).Select(r => r.Id).ToHashSet();
+                Verify(expected.SetEquals(actual), "普通遗物奖励和解锁配置不变");
+            }
+
+            TestMode.IsOn = true;
+            var owner = Player.CreateForNewRun<OttoCharacter>(UnlockState.all, 111);
+            var ally = Player.CreateForNewRun<Ironclad>(UnlockState.all, 112);
+            // 获取遗物时原版仅会为本机玩家标记图鉴；测试虚拟ID必须与本机玩家不同。
+            Verify(!LocalContext.IsMe(owner) && !LocalContext.IsMe(ally), "隔离测试玩家不写入本机图鉴");
+            Verify(owner.Relics.Count == 1 && owner.Relics[0] is OttoTalisman, "新对局仍只携带未升级棍亩");
+            Verify(owner.Deck.Cards.Count == 11, "初始牌组保持11张");
+            Verify(RelicModel.FromSerializable(owner.Relics[0].ToSerializable()) is OttoTalisman, "旧遗物存档ID可还原");
+            var run = RunState.CreateForTest([owner, ally], seed: "OTTO-UPGRADE-CHECK");
+
+            // 调用真实事件方法，覆盖 BaseLib 的升级补丁、选项文字和实际遗物替换链。
+            var touch = (TouchOfOrobas)ModelDb.Relic<TouchOfOrobas>().ToMutable();
+            Verify(touch.GetUpgradedStarterRelic(original) is OttoUpgradedTalisman, "原版事件通过BaseLib找到升级版");
+            Verify(touch.GetUpgradedStarterRelic(ModelDb.Relic<BurningBlood>()) is BlackBlood, "原版燃烧之血仍升级为黑暗之血");
+            Verify(touch.SetupForPlayer(owner), "原版事件为OTTO生成升级选项");
+            Verify(touch.StarterRelic == original.Id && touch.UpgradedRelic == upgraded.Id, "事件正确绑定升级前后存档ID");
+            string optionText = touch.DynamicDescription.GetFormattedText();
+            Verify(optionText.Contains("棍亩") && optionText.Contains("老棍和棍亩"), "事件说明显示两件自定义遗物名称");
+            await RelicCmd.Obtain(touch, owner);
+            Verify(owner.GetRelic<OttoTalisman>() == null && owner.GetRelic<OttoUpgradedTalisman>() != null, "获取事件奖励后移除旧遗物并获得升级版");
+            Verify(owner.Relics.Count(r => r.Rarity == RelicRarity.Starter) == 1, "升级后只有一件初始遗物");
+            var relic = owner.GetRelic<OttoUpgradedTalisman>()!;
+            Verify(owner.Relics[0] == relic, "升级版保留原遗物栏位");
+            Verify(RelicModel.FromSerializable(relic.ToSerializable()) is OttoUpgradedTalisman, "升级版存档可以还原");
+            Verify(touch.GetUpgradedStarterRelic(upgraded) is OttoUpgradedTalisman, "重复升级入口不会错误转换为头环");
+            Verify(ally.Relics.Single() is BurningBlood, "事件不改动其他玩家遗物");
+
+            var state = new CombatState(runState: run);
+            state.AddPlayer(owner); state.AddPlayer(ally); owner.ResetCombatState(); ally.ResetCombatState();
+            var enemy = state.CreateCreature(ModelDb.Monster<MockAttackMonster>().ToMutable(), CombatSide.Enemy, "enemy");
+            state.AddCreature(enemy);
+            typeof(CombatManager).GetField("_state", BindingFlags.NonPublic | BindingFlags.Instance)!.SetValue(CombatManager.Instance, state);
+            SetInProgress(false);
+            await relic.AfterRoomEntered(null!);
+            Verify(!owner.Creature.HasPower<IntangiblePower>(), "非战斗房间不触发");
+            await Hook.AfterRoomEntered(run, new CombatRoom(state));
+            Verify(owner.Creature.GetPowerAmount<IntangiblePower>() == 2, "事件升级后开战只获得2层而不是3层");
+            Verify(!ally.Creature.HasPower<IntangiblePower>(), "不把无实体给予其他玩家");
+            SetInProgress(true);
+            var ctx = new ThrowingPlayerChoiceContext();
+            int hp = owner.Creature.CurrentHp;
+            await CreatureCmd.Damage(ctx, owner.Creature, 20, ValueProp.Unpowered, enemy);
+            Verify(owner.Creature.CurrentHp == hp - 1, "第一轮20伤害降为1");
+            await owner.Creature.GetPower<IntangiblePower>()!.AfterSideTurnEnd(ctx, CombatSide.Player, [owner.Creature]);
+            Verify(owner.Creature.GetPowerAmount<IntangiblePower>() == 2, "玩家回合末不减少");
+            await owner.Creature.GetPower<IntangiblePower>()!.AfterSideTurnEnd(ctx, CombatSide.Enemy, [enemy]);
+            Verify(owner.Creature.GetPowerAmount<IntangiblePower>() == 1, "第一次敌方回合末剩1层");
+            await relic.AfterSideTurnStart(CombatSide.Player, [owner.Creature], state);
+            Verify(owner.Creature.GetPowerAmount<IntangiblePower>() == 1, "后续回合不会重新获得2层");
+            hp = owner.Creature.CurrentHp;
+            await CreatureCmd.Damage(ctx, owner.Creature, 20, ValueProp.Unpowered, enemy);
+            Verify(owner.Creature.CurrentHp == hp - 1, "第二轮20伤害仍降为1");
+            await owner.Creature.GetPower<IntangiblePower>()!.AfterSideTurnEnd(ctx, CombatSide.Enemy, [enemy]);
+            Verify(!owner.Creature.HasPower<IntangiblePower>(), "第二次敌方回合末无实体到期");
+            hp = owner.Creature.CurrentHp;
+            await CreatureCmd.Damage(ctx, owner.Creature, 8, ValueProp.Unpowered, enemy);
+            Verify(owner.Creature.CurrentHp == hp - 8, "到期后恢复正常受伤");
+            SetInProgress(false);
+            await Hook.AfterRoomEntered(run, new CombatRoom(state));
+            Verify(owner.Creature.GetPowerAmount<IntangiblePower>() == 2, "下一场战斗再次获得2层");
+            GD.Print($"OTTO_UPGRADE_OK: {count} assertions passed; event replacement, icons, save IDs, two Intangible and next combat");
+        }
+        catch (Exception error) { GD.PrintErr("OTTO_UPGRADE_FAILED: " + error); }
+        finally { TestMode.IsOn = false; tree.Quit(); }
+    }
+}

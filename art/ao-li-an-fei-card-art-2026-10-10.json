@@ -1,0 +1,14 @@
+{
+  "version": "v0.6.69",
+  "card": "奥利安费",
+  "asset": "OTTO/images/cards/ao_li_an_fei.png",
+  "source_unchanged": true,
+  "packed_texture_loaded": true,
+  "build_errors": 0,
+  "installed_files_verified": true,
+  "files": {
+    "OTTO.dll": "52794e231f884ebe2d94a2ac6c47fd7249eff7b0b654ca63b0c163ecefdafa4a",
+    "OTTO.pck": "93b3a8efaaad1cad5c2f1f5a16ff56cd93c2670119ac4693741b2adf50bdd983",
+    "OTTO.json": "d8e9ba3646fe8131cd5e3f2ef93206bf8e08b54b721a954d0de27e248204e444"
+  }
+}

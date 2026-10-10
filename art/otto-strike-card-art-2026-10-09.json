@@ -1,0 +1,16 @@
+{
+  "version": "v0.6.39",
+  "card": "打击",
+  "card_id": "OTTO_STRIKE",
+  "asset": "OTTO/images/cards/otto_strike.png",
+  "source": "user-provided clipboard image",
+  "source_sha256": "884e0b59188fa3491f3896ec2e34e46b4dbe16007b2c1f6f107ec006c8e0b4b2",
+  "width": 508,
+  "height": 406,
+  "edits": "none",
+  "usage": [
+    "normal card portrait",
+    "upgraded card portrait",
+    "enlarged card preview"
+  ]
+}

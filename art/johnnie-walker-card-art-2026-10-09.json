@@ -1,0 +1,25 @@
+{
+  "version": "v0.6.15",
+  "card": "尊尼获加",
+  "image": "/Users/ryanding/Desktop/SLS2 mod/OTTO/OTTO/images/cards/johnnie_walker.png",
+  "dimensions": [
+    482,
+    428
+  ],
+  "source_sha256": "4441b43ebd02a7783b0a42c83ddfb3267e87ee8eb2927d4627682a774e407682",
+  "checks": {
+    "source_unchanged": true,
+    "build_errors": 0,
+    "packed_texture_loaded": true,
+    "archive_verified": true,
+    "installed_files_verified": true
+  },
+  "files": {
+    "OTTO.dll": "6a1469af76f88734575552617d0c42e9d4844d1b7102cfa2b0e116c250d556e0",
+    "OTTO.pck": "cce0f4ab0936c5664440e0ed8be4082437e9b3a2ef19fc9fbbe3882dce374bda",
+    "OTTO.json": "274d174cd45daf7c9db28feb7388e227fe7aebbfa108b593f0299abd6e622eee"
+  },
+  "archive": "/Users/ryanding/Desktop/SLS2 mod/OTTO/dist/OTTO-v0.6.15.zip",
+  "archive_sha256": "50193f111a8b91cd9f8b0167a0faf449197715ca0a0c079ee3c0793d51ee0c34",
+  "installed_backup": "/Users/ryanding/Desktop/SLS2 mod/.backups/installed-before-johnnie-walker-art-2026-10-09"
+}

@@ -1,0 +1,29 @@
+{
+  "version": "v0.6.95",
+  "description_cleanup": [
+    "OTTO_NAMED_HOU",
+    "OTTO_LAUGHTER_CARD",
+    "OTTO_SUONA_POWER_CARD",
+    "OTTO_LOST_PARADISE_CARD",
+    "OTTO_DA_SI_MA_CARD"
+  ],
+  "battle_audio_gain_db": 6,
+  "hard_limiter_ceiling_db": -1.5,
+  "zoo_bond_simultaneous_audio": true,
+  "relic_source_size": [
+    492,
+    230
+  ],
+  "relic_square_size": [
+    492,
+    492
+  ],
+  "icon_original_aspect_preserved": true,
+  "packed_resource_checks_passed": true,
+  "installed_files_verified": true,
+  "files": {
+    "OTTO.dll": "be5d55c7db39bca633e8f8c57bcbdebaa6f9daea27da6e272bee811678971aaa",
+    "OTTO.pck": "7f108b51f46834ff29a59b2c13a62d3c7dbc742f82ac39cdf7a6b015ca9391ff",
+    "OTTO.json": "cfedb2caa6c9836743be674f975b39991ce9b1c7f700cc67b697efa00e5e9a94"
+  }
+}

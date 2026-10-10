@@ -1,0 +1,14 @@
+{
+  "version": "v0.6.61",
+  "card": "高松灯-official",
+  "asset": "OTTO/images/cards/takamatsu_tomori.png",
+  "source_unchanged": true,
+  "packed_texture_loaded": true,
+  "build_errors": 0,
+  "installed_files_verified": true,
+  "files": {
+    "OTTO.dll": "52fc78656a4797a071c9efb46231a0e297b6d8eaa6ac60a6e45f43d3ede00fa8",
+    "OTTO.pck": "4c9d9973e4c8f50f8123aadc5b90094323ddb931f84058142706f86dca2790e2",
+    "OTTO.json": "22275a6b65eaf2136a40e262c127446e5d3e8ab99addb783e013057523e0b16a"
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "version": "v0.6.16",
+  "cards": [
+    "偶内的手",
+    "阿米诺手"
+  ],
+  "images": {
+    "one_hand": {
+      "path": "/Users/ryanding/Desktop/SLS2 mod/OTTO/OTTO/images/cards/one_hand.png",
+      "sha256": "6e0a53a6d4c99c180d16d8dd6215578eff7dae97dc221229c3851f8cc57179f5"
+    },
+    "amino_hand": {
+      "path": "/Users/ryanding/Desktop/SLS2 mod/OTTO/OTTO/images/cards/amino_hand.png",
+      "sha256": "76da8b9e93cbea73b6652165b2841035f456dfae46ef7b401f09915b522d3d39"
+    }
+  },
+  "edit_method": "built-in imagegen",
+  "prompt": "Edit target: supplied green-background hand photo. Make only a horizontal left-right mirror flip of the entire image for a matching card illustration. Thumb must now be on the RIGHT; wrist slants down to the LEFT. Preserve the same five fingers, soft photo quality, exact vivid green background, hand shape, framing, skin tone, and orientation upright. Do not redraw or beautify, remove green, add objects/text, rotate, or crop. This is strictly the left-right mirrored counterpart of the input.",
+  "checks": {
+    "one_hand_source_unchanged": true,
+    "mirror_visually_checked": true,
+    "build_errors": 0,
+    "packed_textures_loaded": true,
+    "archive_verified": true,
+    "installed_files_verified": true
+  },
+  "files": {
+    "OTTO.dll": "02d697e8a93a17c4d21e75182403902d69ba998c2a99a9d41bb3a8cc6ae9fc81",
+    "OTTO.pck": "8a455a4f4fdb098a8b2796e549d7ad794ac55726011a6c2d912df5a685995f42",
+    "OTTO.json": "a55a3a7ae2fa7c0fb0488053228adcfb5a50ccdc121ceaecceba087d3b64bb91"
+  },
+  "archive": "/Users/ryanding/Desktop/SLS2 mod/OTTO/dist/OTTO-v0.6.16.zip",
+  "archive_sha256": "b1a54d32079a0af97741d5c85e0a7dc6e59f2ede770fec364513d9bc87146314",
+  "installed_backup": "/Users/ryanding/Desktop/SLS2 mod/.backups/installed-before-hand-art-2026-10-09"
+}

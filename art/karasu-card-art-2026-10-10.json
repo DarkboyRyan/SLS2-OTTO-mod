@@ -1,0 +1,14 @@
+{
+  "version": "v0.6.64",
+  "card": "_Karasu_",
+  "asset": "OTTO/images/cards/karasu.png",
+  "source_unchanged": true,
+  "packed_texture_loaded": true,
+  "build_errors": 0,
+  "installed_files_verified": true,
+  "files": {
+    "OTTO.dll": "5a19859337befb5f41dbfd8fd209dbd301c44918e4d59f13f9c14072c0fcb603",
+    "OTTO.pck": "01390531f8ae78afa8dd58547f05eca2c4ae353b5ba6c37a8c10ffd0f43a9ce4",
+    "OTTO.json": "546e7e7ee8aa7c99038fa17f8a715f77eec64a15508fc3ca384166bae1048189"
+  }
+}

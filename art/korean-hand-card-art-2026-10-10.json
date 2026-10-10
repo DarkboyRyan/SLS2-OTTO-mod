@@ -1,0 +1,14 @@
+{
+  "version": "v0.6.71",
+  "card": "韩国的虾米诺手啊",
+  "asset": "OTTO/images/cards/korean_hand.png",
+  "source_unchanged": true,
+  "packed_texture_loaded": true,
+  "build_errors": 0,
+  "installed_files_verified": true,
+  "files": {
+    "OTTO.dll": "8bf2d945af5c7f1524270672246a7e78f5140c21c823e6db08d14a8b8b166e20",
+    "OTTO.pck": "9a588bfdf86e9f03c32efb95da9ea8c948ec50ae79d5ff2599c6f903d27d2284",
+    "OTTO.json": "d521986c0d0d32a53fc618e1e0ece6c232b988e6eac53155016aba33fcfe27e8"
+  }
+}

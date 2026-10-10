@@ -1,0 +1,25 @@
+{
+  "version": "v0.6.24",
+  "card": "帅！OTTO!",
+  "image": "/Users/ryanding/Desktop/SLS2 mod/OTTO/OTTO/images/cards/handsome_otto.png",
+  "dimensions": [
+    1444,
+    478
+  ],
+  "source_sha256": "ee5fc5b53b8ffce27c88c6aaeece4898bef13a142f858450802a038c9532abd8",
+  "checks": {
+    "source_unchanged": true,
+    "build_errors": 0,
+    "packed_texture_loaded": true,
+    "archive_verified": true,
+    "installed_files_verified": true
+  },
+  "files": {
+    "OTTO.dll": "44b95b7f4127169117e83ff9fc2c15338a54719bf24c6bf415e46dc23c64d004",
+    "OTTO.pck": "72f25f9b8c638f59fe707c61be569b531573935a63b27c4a2610ff5402aa599c",
+    "OTTO.json": "194f5f69ed1471e47e0248b79fb99fe6bddbb652c74027999713e5ab21cebecf"
+  },
+  "archive": "/Users/ryanding/Desktop/SLS2 mod/OTTO/dist/OTTO-v0.6.24.zip",
+  "archive_sha256": "8f9e9da31646761df1a465a62f517d96bb1884f78573a577d3745d725db4b3f2",
+  "installed_backup": "/Users/ryanding/Desktop/SLS2 mod/.backups/installed-before-handsome-art-2026-10-09"
+}

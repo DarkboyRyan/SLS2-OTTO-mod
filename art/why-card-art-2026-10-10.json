@@ -1,0 +1,14 @@
+{
+  "version": "v0.6.47",
+  "card": "为什么呀 为什么呀",
+  "asset": "OTTO/images/cards/why_oh_why.png",
+  "source_unchanged": true,
+  "packed_texture_loaded": true,
+  "build_errors": 0,
+  "installed_files_verified": true,
+  "files": {
+    "OTTO.dll": "0fc3aeca6e8f4681184f1b20cfd91bd9ff3bcbca9efde367c9649f1f35570799",
+    "OTTO.pck": "40773e5920b9f86a0eea6440eede38079c488426c2df6fcc33f96d21f108a499",
+    "OTTO.json": "0b235b7bc68b0f088775ff5514e9906609d45cbcced3b71790627a8e7b645d6f"
+  }
+}

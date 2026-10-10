@@ -1,0 +1,17 @@
+{
+  "version": "v0.6.41",
+  "card": "哈利路大旋风",
+  "user_label": "哈利路打旋风",
+  "card_id": "OTTO_HALILU_TORNADO",
+  "asset": "OTTO/images/cards/halilu_tornado.png",
+  "source": "user-provided clipboard image",
+  "source_sha256": "1dd826fbbd778b7de7a5a34594a53605397606903c33722343b99bdd8991c694",
+  "width": 694,
+  "height": 640,
+  "edits": "none",
+  "usage": [
+    "normal card portrait",
+    "upgraded card portrait",
+    "enlarged card preview"
+  ]
+}

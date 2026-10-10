@@ -1,0 +1,14 @@
+{
+  "version": "v0.6.50",
+  "card": "海绵宝宝艾克儿",
+  "asset": "OTTO/images/cards/sponge_ekko.png",
+  "source_unchanged": true,
+  "packed_texture_loaded": true,
+  "build_errors": 0,
+  "installed_files_verified": true,
+  "files": {
+    "OTTO.dll": "e210b64176bc9b2185bd636b1a16ba989a71e221f688cf1c1168a4c029cedce9",
+    "OTTO.pck": "f5db3e2afb7b32f1a7756982cb757d1508e185a3a1f297ff91f4f2ba5c52d614",
+    "OTTO.json": "e39da7ba19b191abd23c22cb0a1cea01a89d273079877942235cd764821d53ed"
+  }
+}

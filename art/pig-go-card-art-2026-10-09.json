@@ -1,0 +1,17 @@
+{
+  "version": "v0.6.31",
+  "card": "OTTO_PIG_GO",
+  "checks": {
+    "build_errors": 0,
+    "source_unchanged": true,
+    "packed_texture_loaded": true,
+    "archive_verified": true,
+    "installed_files_verified": true
+  },
+  "files": {
+    "OTTO.dll": "9f40886964e72604f189cba37381f587a5dadd32e52a852ab0087dd00f40e235",
+    "OTTO.pck": "fa1840999f3a8ae1198639bdef146ab80b42e7fa87a6f7939fbcc8a45e3268b7",
+    "OTTO.json": "1263990dd6567bd704221643b8b1bdb848b941788c4cb0950c569ca9c3e38e96"
+  },
+  "installed_backup": "/Users/ryanding/Desktop/SLS2 mod/.backups/installed-before-pig-go-art-2026-10-09"
+}

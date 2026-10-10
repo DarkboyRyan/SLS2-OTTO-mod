@@ -1,0 +1,51 @@
+{
+  "version": "v0.6.93",
+  "gain_db": 6,
+  "peak_limiter": true,
+  "clip_count": 9,
+  "levels": {
+    "OTTO/OTTO/audio/ancient/ai_ya_mi_no.ogg": {
+      "lufs": -11.43,
+      "true_peak_db": -1.22
+    },
+    "OTTO/OTTO/audio/ancient/ancient_speech.ogg": {
+      "lufs": -9.99,
+      "true_peak_db": -1.74
+    },
+    "OTTO/OTTO/audio/ancient/ham.ogg": {
+      "lufs": -10.74,
+      "true_peak_db": -1.23
+    },
+    "OTTO/OTTO/audio/ancient/one_hand.ogg": {
+      "lufs": -10.97,
+      "true_peak_db": -1.17
+    },
+    "OTTO/OTTO/audio/ancient/spoken_reason.ogg": {
+      "lufs": -9.99,
+      "true_peak_db": -3.47
+    },
+    "OTTO/OTTO/audio/ancient/wawo.ogg": {
+      "lufs": -10.02,
+      "true_peak_db": -4.39
+    },
+    "OTTO/OTTO/audio/summon/huo_xing_bao.ogg": {
+      "lufs": -10.01,
+      "true_peak_db": -1.96
+    },
+    "OTTO/OTTO/audio/summon/shan_ni_ruo.ogg": {
+      "lufs": -10.01,
+      "true_peak_db": -7.73
+    },
+    "OTTO/OTTO/audio/summon/xuan_dog.ogg": {
+      "lufs": -10.05,
+      "true_peak_db": -1.32
+    }
+  },
+  "audio_checks_passed": true,
+  "installed_files_verified": true,
+  "files": {
+    "OTTO.dll": "6a6eaf627d653e4d4384dc964e5650af460d47c88e3ba1c9bd0261c10ebe206b",
+    "OTTO.pck": "465c5cd79d1e0480165fcd59147eedf79d418aad459816ffe0d8a88b12d842c0",
+    "OTTO.json": "dd39d64caa063ebea52a166ac682d0b3c4587e3fd4417adc75641cd597418345"
+  }
+}

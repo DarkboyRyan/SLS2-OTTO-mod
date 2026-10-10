@@ -1,0 +1,6 @@
+<Project>
+  <PropertyGroup>
+    <!-- 本机 MegaDot 4.5.1 的可执行文件；换电脑时修改此路径。 -->
+    <GodotPath>/Users/ryanding/Applications/MegaDot.app/Contents/MacOS/Godot</GodotPath>
+  </PropertyGroup>
+</Project>

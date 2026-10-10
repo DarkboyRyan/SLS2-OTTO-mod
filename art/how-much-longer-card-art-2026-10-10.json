@@ -1,0 +1,14 @@
+{
+  "version": "v0.6.48",
+  "card": "这还要熬多久",
+  "asset": "OTTO/images/cards/how_much_longer.png",
+  "source_unchanged": true,
+  "packed_texture_loaded": true,
+  "build_errors": 0,
+  "installed_files_verified": true,
+  "files": {
+    "OTTO.dll": "6e0d9829a7558245c7c45b3b5346af297400f8eddce1e39e1e40132140fe4cab",
+    "OTTO.pck": "172f52b302d0eff46db577d1c231d6df5f8112e3233433b259fa341448709de6",
+    "OTTO.json": "c1dd9192de8cb822da04c8541f0fb25af1a72574a72e055fba8f137e8ae9dbce"
+  }
+}

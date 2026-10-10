@@ -1,0 +1,249 @@
+using System.Reflection;
+using Godot;
+using BaseLib.Patches.Content;
+using MegaCrit.Sts2.Core.Combat;
+using MegaCrit.Sts2.Core.Commands;
+using MegaCrit.Sts2.Core.Entities.Cards;
+using MegaCrit.Sts2.Core.Entities.Creatures;
+using MegaCrit.Sts2.Core.Entities.Players;
+using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using MegaCrit.Sts2.Core.Hooks;
+using MegaCrit.Sts2.Core.Localization;
+using MegaCrit.Sts2.Core.Modding;
+using MegaCrit.Sts2.Core.Models;
+using MegaCrit.Sts2.Core.Models.Cards;
+using MegaCrit.Sts2.Core.Models.Characters;
+using MegaCrit.Sts2.Core.Models.Monsters;
+using MegaCrit.Sts2.Core.Models.Monsters.Mocks;
+using MegaCrit.Sts2.Core.Models.Powers;
+using MegaCrit.Sts2.Core.MonsterMoves.Intents;
+using MegaCrit.Sts2.Core.MonsterMoves.MonsterMoveStateMachine;
+using MegaCrit.Sts2.Core.Runs;
+using MegaCrit.Sts2.Core.TestSupport;
+using MegaCrit.Sts2.Core.Unlocks;
+using MegaCrit.Sts2.Core.ValueProps;
+using OttoMod;
+
+// 在真实引擎创建独立内存战斗，使用真实出牌包装器；不进入地图、不保存用户进度。
+[ModInitializer(nameof(Initialize))]
+public static class Probe
+{
+    private static readonly PlayerChoiceContext Ctx = new ThrowingPlayerChoiceContext();
+    private static int assertions;
+    private static Player owner = null!, ally = null!;
+    private static Creature enemy = null!, enemy2 = null!;
+    private static CombatState state = null!;
+    public static void Initialize() => Callable.From(Check).CallDeferred();
+    private static void Verify(bool ok, string message)
+    {
+        if (!ok) throw new Exception(message);
+        assertions++;
+    }
+    private static void Fresh()
+    {
+        owner = Player.CreateForNewRun<OttoCharacter>(UnlockState.all, 121);
+        ally = Player.CreateForNewRun<Ironclad>(UnlockState.all, 122);
+        var run = RunState.CreateForTest([owner, ally], seed: "OTTO-INTENT-FIX");
+        state = new CombatState(runState: run);
+        state.AddPlayer(owner); state.AddPlayer(ally); owner.ResetCombatState(); ally.ResetCombatState();
+        enemy = state.CreateCreature(ModelDb.Monster<MockAttackMonster>().ToMutable(), CombatSide.Enemy, "enemy1"); state.AddCreature(enemy);
+        enemy2 = state.CreateCreature(ModelDb.Monster<MockAttackMonster>().ToMutable(), CombatSide.Enemy, "enemy2"); state.AddCreature(enemy2);
+        typeof(CombatManager).GetField("_state", BindingFlags.Instance | BindingFlags.NonPublic)!.SetValue(CombatManager.Instance, state);
+        typeof(CombatManager).GetProperty("IsInProgress")!.SetValue(CombatManager.Instance, true);
+    }
+    private static T New<T>(bool upgrade = false, PileType pile = PileType.Hand) where T : CardModel
+    {
+        var card = state.CreateCard<T>(owner);
+        if (upgrade) card.UpgradeInternal();
+        pile.GetPile(owner).AddInternal(card);
+        return card;
+    }
+    private static async Task Play(CardModel card, Creature? target = null, bool auto = false)
+    {
+        // 每次从正确牌堆进入正式出牌包装器，覆盖易拉罐取位置、前后钩子、牌堆及重复出牌清理。
+        if (!auto && card.Pile?.Type != PileType.Hand)
+        {
+            card.RemoveFromCurrentPile(); owner.PlayerCombatState!.Hand.AddInternal(card);
+        }
+        await card.OnPlayWrapper(Ctx, target, auto, default, skipCardPileVisuals: true);
+    }
+    private static bool Allowed(CardModel card) => Hook.ShouldPlay(state, card, out _, AutoPlayType.None);
+    private static async Task StartTurn() => await Hook.AfterSideTurnStart(state, CombatSide.Player, [owner.Creature]);
+    // 测试只派发状态的回合末清理，不启动真实敌方AI。
+    private static async Task EndTurn()
+    {
+        foreach (var power in owner.Creature.Powers.ToArray())
+            await power.AfterSideTurnEnd(Ctx, CombatSide.Player, [owner.Creature]);
+    }
+    private static void DrawPile(int count)
+    {
+        for (int i = 0; i < count; i++) New<OttoStrike>(pile: PileType.Draw);
+    }
+    private static async Task ClearPowers(Creature c)
+    {
+        foreach (var p in c.Powers.ToArray()) await PowerCmd.Remove(p);
+    }
+    private static void SetMove(Creature target, params AbstractIntent[] intents)
+    {
+        // 测试专用：改变内存目标的可见招式，不调用敌人的行动或AI。
+        typeof(MonsterModel).GetProperty("NextMove")!.SetValue(target.Monster, new MoveState("PROBE", _ => Task.CompletedTask, intents));
+    }
+    // 取原版状态机中的真实招式，不能手工伪造一个图标来代替会出错的混合意图。
+    private static Creature Actual<T>(string moveId, Creature replace) where T : MonsterModel
+    {
+        state.RemoveCreature(replace);
+        var monster = ModelDb.Monster<T>().ToMutable();
+        var target = state.CreateCreature(monster, CombatSide.Enemy, "actual");
+        state.AddCreature(target);
+        monster.SetUpForCombat();
+        monster.SetMoveImmediate((MoveState)monster.MoveStateMachine!.States[moveId], true);
+        return target;
+    }
+    private static async Task CaseCore<T>(string moveId, decimal strength = 0, decimal block = 0,
+        decimal vigor = 0, decimal ritual = 0, decimal thorns = 0, decimal intangible = 0) where T : MonsterModel
+    {
+        Fresh();
+        enemy = Actual<T>(moveId, enemy);
+        await CreatureCmd.SetMaxAndCurrentHp(enemy, 9999);
+        SetMove(enemy2, new SummonIntent());
+        var copy = New<TheirOwnWay>();
+        owner.PlayerCombatState!.ResetEnergy();
+        var move = enemy.Monster!.NextMove;
+        int logCount = enemy.Monster.MoveStateMachine!.StateLog.Count;
+        decimal damage = move.Intents.OfType<AttackIntent>().Sum(i => i.DamageCalc!() * i.Repeats);
+        // 蟹钳的掉血钩子要求完整首领背景；隔离战斗以格挡承伤验证实际攻击，避免伪造背景或修改原版逻辑。
+        if (enemy.Monster is Crusher) enemy.GainBlockInternal(1000);
+        decimal initialBlock = enemy.Block;
+        decimal hp = enemy.CurrentHp, otherHp = enemy2.CurrentHp;
+        string label = typeof(T).Name + "/" + moveId;
+        Verify(state.Enemies.Count == 2 && copy.CanPlayTargeting(enemy), label + " 双敌人可选中并能手动打出");
+        Verify(!copy.IsValidTarget(enemy2) && !copy.IsValidTarget(owner.Creature) && !copy.IsValidTarget(null), label + " 只选支持的单个敌人");
+        await copy.SpendResources();
+        await Play(copy, enemy);
+        Verify(hp - enemy.CurrentHp + initialBlock - enemy.Block == damage && enemy2.CurrentHp == otherHp, label + " 伤害只命中选中敌人");
+        Verify(owner.Creature.GetPowerAmount<StrengthPower>() == strength && owner.Creature.Block == block, label + " 力量格挡给OTTO");
+        Verify(owner.Creature.GetPowerAmount<VigorPower>() == vigor && owner.Creature.GetPowerAmount<RitualPower>() == ritual
+            && owner.Creature.GetPowerAmount<ThornsPower>() == thorns && owner.Creature.GetPowerAmount<IntangiblePower>() == intangible,
+            label + " 区分活力仪式荆棘无实体");
+        Verify(!owner.Creature.HasPower<SteamEruptionPower>() && !owner.Creature.HasPower<VitalSparkPower>(), label + " 不把专属首领逻辑挂到玩家");
+        Verify(enemy.Powers.Count == 0 && enemy2.Powers.Count == 0 && enemy.Block == Math.Max(0, initialBlock - damage), label + " 不强化敌人");
+        Verify(enemy.Monster.NextMove == move && enemy.Monster.MoveStateMachine.StateLog.Count == logCount, label + " 不推进敌方AI");
+        Verify(owner.PlayerCombatState.Energy == 1 && copy.Pile?.Type == PileType.Discard, label + " 扣2费并进入弃牌堆");
+        GD.Print("OTTO_COPY_CASE_OK: " + label);
+    }
+    private static int failures;
+    private static async Task Case<T>(string moveId, decimal strength = 0, decimal block = 0,
+        decimal vigor = 0, decimal ritual = 0, decimal thorns = 0, decimal intangible = 0) where T : MonsterModel
+    {
+        try { await CaseCore<T>(moveId, strength, block, vigor, ritual, thorns, intangible); }
+        catch (Exception error)
+        {
+            failures++;
+            GD.PrintErr("OTTO_COPY_CASE_FAILED: " + typeof(T).Name + "/" + moveId + " " + error);
+        }
+    }
+    private static async void Check()
+    {
+        var tree = (SceneTree)Engine.GetMainLoop();
+        try
+        {
+            for (int i = 0; i < 40; i++) await tree.ToSignal(tree, SceneTree.SignalName.ProcessFrame);
+            TestMode.IsOn = true;
+            // 先复现两只怪，一只攻击、一只强化；两者均可单独指定。
+            Fresh(); enemy2 = Actual<SewerClam>("PRESSURIZE_MOVE", enemy2); SetMove(enemy, new SingleAttackIntent(8));
+            owner.PlayerCombatState!.ResetEnergy(); var copy = New<TheirOwnWay>();
+            Verify(copy.CanPlayTargeting(enemy) && copy.CanPlayTargeting(enemy2), "两只怪分别攻击和强化，都能单独选择");
+            decimal hp = enemy.CurrentHp, otherHp = enemy2.CurrentHp;
+            await Play(copy, enemy);
+            Verify(hp - enemy.CurrentHp == 8 && enemy2.CurrentHp == otherHp && !owner.Creature.HasPower<StrengthPower>(), "选攻击怪只反打它，不复制另一只的强化");
+            await Play(copy, enemy2);
+            Verify(owner.Creature.GetPowerAmount<StrengthPower>() == 4 && !enemy2.HasPower<StrengthPower>() && enemy2.CurrentHp == otherHp, "选强化怪只给自己4力量，不攻击另一只");
+            Fresh(); SetMove(enemy, new SingleAttackIntent(8), new BuffIntent()); SetMove(enemy2, new SummonIntent());
+            copy = New<TheirOwnWay>(upgrade: true); owner.PlayerCombatState!.ResetEnergy();
+            Verify(copy.CanPlayTargeting(enemy), "未知攻击强化也可选中");
+            hp = enemy.CurrentHp; await copy.SpendResources(); await Play(copy, enemy);
+            Verify(hp - enemy.CurrentHp == 8 && owner.PlayerCombatState.Energy == 2, "升级版扣1费，未知强化跳过但攻击执行");
+            SetMove(enemy, new SingleAttackIntent(8), new DebuffIntent());
+            Verify(!copy.IsValidTarget(enemy) && !Allowed(copy), "两个目标都不支持时不能打出，减益未被意外放开");
+            // 已核对本机游戏全部攻击＋强化，以及全部攻击＋格挡的真实招式。
+            await Case<GremlinMerc>("HEHE_MOVE", strength: 2);
+            await Case<CeremonialBeast>("PLOW_MOVE", strength: 2);
+            await Case<CeremonialBeast>("CRUSH_MOVE", strength: 3);
+            await Case<CubexConstruct>("REPEATER_BLAST_MOVE", strength: 2);
+            await Case<CubexConstruct>("REPEATER_BLAST_MOVE_2", strength: 2);
+            await Case<DecimillipedeSegmentFront>("BULK_MOVE", strength: 2);
+            await Case<Fogmog>("SWIPE_MOVE", strength: 1);
+            await Case<Fogmog>("SWIPE_RANDOM_MOVE", strength: 1);
+            await Case<GlobeHead>("GALVANIC_BURST", strength: 2);
+            await Case<Myte>("SUCK_MOVE", strength: 2);
+            await Case<SkulkingColony>("INERTIA_MOVE", strength: 2);
+            await Case<SludgeSpinner>("RAGE_MOVE", strength: 3);
+            await Case<SnappingJaxfruit>("ENERGY_ORB_MOVE", strength: 2);
+            await Case<TerrorEel>("THRASH_MOVE", vigor: 6);
+            await Case<TheAdversaryMkOne>("BARRAGE_MOVE", strength: 2);
+            await Case<TheAdversaryMkTwo>("BARRAGE_MOVE", strength: 3);
+            await Case<TheAdversaryMkThree>("BARRAGE_MOVE", strength: 4);
+            await Case<LivingShield>("SMASH_MOVE", strength: 3);
+            await Case<SlumberingBeetle>("ROLL_OUT_MOVE", strength: 2);
+            await Case<WaterfallGiant>("RAM_MOVE");
+            await Case<WaterfallGiant>("PRESSURE_GUN_MOVE");
+            await Case<WaterfallGiant>("PRESSURE_UP_MOVE");
+            await Case<InfestedPrism>("PULSATE_MOVE", block: 20);
+            await Case<Aeonglass>("EBB_MOVE", block: 33);
+            await Case<AxeRubyRaider>("SWING_1", block: 5);
+            await Case<AxeRubyRaider>("SWING_2", block: 5);
+            await Case<BowlbugEgg>("BITE_MOVE", block: 7);
+            await Case<Crusher>("GUARDED_STRIKE_MOVE", block: 18);
+            await Case<InfestedPrism>("RADIATE_MOVE", block: 11);
+            await Case<LagavulinMatriarch>("SLASH2_MOVE", block: 12);
+            await Case<MagiKnight>("POWER_SHIELD_MOVE", block: 5);
+            await Case<Nibbit>("SLICE_MOVE", block: 5);
+            await Case<SlitheringStrangler>("THWACK", block: 5);
+            await Case<TheObscura>("HARDENING_STRIKE_MOVE", block: 6);
+            // 纯强化同样在另一只怪存在时验证，防止修复只覆盖复合图标而遗漏用户场景。
+            await Case<BowlbugNectar>("BUFF_MOVE", strength: 15);
+            await Case<BruteRubyRaider>("ROAR_MOVE", strength: 3);
+            await Case<BygoneEffigy>("WAKE_MOVE", strength: 10);
+            await Case<Crusher>("ADAPT_MOVE", strength: 2);
+            await Case<CubexConstruct>("CHARGE_UP_MOVE", strength: 2);
+            await Case<Exoskeleton>("ENRAGE_MOVE", strength: 2);
+            await Case<FakeMerchantMonster>("ENRAGE_MOVE", strength: 2);
+            await Case<Queen>("ENRAGE_MOVE", strength: 2);
+            await Case<FlailKnight>("WAR_CHANT", strength: 3);
+            await Case<FrogKnight>("FOR_THE_QUEEN", strength: 5);
+            await Case<FuzzyWurmCrawler>("INHALE", strength: 7);
+            await Case<KinFollower>("POWER_DANCE_MOVE", strength: 2);
+            await Case<KinPriest>("RITUAL_MOVE", strength: 2);
+            await Case<LouseProgenitor>("CURL_AND_GROW_MOVE", block: 14, strength: 5);
+            await Case<MechaKnight>("WINDUP_MOVE", block: 15, strength: 5);
+            await Case<Nibbit>("HISS_MOVE", strength: 2);
+            await Case<Ovicopter>("NUTRITIONAL_PASTE_MOVE", strength: 3);
+            await Case<PhantasmalGardener>("ENLARGE_MOVE", strength: 2);
+            await Case<Rocket>("CHARGE_UP_MOVE", strength: 2);
+            await Case<ScrollOfBiting>("MORE_TEETH", strength: 2);
+            await Case<Seapunk>("BUBBLE_BURP_MOVE", block: 7, strength: 1);
+            await Case<SewerClam>("PRESSURIZE_MOVE", strength: 4);
+            await Case<SoulFysh>("FADE_MOVE", intangible: 2);
+            await Case<SpinyToad>("PROTRUDING_SPIKES_MOVE", thorns: 5);
+            await Case<TheInsatiable>("SALIVATE_MOVE", strength: 2);
+            await Case<TheObscura>("SAIL_MOVE", strength: 3);
+            await Case<Toadpole>("SPIKEN_MOVE", thorns: 2);
+            await Case<TurretOperator>("RELOAD_MOVE", strength: 1);
+            await Case<Vantom>("PREPARE_MOVE", strength: 2);
+            await Case<CalcifiedCultist>("INCANTATION_MOVE", ritual: 2);
+            await Case<DampCultist>("INCANTATION_MOVE", ritual: 5);
+            // 属性、时序：本次攻击吃OTTO原有力量，复制的新力量在伤害后才取得。
+            Fresh(); enemy = Actual<SludgeSpinner>("RAGE_MOVE", enemy);
+            await PowerCmd.Apply<StrengthPower>(Ctx, owner.Creature, 5, owner.Creature, null);
+            await PowerCmd.Apply<StrengthPower>(Ctx, enemy, 10, enemy, null);
+            decimal baseDamage = enemy.Monster!.NextMove.Intents.OfType<AttackIntent>().Single().DamageCalc!(); hp = enemy.CurrentHp;
+            copy = New<TheirOwnWay>(); await Play(copy, enemy);
+            Verify(hp - enemy.CurrentHp == baseDamage + 5 && owner.Creature.GetPowerAmount<StrengthPower>() == 8 && enemy.GetPowerAmount<StrengthPower>() == 10,
+                "攻击使用OTTO原有力量，攻击后才获得复制的3力量，不复制敌人已有10力量");
+            Verify(failures == 0, $"所有招式通过，失败数={failures}");
+            GD.Print($"OTTO_COPY_FIX_OK: {assertions} assertions passed");
+        }
+        catch (Exception error) { GD.PrintErr("OTTO_COPY_FIX_FAILED: " + error); }
+        finally { TestMode.IsOn = false; tree.Quit(); }
+    }
+}

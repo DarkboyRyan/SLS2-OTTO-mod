@@ -1,0 +1,10 @@
+{
+  "version": "v0.6.100",
+  "change": "AdvancingKing normal/upgraded applies one stun action",
+  "checks": "13 real engine assertions: skip first action, resume second attack, Artifact blocks; build zero warnings/errors; installed and ZIP identical",
+  "sha256": {
+    "OTTO.dll": "afcba448c2a9c6d7b021e5ac0a2552b001e3451f67f777f48516b9ca418adbbf",
+    "OTTO.pck": "01ece652df2fd9cb5c1503c8f5908604a51ee1480d704af7cc81a717d4f9ee75",
+    "OTTO.json": "b845013c2039a84e2eff92c16bf75c6d1404ddb041bc741ef59f56927fdc027d"
+  }
+}

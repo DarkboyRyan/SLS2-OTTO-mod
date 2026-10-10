@@ -1,0 +1,16 @@
+{
+  "version": "v0.6.40",
+  "card": "肯德基",
+  "card_id": "OTTO_KFC",
+  "asset": "OTTO/images/cards/kfc.png",
+  "source": "user-provided clipboard image",
+  "source_sha256": "0b87f4996fcb725cb16208028fc7839291e52698104a2148ba6e14080b16d815",
+  "width": 154,
+  "height": 132,
+  "edits": "none",
+  "usage": [
+    "normal card portrait",
+    "upgraded card portrait",
+    "enlarged card preview"
+  ]
+}

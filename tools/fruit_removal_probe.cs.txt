@@ -1,0 +1,230 @@
+using MegaCrit.Sts2.Core.Saves;
+using System.Reflection;
+using MegaCrit.Sts2.Core.GameActions;
+using MegaCrit.Sts2.Core.Context;
+using Godot;
+using BaseLib.Patches.Content;
+using MegaCrit.Sts2.Core.Combat;
+using MegaCrit.Sts2.Core.Commands;
+using MegaCrit.Sts2.Core.Entities.Cards;
+using MegaCrit.Sts2.Core.Entities.Creatures;
+using MegaCrit.Sts2.Core.Entities.Players;
+using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using MegaCrit.Sts2.Core.Hooks;
+using MegaCrit.Sts2.Core.Localization;
+using MegaCrit.Sts2.Core.Modding;
+using MegaCrit.Sts2.Core.Models;
+using MegaCrit.Sts2.Core.Models.Cards;
+using MegaCrit.Sts2.Core.Models.Characters;
+using MegaCrit.Sts2.Core.Models.Monsters;
+using MegaCrit.Sts2.Core.Models.Monsters.Mocks;
+using MegaCrit.Sts2.Core.Models.Powers;
+using MegaCrit.Sts2.Core.MonsterMoves.Intents;
+using MegaCrit.Sts2.Core.MonsterMoves.MonsterMoveStateMachine;
+using MegaCrit.Sts2.Core.Runs;
+using MegaCrit.Sts2.Core.TestSupport;
+using MegaCrit.Sts2.Core.Unlocks;
+using MegaCrit.Sts2.Core.ValueProps;
+using OttoMod;
+
+// 在真实引擎创建独立内存战斗，使用真实出牌包装器；不进入地图、不保存用户进度。
+[ModInitializer(nameof(Initialize))]
+public static partial class Probe
+{
+    private static readonly PlayerChoiceContext Ctx = new ThrowingPlayerChoiceContext();
+    private static int assertions;
+    private static Player owner = null!, ally = null!;
+    private static Creature enemy = null!, enemy2 = null!;
+    private static CombatState state = null!;
+    public static void Initialize() => Callable.From(Check).CallDeferred();
+    private static void Verify(bool ok, string message)
+    {
+        if (!ok) throw new Exception(message);
+        assertions++;
+    }
+    private static void Fresh()
+    {
+        typeof(CombatManager).GetField("_pendingLoss", BindingFlags.Instance | BindingFlags.NonPublic)!.SetValue(CombatManager.Instance, null);
+        CombatManager.Instance.History.Clear();
+        var ready=typeof(CombatManager).GetField("_playersReadyToEndTurn", BindingFlags.Instance|BindingFlags.NonPublic)!.GetValue(CombatManager.Instance)!;
+        ready.GetType().GetMethod("Clear")!.Invoke(ready,null);
+        owner = Player.CreateForNewRun<OttoCharacter>(UnlockState.all, 121);
+        ally = Player.CreateForNewRun<Ironclad>(UnlockState.all, 122);
+        var run = RunState.CreateForTest([owner, ally], seed: "OTTO-ANCIENT");
+        state = new CombatState(runState: run);
+        state.AddPlayer(owner); state.AddPlayer(ally); owner.ResetCombatState(); ally.ResetCombatState();
+        enemy = state.CreateCreature(ModelDb.Monster<MockAttackMonster>().ToMutable(), CombatSide.Enemy, "enemy1"); state.AddCreature(enemy);
+        enemy2 = state.CreateCreature(ModelDb.Monster<MockAttackMonster>().ToMutable(), CombatSide.Enemy, "enemy2"); state.AddCreature(enemy2);
+        foreach (var e in new[] { enemy, enemy2 }) { e.Monster!.SetUpForCombat(); e.Monster.RollMove([owner.Creature, ally.Creature]); }
+        LocalContext.NetId = null;
+        typeof(CombatManager).GetField("_state", BindingFlags.Instance | BindingFlags.NonPublic)!.SetValue(CombatManager.Instance, state);
+        typeof(CombatManager).GetProperty("IsInProgress")!.SetValue(CombatManager.Instance, true);
+    }
+    private static T New<T>(bool upgrade = false, PileType pile = PileType.Hand) where T : CardModel
+    {
+        var card = state.CreateCard<T>(owner);
+        if (upgrade) card.UpgradeInternal();
+        pile.GetPile(owner).AddInternal(card);
+        return card;
+    }
+    private static async Task Play(CardModel card, Creature? target = null, bool auto = false)
+    {
+        // 每次从正确牌堆进入正式出牌包装器，覆盖易拉罐取位置、前后钩子、牌堆及重复出牌清理。
+        if (!auto && card.Pile?.Type != PileType.Hand)
+        {
+            card.RemoveFromCurrentPile(); owner.PlayerCombatState!.Hand.AddInternal(card);
+        }
+        await card.OnPlayWrapper(Ctx, target, auto, default, skipCardPileVisuals: true);
+    }
+    private static bool Allowed(CardModel card) => Hook.ShouldPlay(state, card, out _, AutoPlayType.None);
+    private static async Task StartTurn() => await Hook.AfterSideTurnStart(state, CombatSide.Player, [owner.Creature]);
+    // 测试只派发状态的回合末清理，不启动真实敌方AI。
+    private static async Task EndTurn()
+    {
+        foreach (var power in owner.Creature.Powers.ToArray())
+            await power.AfterSideTurnEnd(Ctx, CombatSide.Player, [owner.Creature]);
+    }
+    private static void DrawPile(int count)
+    {
+        for (int i = 0; i < count; i++) New<OttoStrike>(pile: PileType.Draw);
+    }
+    private static async Task ClearPowers(Creature c)
+    {
+        foreach (var p in c.Powers.ToArray()) await PowerCmd.Remove(p);
+    }
+    private static void SetMove(Creature target, params AbstractIntent[] intents)
+    {
+        // 测试专用：改变内存目标的可见招式，不调用敌人的行动或AI。
+        typeof(MonsterModel).GetProperty("NextMove")!.SetValue(target.Monster, new MoveState("PROBE", _ => Task.CompletedTask, intents));
+    }
+}
+
+public static partial class Probe
+{
+    private static int Meter => owner.Creature.GetPowerAmount<AncientMeterPower>();
+    private static int EnemyHp => enemy.CurrentHp + enemy2.CurrentHp;
+    private static async Task Setup()
+    {
+        Fresh();
+        foreach (var e in new[] {enemy,enemy2}) {
+            await CreatureCmd.SetMaxHp(e,5000); await CreatureCmd.SetCurrentHp(e,5000);
+        }
+        owner.Creature.SetCurrentHpInternal(40);
+    }
+    private static async Task Three()
+    {
+        var source=New<KingJiji>();
+        await PowerCmd.Apply<ZooBondPower>(Ctx,owner.Creature,1,owner.Creature,source);
+        for (int k=0;k<3;k++) await Zoo.Summon(Ctx,source,k);
+    }
+    private static async void Check()
+    {
+        var tree=(SceneTree)Engine.GetMainLoop();
+        try
+        {
+            for(int i=0;i<40;i++) await tree.ToSignal(tree,SceneTree.SignalName.ProcessFrame);
+            TestMode.IsOn=true;
+            SaveManager.Instance.MarkFtueAsComplete("shuffle_ftue");
+            // 删除旧衍生牌后，检查真实模型注册和所有现有卡牌资源，避免残留或误删。
+            var all=ModelDb.CardPool<OttoCardPool>().AllCards.ToArray();
+            Verify(all.Length==86, "exactly86 designed cards after removal");
+            Verify(all.Count(c=>c.Rarity==CardRarity.Common)==20 && all.Count(c=>c.Rarity==CardRarity.Uncommon)==37 && all.Count(c=>c.Rarity==CardRarity.Rare)==25, "reward rarity counts remain20/37/25");
+            Verify(all.Count(c=>c.Rarity==CardRarity.Basic)==3 && all.Count(c=>c.Rarity==CardRarity.Ancient)==1 && all.All(c=>c.Rarity!=CardRarity.Token), "3 basic and1 ancient; no fruit token models");
+            foreach(var name in new[]{"OttoFruit","GoodBanana","RottenOrange","Durian"})
+                Verify(typeof(KingJiji).Assembly.GetType("OttoMod."+name)==null,"removed type "+name);
+            foreach(var card in all)
+                Verify(ResourceLoader.Exists(card.PortraitPath),"remaining portrait "+card.Id);
+            foreach(bool up in new[]{false,true})
+            {
+                await Setup(); var card=New<KingJiji>(up);
+                Verify(card.EnergyCost.GetWithModifiers(CostModifiers.All)==(up?0:1),"cost 1 -> 0");
+                Verify(card.Rarity==CardRarity.Common && card.Type==CardType.Skill && card is AncientCard,"common skill ancient classification");
+                Verify(card.Keywords.Contains(CardKeyword.Exhaust) && card.GainsBlock,"exhaust and conditional block flag");
+                var description=card.GetDescriptionForPile(PileType.Hand);
+                Verify(!description.Contains("{") && !description.Contains("???") && description.Contains("10"),"localized dynamic description");
+                Verify(card.Portrait.GetSize()==new Vector2(196,196),"custom photo remains");
+                await Play(card);
+                Verify(Zoo.Count(owner.Creature)==1 && Meter==10,"no companion summons and acts");
+                Verify(card.Pile?.Type==PileType.Exhaust,"card exhausts through real play wrapper");
+                Verify(owner.PlayerCombatState!.Hand.Cards.Count==0,"no fruit generated");
+                var pet=Zoo.Current(owner.Creature);
+                Verify(pet switch {
+                    XuanDogPower=>owner.Creature.Block==4&&EnemyHp==9996,
+                    ShanNiRuoPower=>owner.Creature.CurrentHp==42,
+                    HuoXingBaoPower=>owner.Creature.GetPowerAmount<StrengthPower>()==1&&owner.Creature.GetPowerAmount<DexterityPower>()==1,
+                    _=>false
+                },"summoned companion actually acts");
+            }
+            // 已有伙伴不能被换走，每类各验证一次；两名伙伴入狱时只召唤剩余合法伙伴。
+            for(int k=0;k<3;k++)
+            {
+                await Setup(); var card=New<KingJiji>(); await Zoo.Summon(Ctx,card,k);
+                var old=Zoo.Companion(owner.Creature,k); await Play(card);
+                Verify(Zoo.Count(owner.Creature)==1&&ReferenceEquals(old,Zoo.Companion(owner.Creature,k))&&Meter==10,"preserve existing kind "+k);
+                await Setup(); card=New<KingJiji>(); await Three();
+                for(int other=0;other<3;other++) await Zoo.Imprison(Ctx,owner.Creature,other,card);
+                switch(k) {
+                    case 0: await PowerCmd.Remove<DogPrisonPower>(owner.Creature); break;
+                    case 1: await PowerCmd.Remove<PigPrisonPower>(owner.Creature); break;
+                    case 2: await PowerCmd.Remove<MarsPrisonPower>(owner.Creature); break;
+                }
+                await Play(card);
+                Verify(Zoo.Count(owner.Creature)==1&&Zoo.Companion(owner.Creature,k)!=null&&Meter==10,"only eligible kind summoned "+k);
+                Verify(owner.Creature.Powers.OfType<ZooPrisonPower>().Count()==2,"prison not released "+k);
+            }
+            await Setup(); await Three(); var command=New<KingJiji>(); await Play(command);
+            Verify(Zoo.Count(owner.Creature)==3&&Meter==30,"all three act and charge30");
+            Verify(EnemyHp==9996&&owner.Creature.Block==4&&owner.Creature.CurrentHp==42,"dog and pig once");
+            Verify(owner.Creature.GetPowerAmount<StrengthPower>()==1&&owner.Creature.GetPowerAmount<DexterityPower>()==1,"mars once");
+            foreach(var pet in Zoo.All(owner.Creature).ToArray())
+                await pet.BeforeSideTurnEnd(Ctx,CombatSide.Player,[owner.Creature]);
+            Verify(EnemyHp==9992&&owner.Creature.Block==8&&owner.Creature.CurrentHp==44&&Meter==30,"normal end turn action still occurs without extra charge");
+
+            // 本场强化与火星包模式必须复用真实行动计算。
+            await Setup(); await Three();
+            await PowerCmd.Apply<DogTrainingPower>(Ctx,owner.Creature,1,owner.Creature,null);
+            await PowerCmd.Apply<DogBoostPower>(Ctx,owner.Creature,3,owner.Creature,null);
+            await PowerCmd.Apply<PigTrainingPower>(Ctx,owner.Creature,1,owner.Creature,null);
+            await PowerCmd.Apply<PigBoostPower>(Ctx,owner.Creature,2,owner.Creature,null);
+            await PowerCmd.Apply<MarsTrainingPower>(Ctx,owner.Creature,1,owner.Creature,null);
+            await PowerCmd.Apply<MarsBoostPower>(Ctx,owner.Creature,1,owner.Creature,null);
+            await PowerCmd.Apply<MarsModePower>(Ctx,owner.Creature,2,owner.Creature,null);
+            await Play(New<KingJiji>());
+            Verify(EnemyHp==9987&&owner.Creature.Block==13,"dog training and boost preserved");
+            Verify(owner.Creature.CurrentHp==46&&enemy.GetPowerAmount<PoisonPower>()==4&&enemy2.GetPowerAmount<PoisonPower>()==4,"pig trained heal and poison");
+            Verify(owner.Creature.GetPowerAmount<DexterityPower>()==8&&!owner.Creature.HasPower<StrengthPower>(),"mars dex-only mode with training");
+            await PowerCmd.Apply<KfcPower>(Ctx,owner.Creature,4,owner.Creature,null);
+            int beforeHp=EnemyHp;
+            await Play(New<KingJiji>());
+            Verify(beforeHp-EnemyHp==61&&owner.Creature.CurrentHp==46&&Meter==60,"KFC replaces healing with 24 damage to each enemy plus13dog");
+
+            await Setup(); await Three(); command=New<KingJiji>();
+            for(int k=0;k<3;k++) await Zoo.Imprison(Ctx,owner.Creature,k,command);
+            await Play(command);
+            Verify(Zoo.Count(owner.Creature)==0&&Meter==0&&owner.Creature.Powers.OfType<ZooPrisonPower>().Count()==3,"all imprisoned has no summon or charge");
+            Verify(command.Pile?.Type==PileType.Exhaust,"all imprisoned still exhausts");
+
+            await Setup(); await Three(); command=New<KingJiji>();
+            await AncientForm.Enter(Ctx,command); int threshold=AncientForm.RequiredValue(owner.Creature);
+            await Play(command);
+            Verify(Meter==0&&EnemyHp==9992&&owner.Creature.CurrentHp==42,"in form companions act with doubled damage and no charge");
+            Verify(owner.Creature.GetPowerAmount<AncientFormPower>()==2&&AncientForm.RequiredValue(owner.Creature)==threshold,"does not refresh form or raise threshold");
+
+            await Setup(); await Three(); command=New<KingJiji>();
+            await AncientForm.Gain(Ctx,command,90); await Play(command);
+            Verify(EnemyHp==9996&&owner.Creature.HasPower<AncientFormPower>()&&Meter==0,"all actions before charge and transformation");
+            Verify(AncientForm.RequiredValue(owner.Creature)==150,"transformation increments next threshold");
+
+            await Setup(); command=New<KingJiji>(pile:PileType.Draw); await Play(New<AllIn>());
+            Verify(command.Pile?.Type==PileType.Exhaust&&Zoo.Count(owner.Creature)==1&&Meter==10,"all in actually plays new ancient card");
+            await Setup(); command=New<KingJiji>(pile:PileType.Discard);
+            var selector=new TestCardSelector(); selector.PrepareToSelect([0]);
+            using(CardSelectCmd.UseSelector(selector)) await Play(New<AiYaMiNo>());
+            Verify(command.Pile?.Type==PileType.Hand&&owner.Creature.Block==6,"ancient retrieval actually selects King Jiji");
+
+            GD.Print($"OTTO_FRUIT_REMOVAL_OK: {assertions} assertions passed");
+        }
+        catch(Exception e) { GD.PrintErr("OTTO_FRUIT_REMOVAL_FAILED: "+e); }
+        finally { TestMode.IsOn=false; tree.Quit(); }
+    }
+}

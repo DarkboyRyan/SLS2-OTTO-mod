@@ -1,0 +1,100 @@
+{
+  "version": "0.1.3",
+  "engine": "MegaDot 4.5.1",
+  "prompt_file": "generation-prompt.txt",
+  "assets": [
+    {
+      "path": "OTTO/images/backgrounds/otto_select_poster.png",
+      "role": "character_select_background",
+      "dimensions": [
+        347,
+        576
+      ],
+      "mode": "RGB",
+      "source": "User supplied poster",
+      "original_path": "/var/folders/j0/1zgwylvj0_5c7ndz4wvq7ntr0000gn/T/codex-clipboard-c1fe1d24-de35-4c29-89d4-32efc41c7b81.png",
+      "sha256": "81d73691a6bedde614ab320570bcc00a356c781f321dbc9c97e34f9014cbcdfd",
+      "source_copied_unchanged": true,
+      "provenance_note": "用户提供参考图并授权本次 Mod 制作；未额外核验原海报的再分发许可。",
+      "status": "selected_and_integrated",
+      "visual_check": "Viewed at native approximate combat scale in art/preview.html; actual game combat screenshot not captured."
+    },
+    {
+      "path": "OTTO/images/character/otto_combat.png",
+      "role": "combat_character",
+      "dimensions": [
+        1024,
+        1536
+      ],
+      "mode": "RGBA",
+      "source": "Built-in image_gen, reference-guided generation",
+      "original_path": "/Users/ryanding/.codex/generated_images/01a0c6c6-163a-74d1-8a26-0a0c237ce623/exec-6ba36f79-2992-4e2b-88cd-2fab2576736f.png",
+      "sha256": "a23b85560df8b03b8420d8a748da319f052290d51d340db3b4d66bb3623706bc",
+      "source_copied_unchanged": true,
+      "provenance_note": "用户提供参考图并授权本次 Mod 制作；未额外核验原海报的再分发许可。",
+      "status": "selected_and_integrated",
+      "visual_check": "Viewed at native approximate combat scale in art/preview.html; actual game combat screenshot not captured.",
+      "alpha_extrema": [
+        0,
+        254
+      ],
+      "fully_transparent_pixels": 1145027,
+      "opaque_subject_bounds": [
+        271,
+        25,
+        779,
+        1517
+      ],
+      "display_height_px": 304,
+      "pivot": "bottom center of alpha >= 0.5 subject",
+      "filter": "linear",
+      "animation": "Godot AnimationPlayer transforms, not skeletal animation"
+    },
+    {
+      "path": "OTTO/images/character/otto_punch_sheet.png",
+      "role": "punch_animation_atlas",
+      "dimensions": [
+        1024,
+        1536
+      ],
+      "mode": "RGBA",
+      "source": "Built-in image_gen; edited from existing OTTO combat sprite",
+      "original_path": "/Users/ryanding/.codex/generated_images/01a0c6c6-163a-74d1-8a26-0a0c237ce623/exec-656eacf8-1a63-4c7d-8ba0-5601359dca8d.png",
+      "source_copied_unchanged": true,
+      "sha256": "872ce799562434a349f0bfb41a5bb8580d6d63af7eed2c4b9c5922f95b9f9fb4",
+      "alpha_extrema": [
+        0,
+        254
+      ],
+      "fully_transparent_pixels": 1068411,
+      "selected_regions": [
+        [
+          0,
+          0,
+          512,
+          780
+        ],
+        [
+          0,
+          780,
+          512,
+          756
+        ],
+        [
+          512,
+          780,
+          512,
+          756
+        ]
+      ],
+      "unused_region_note": "Top-right anticipation draws back the opposite arm; excluded from animation.",
+      "prompt_file": "punch-generation-prompt.txt",
+      "pose_metadata": "punch-preview.json",
+      "duration_seconds": 0.48,
+      "impact_seconds": 0.15,
+      "status": "integrated_and_pack_tested",
+      "visual_check": "Transparent edges and fully extended fist inspected at ~304px native scale in punch-preview.html.",
+      "animation": "Discrete pose frames plus body translation; no skeletal rig."
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "version": "v0.6.70",
+  "card": "公公又式式",
+  "asset": "OTTO/images/cards/gong_gong_again.png",
+  "source_unchanged": true,
+  "packed_texture_loaded": true,
+  "build_errors": 0,
+  "installed_files_verified": true,
+  "files": {
+    "OTTO.dll": "272a42f65affdbbad6bf758d9814d976620d35d0be0c36c4ba7b6d201f5f7099",
+    "OTTO.pck": "e203df1e646b4129535c13cb1775ff08ba4e639228cff9e66b99bf28b9ad8592",
+    "OTTO.json": "cba86dcc4a6175cf408ede9060567c6444d5b06c545e1b71ed879fc162eca024"
+  }
+}

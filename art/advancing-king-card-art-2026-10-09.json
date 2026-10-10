@@ -1,0 +1,16 @@
+{
+  "version": "v0.6.38",
+  "card": "进击的国王",
+  "user_label": "进击的国玉",
+  "asset": "OTTO/images/cards/advancing_king.png",
+  "source": "user-provided clipboard image",
+  "source_sha256": "ba785ebd9e97ef82e9222888486fa5d86d14e692597f2205edad1aa763aa7938",
+  "width": 1520,
+  "height": 792,
+  "edits": "none",
+  "usage": [
+    "normal card portrait",
+    "upgraded card portrait",
+    "enlarged card preview"
+  ]
+}

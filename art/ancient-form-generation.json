@@ -1,0 +1,20 @@
+{
+  "source": "/var/folders/j0/1zgwylvj0_5c7ndz4wvq7ntr0000gn/T/codex-clipboard-2e9447e5-5c8e-49a9-b5a1-35980536568c.png",
+  "tool": "built-in image_gen",
+  "generated": "/Users/ryanding/.codex/generated_images/01a0c6c6-163a-74d1-8a26-0a0c237ce623/exec-583bcdb8-68e5-4419-85a2-28d3f52f4552.png",
+  "asset": "OTTO/images/character/otto_ancient_form.png",
+  "prompt": "Use case: background-extraction. Edit target: the provided distorted smiling-face meme image, for an OTTO game transformation sprite. Remove ONLY the bright green background and black side borders, producing genuine transparent RGBA alpha. Preserve the entire existing purple-grey distorted face/blob silhouette, expression, hair, large grin, soft low-resolution meme texture and original proportions as faithfully as possible. Do not beautify, sharpen into a new face, redraw in cartoon style, add limbs, clothing, text, symbols, labels, outlines, scenery or shadow. The solid face shape remains opaque; outside it is fully transparent, including above the head and below the flat bottom. Keep the face fully visible with modest transparent margins, centered on canvas. A single isolated sprite, no variations, no checkerboard painted into the image.",
+  "mode": "edit: background extraction",
+  "atlas_region": [
+    10,
+    165,
+    1095,
+    1055
+  ],
+  "display_height_px": 304,
+  "sway": {
+    "horizontal_px": 12,
+    "rotation_radians": 0.055,
+    "period_seconds": 1.3
+  }
+}

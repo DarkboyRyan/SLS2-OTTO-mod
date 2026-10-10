@@ -1,0 +1,17 @@
+{
+  "version": "v0.6.30",
+  "card": "翻云覆雨",
+  "checks": {
+    "build_errors": 0,
+    "source_unchanged": true,
+    "packed_texture_loaded": true,
+    "archive_verified": true,
+    "installed_files_verified": true
+  },
+  "files": {
+    "OTTO.dll": "ef7af1e63fc68b1809482c3b058647bc609462fa8ca6962ed39bee3535a46d06",
+    "OTTO.pck": "282bfed2492ba86ada1a4a812f2d0bb3d61410993dd2eb31200633b055213a28",
+    "OTTO.json": "940024e08419a118b7f489c52156df034000d1196b6656274a80d989047db553"
+  },
+  "installed_backup": "/Users/ryanding/Desktop/SLS2 mod/.backups/installed-before-flip-clouds-art-2026-10-09"
+}

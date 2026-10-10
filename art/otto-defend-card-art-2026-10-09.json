@@ -1,0 +1,17 @@
+{
+  "version": "v0.6.44",
+  "card": "防御",
+  "card_id": "OTTO_DEFEND",
+  "asset": "OTTO/images/cards/otto_defend.png",
+  "source": "user-provided clipboard image",
+  "source_sha256": "6932693a2b9dc0dc4a50ef19da4738bd01b753d5b8be1ad7d8b19eb475fcd087",
+  "width": 384,
+  "height": 444,
+  "alpha": false,
+  "edits": "none",
+  "usage": [
+    "normal card portrait",
+    "upgraded card portrait",
+    "enlarged card preview"
+  ]
+}

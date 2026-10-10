@@ -1,0 +1,17 @@
+{
+  "version": "v0.6.29",
+  "card": "说的老理",
+  "checks": {
+    "build_errors": 0,
+    "source_unchanged": true,
+    "packed_texture_loaded": true,
+    "archive_verified": true,
+    "installed_files_verified": true
+  },
+  "files": {
+    "OTTO.dll": "dcea21599ba893d23ae8de385833afc825d6237528c4a61ecd3e779926803219",
+    "OTTO.pck": "bc39ce6f66e16bffaa5e817394467223103f7c3b57e44858b1869c9d5879f862",
+    "OTTO.json": "8509dfc01fa2d50c296cd3a13487156f16cfd17aaab2676e67dd8f582cae4741"
+  },
+  "installed_backup": "/Users/ryanding/Desktop/SLS2 mod/.backups/installed-before-old-reason-art-2026-10-09"
+}

@@ -1,0 +1,31 @@
+{
+  "version": "v0.6.2",
+  "date": "2026-10-08",
+  "game": "v0.107.1 stable",
+  "baselib": "3.4.7",
+  "assertions_per_language": 43,
+  "languages": [
+    "zhs",
+    "eng"
+  ],
+  "workbook": {
+    "output": "/Users/ryanding/Desktop/SLS2 mod/outputs/01a0c6c6-163a-74d1-8a26-0a0c237ce623/OTTO卡牌设计模板-01.xlsx",
+    "sha256": "4541af9207706b519f96b44593be3cc4204f6cb32b2b7bf473fbdf77027bda99",
+    "edited_cells": [
+      "H14",
+      "J14",
+      "N14",
+      "O14",
+      "R14",
+      "S14"
+    ],
+    "preserved": "all other cell contents/formulas/styles and all non-worksheet XML parts"
+  },
+  "sha256": {
+    "OTTO.dll": "fa01bcc2d877a17d9dc190bf2d281de00086991772d87de9bad49a16f9e11bbd",
+    "OTTO.pck": "772d50f429fff01fc3bb066b13e3d813622115f026fb9f1eda923d29f2ee1f52",
+    "OTTO.json": "8f728400e9a572dfb690cd8c46d662cefa7a7377333c379a540e898eaebdb0a2"
+  },
+  "archive_sha256": "c8cedd001a7616a793ac7a35c50e2dc1a5a5f4620795d1ce190370f5e22ffc62",
+  "backup": "/Users/ryanding/Desktop/SLS2 mod/.backups/installed-before-king-jiji-2026-10-08"
+}

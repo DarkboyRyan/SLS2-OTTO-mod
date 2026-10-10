@@ -1,0 +1,23 @@
+{
+  "version": "v0.6.9",
+  "card": "冲刺！冲刺！冲刺",
+  "image": "OTTO/images/cards/otto_rush.png",
+  "dimensions": [
+    426,
+    210
+  ],
+  "image_sha256": "bac3c790226d170cd1ed81bb555448c235270d9bdb78407d187de69c9226a395",
+  "checks": [
+    "Source PNG copied unchanged",
+    "Build succeeded, zero errors",
+    "Texture loaded successfully from exported PCK",
+    "ZIP contents verified against staged DLL, PCK and manifest"
+  ],
+  "sha256": {
+    "OTTO.dll": "5ab5d65aca1f04542626cf9f06265b5bb197e1ba75547c76e30bd390cdb2819f",
+    "OTTO.pck": "55dbb6a15dd89f733d8f1303c144bc6bdd672ef1142fe3142c683265dc8e2dc2",
+    "OTTO.json": "12409bd0ddd2895aa95c6867c5ab5516c3df929e6b01a1cf3e6578b5228abcce"
+  },
+  "archive_sha256": "dcfd6636df4e5d971933c7e5989cb46abc3953dbb152daacdc7947e675a72007",
+  "backup": "/Users/ryanding/Desktop/SLS2 mod/.backups/installed-before-rush-art-2026-10-09"
+}

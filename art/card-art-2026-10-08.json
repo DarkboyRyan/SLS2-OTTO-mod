@@ -1,0 +1,35 @@
+{
+  "version": "v0.6.1",
+  "date": "2026-10-08",
+  "assets": [
+    {
+      "name": "v5_otto",
+      "dimensions": [
+        186,
+        228
+      ],
+      "sha256": "ea6151bcbaa16674f78335f1e2a6b642e87799bfb70104e4e02d9c865c36cbfa"
+    },
+    {
+      "name": "king_jiji",
+      "dimensions": [
+        196,
+        196
+      ],
+      "sha256": "c5fed63b150119338ca05a54461b7ab91108d770bed5ee6f7663d9c830da93cb"
+    }
+  ],
+  "checks": [
+    "Release build succeeded (0 errors).",
+    "Both image resources loaded from the exported PCK.",
+    "Source PNG files copied byte-for-byte.",
+    "ZIP contains exactly the DLL, PCK and manifest; all match staged files."
+  ],
+  "sha256": {
+    "OTTO.dll": "103db97049bd215cd583657fd4f2f8efc52ced9d7ca1dc9ce18efaaee72c6bfb",
+    "OTTO.pck": "e6f64a1cf034d9c4e764d77ce6e76381ab2d73b1f2e442f41e1935c234039595",
+    "OTTO.json": "add24ab0f14cdd1abb01c6355c15bf2f17e3aea7c20096564bb91b7356583a37"
+  },
+  "archive_sha256": "b1f3671eb1a777f5a400b4be89d5c67392f05d78f7e22e92c45e8921c2edabbf",
+  "previous_install_backup": "/Users/ryanding/Desktop/SLS2 mod/.backups/installed-before-card-art-2026-10-08"
+}

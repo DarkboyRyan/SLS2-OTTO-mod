@@ -1,0 +1,8 @@
+{
+  "OTTOMOD-OTTO_CAN.title": "Can",
+  "OTTOMOD-OTTO_CAN.description": "Manually play from either end of your hand to draw 1 card after resolution. Auto-plays do not trigger Can.",
+  "OTTOMOD-OTTO_HAND.title": "Hand",
+  "OTTOMOD-OTTO_HAND.description": "The two differently named Hands activate each other for this turn. Identically named Hands do not.",
+  "OTTOMOD-OTTO_DELAYED.title": "Delayed",
+  "OTTOMOD-OTTO_DELAYED.description": "Cannot be played until the start of your next turn."
+}

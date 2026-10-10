@@ -1,0 +1,25 @@
+{
+  "version": "v0.6.19",
+  "card": "牛魔",
+  "image": "/Users/ryanding/Desktop/SLS2 mod/OTTO/OTTO/images/cards/bull_demon.png",
+  "dimensions": [
+    186,
+    168
+  ],
+  "source_sha256": "6a862b8897538ff2cf229943ba5952ec1286606d042f4e12982103d458f527c9",
+  "checks": {
+    "source_unchanged": true,
+    "build_errors": 0,
+    "packed_texture_loaded": true,
+    "archive_verified": true,
+    "installed_files_verified": true
+  },
+  "files": {
+    "OTTO.dll": "7ffe0e8e071d0e71a544ed32c3c0f66f1cf55abf6fe5d24449c1e4d2b6223cf0",
+    "OTTO.pck": "a54d4678cee930490fc7c8eb0f46bf79919fa9b92b4ef6adbbff6e4582ac2b4d",
+    "OTTO.json": "5c2c0a007564256336d425b5a425a7b558edceff3c51e233969fca36231b61a0"
+  },
+  "archive": "/Users/ryanding/Desktop/SLS2 mod/OTTO/dist/OTTO-v0.6.19.zip",
+  "archive_sha256": "4441d9b54f0a8ba1e7dd737e3e4f8841cd92294cc52a0399a4a699983b5cab98",
+  "installed_backup": "/Users/ryanding/Desktop/SLS2 mod/.backups/installed-before-bull-demon-art-2026-10-09"
+}

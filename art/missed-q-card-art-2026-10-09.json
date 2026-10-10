@@ -1,0 +1,25 @@
+{
+  "version": "v0.6.14",
+  "card": "Q都能Q歪来",
+  "image": "/Users/ryanding/Desktop/SLS2 mod/OTTO/OTTO/images/cards/missed_q.png",
+  "dimensions": [
+    166,
+    118
+  ],
+  "source_sha256": "db5510b2486b2024a70eb00f2b60dab92e6726fadb1e3424ca4e048e54a2455a",
+  "checks": {
+    "source_unchanged": true,
+    "build_errors": 0,
+    "packed_texture_loaded": true,
+    "archive_verified": true,
+    "installed_files_verified": true
+  },
+  "files": {
+    "OTTO.dll": "8724831b9d1e62b2ecdd0820d35b1c92ef1cdbbfe220a083a2262dd997c9324e",
+    "OTTO.pck": "06e5473f8fe84a1ea4e24159ec4a6f21a40accf39bfcb6c5c8c6338a8e7758a0",
+    "OTTO.json": "65469c13d43d8a7714521d7936be48b4bd10d32836ef68d9b000b07ca563115a"
+  },
+  "archive": "/Users/ryanding/Desktop/SLS2 mod/OTTO/dist/OTTO-v0.6.14.zip",
+  "archive_sha256": "820cef9446ff60d12dd21607c0f5316e3ee075ea56370397fdfb7db6d2cda22a",
+  "installed_backup": "/Users/ryanding/Desktop/SLS2 mod/.backups/installed-before-missed-q-art-2026-10-09"
+}

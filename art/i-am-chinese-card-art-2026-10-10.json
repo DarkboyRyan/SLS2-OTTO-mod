@@ -1,0 +1,14 @@
+{
+  "version": "v0.6.77",
+  "card": "I am Chinese",
+  "asset": "OTTO/images/cards/i_am_chinese.png",
+  "source_unchanged": true,
+  "packed_texture_loaded": true,
+  "build_errors": 0,
+  "installed_files_verified": true,
+  "files": {
+    "OTTO.dll": "4ea441c31ef27d2a33ffb5f3a070eaf60b7d62e6cc35cad78e72281b6fc533ff",
+    "OTTO.pck": "b4237077a77445fea25098173366f03b115d1243341236f73e2956d3d1019b1a",
+    "OTTO.json": "3c5702555946f4cae6a89194baa9e6d0eb8de7f34110187c82732e94a54615fc"
+  }
+}

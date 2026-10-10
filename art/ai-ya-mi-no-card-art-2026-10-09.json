@@ -1,0 +1,17 @@
+{
+  "version": "v0.6.27",
+  "card": "哎呀米诺",
+  "checks": {
+    "build_errors": 0,
+    "source_unchanged": true,
+    "packed_texture_loaded": true,
+    "archive_verified": true,
+    "installed_files_verified": true
+  },
+  "files": {
+    "OTTO.dll": "3d5fa29eb9322ed821e4c365b69ded7743279587ed973a2774499590f52ba744",
+    "OTTO.pck": "a01425f29d7d4986a3da29a8251733cf161ff76b4b6db4b648ee3e986b8d5aae",
+    "OTTO.json": "ed1e3c396ed3685b2f4ec2338e498bea25d85692e2f3c243f0cbcc62463e80ff"
+  },
+  "installed_backup": "/Users/ryanding/Desktop/SLS2 mod/.backups/installed-before-ai-ya-mi-no-art-2026-10-09"
+}

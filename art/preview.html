@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="zh-CN"><meta charset="utf-8"><title>OTTO 美术预览</title>
+<style>
+/* 只用于按游戏中的近似大小检查 PNG 边缘；动作以 Godot 场景为准。 */
+*{box-sizing:border-box}body{margin:0;background:#171820;color:#ede5d5;font:16px system-ui}
+main{max-width:1240px;margin:36px auto;padding:0 24px}h1{font-weight:600;margin:0 0 8px}p{color:#b7b2ac}
+.grid{display:grid;grid-template-columns:1.65fr 1fr;gap:24px;margin-top:28px}section{border:1px solid #41414b;border-radius:12px;overflow:hidden}
+h2{font-size:15px;font-weight:500;padding:16px 20px;margin:0;background:#24242e}
+.poster{position:relative;aspect-ratio:16/9;background:#0b090b;overflow:hidden}
+.poster img{position:absolute;left:40%;width:60%;height:100%;object-fit:contain}
+.poster:after{content:"";position:absolute;inset:0;background:linear-gradient(to top,rgba(9,6,9,.95),transparent 32%),linear-gradient(to right,#0b090b 35%,rgba(11,9,11,.88) 45%,transparent 57%)}
+.name{position:absolute;z-index:1;left:6%;top:37%;font-size:38px}.name small{display:block;font-size:13px;margin-top:12px;color:#c5bebb}
+.combat{height:420px;display:flex;align-items:flex-end;justify-content:center;padding-bottom:44px;background:linear-gradient(#424451,#61616b);position:relative}
+.combat img{height:313px;position:relative;z-index:1}.shadow{position:absolute;bottom:42px;width:114px;height:18px;border-radius:50%;background:#15131a55}
+.note{padding:15px 20px;margin:0;font-size:14px;line-height:1.8}.badge{display:inline-block;color:#d7be85;border:1px solid #6b5f42;padding:5px 10px;border-radius:20px;font-size:13px}
+@media(max-width:850px){.grid{grid-template-columns:1fr}}
+</style>
+<main><span class="badge">OTTO v0.1.2</span><h1>黑金队服 · 战斗形象</h1><p>选人海报保持原图；人物根据参考图补全全身，并生成透明立绘。</p>
+<div class="grid"><section><h2>选人背景 · 16:9 构图</h2><div class="poster"><img src="../OTTO/images/backgrounds/otto_select_poster.png"><div class="name">OTTO<small>卡牌和数值沿用铁甲战士</small></div></div><p class="note">海报等比例完整显示，左侧留给名称与介绍。此处为美术排版预览。</p></section>
+<section><h2>战斗立绘 · 主体高度约 304 px</h2><div class="combat"><span class="shadow"></span><img src="../OTTO/images/character/otto_combat.png"></div><p class="note">透明 PNG，脚底对齐。Godot 内已配置呼吸、攻击、施放、受击、倒地、复活基础动作。</p></section></div></main>
+</html>

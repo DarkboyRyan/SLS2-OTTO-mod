@@ -1,0 +1,23 @@
+{
+  "version": "v0.6.5",
+  "card": "说的道莉",
+  "image": "OTTO/images/cards/spoken_reason_guard.png",
+  "dimensions": [
+    566,
+    416
+  ],
+  "image_sha256": "c13c695c525631921183181e194a937946feaf9081c54b1982d9eb3e1adcaa30",
+  "checks": [
+    "Source PNG copied unchanged",
+    "Build succeeded, zero errors",
+    "Texture loaded successfully from exported PCK",
+    "ZIP contents verified against staged DLL, PCK and manifest"
+  ],
+  "sha256": {
+    "OTTO.dll": "57eeb64dc22fc949ed3d676f8f83f2441b8919afe174f73d349d08565d09884d",
+    "OTTO.pck": "e7f5119a1f432f98f8889c875c3d2e5b0cb96d9a9d6f51c0f07dc6837fbe6451",
+    "OTTO.json": "b458eb644e7cda8d1f45a42bf101859a863f33be5f880b6fa7c04f59e935cc22"
+  },
+  "archive_sha256": "6bb238c6236d995a0698eb1d72fb97981fef4d30a9fcb94318871384e74bf953",
+  "backup": "/Users/ryanding/Desktop/SLS2 mod/.backups/installed-before-spoken-reason-guard-art-2026-10-08"
+}

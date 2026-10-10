@@ -1,0 +1,10 @@
+Use case: identity-preserve / background-extraction.
+Asset type: ONE transparent-background 2D full-body combat character sprite for a Slay the Spire 2 mod named OTTO.
+Input image 1 is the supplied reference photograph/poster of the person, his face, hairstyle, black and gold esports jersey and matching dark trousers. This is a reference, not a request to reproduce the poster.
+Primary request: Create a clean high-resolution full-body game character illustration of the SAME referenced adult person, preserving the recognizable face, short black hair, slim build, black short-sleeve jersey with prominent gold V-like chest emblem and gold geometric seam details, and matching black trousers. Complete the cropped lower legs and add simple dark athletic shoes. Preserve the clothing design and distinctive face as closely as possible.
+View and pose: standing three-quarter view, body and head turned modestly toward the RIGHT (toward game enemies), both feet planted, relaxed but ready neutral combat stance, arms outside the pockets and slightly away from the torso with natural hands. One single complete person, both hands, all of hair, both feet visible, consistent human proportions, not chibi.
+Art direction: polished semi-realistic 2D painted game illustration with clean readable silhouette, subtle dark contour, restrained shading, crisp facial and jersey details; recognizable portrait rather than an unrelated generic fighter.
+Lighting: soft neutral studio lighting from upper front left, no dramatic colored rim light.
+Technical output: portrait PNG approximately 1024x1536, REAL transparent alpha background, no scenery, no floor, no baked drop shadow, no checkerboard texture painted into image. Full figure occupies about 88% of canvas height with safe transparent padding around hair and shoes. Foot baseline centered horizontally so it can pivot at the feet in a game.
+Exclude: poster lettering, headings, floating logos, watermark, UI, weapons, armor, extra people, duplicate limbs, motion blur, cropped feet. Small clothing marks are part of the outfit; do not add any text outside the clothing.
+Return only the finished transparent character asset.

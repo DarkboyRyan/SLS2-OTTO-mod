@@ -1,0 +1,25 @@
+{
+  "version": "v0.6.18",
+  "card": "唢呐",
+  "image": "/Users/ryanding/Desktop/SLS2 mod/OTTO/OTTO/images/cards/suona_power.png",
+  "dimensions": [
+    420,
+    426
+  ],
+  "source_sha256": "d93379c425b354f7f8e42d517f1cb28185ba7a42877a67058f6139770e90e284",
+  "checks": {
+    "source_unchanged": true,
+    "build_errors": 0,
+    "packed_textures_loaded": true,
+    "archive_verified": true,
+    "installed_files_verified": true
+  },
+  "files": {
+    "OTTO.dll": "93fd9d0e37111c10641ca0faa565f91df62840aab83192fdbdcfc70a64c229c5",
+    "OTTO.pck": "56261fdd3040b6f622a02ad0a5c23038b9002b15c25d155a2b6aedbc0e3f7612",
+    "OTTO.json": "9cbee9f0ed4cd03b374961d4746b704b7d1597161d29174e7d7083e2121ef3df"
+  },
+  "archive": "/Users/ryanding/Desktop/SLS2 mod/OTTO/dist/OTTO-v0.6.18.zip",
+  "archive_sha256": "f4a982d74fd1a776b534c8874e7b571b6bcfbc0c3d3c662dca194c981945a79c",
+  "installed_backup": "/Users/ryanding/Desktop/SLS2 mod/.backups/installed-before-suona-power-art-2026-10-09"
+}

@@ -1,0 +1,276 @@
+using System.Reflection;
+using Godot;
+using BaseLib.Patches.Content;
+using MegaCrit.Sts2.Core.Combat;
+using MegaCrit.Sts2.Core.Commands;
+using MegaCrit.Sts2.Core.Entities.Cards;
+using MegaCrit.Sts2.Core.Entities.Creatures;
+using MegaCrit.Sts2.Core.Entities.Players;
+using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using MegaCrit.Sts2.Core.Hooks;
+using MegaCrit.Sts2.Core.Localization;
+using MegaCrit.Sts2.Core.Modding;
+using MegaCrit.Sts2.Core.Models;
+using MegaCrit.Sts2.Core.Models.Cards;
+using MegaCrit.Sts2.Core.Models.Characters;
+using MegaCrit.Sts2.Core.Models.Monsters;
+using MegaCrit.Sts2.Core.Models.Monsters.Mocks;
+using MegaCrit.Sts2.Core.Models.Powers;
+using MegaCrit.Sts2.Core.MonsterMoves.Intents;
+using MegaCrit.Sts2.Core.MonsterMoves.MonsterMoveStateMachine;
+using MegaCrit.Sts2.Core.Runs;
+using MegaCrit.Sts2.Core.TestSupport;
+using MegaCrit.Sts2.Core.Unlocks;
+using MegaCrit.Sts2.Core.ValueProps;
+using OttoMod;
+
+// 在真实引擎创建独立内存战斗，使用真实出牌包装器；不进入地图、不保存用户进度。
+[ModInitializer(nameof(Initialize))]
+public static class Probe
+{
+    private static readonly PlayerChoiceContext Ctx = new ThrowingPlayerChoiceContext();
+    private static int assertions;
+    private static Player owner = null!, ally = null!;
+    private static Creature enemy = null!, enemy2 = null!;
+    private static CombatState state = null!;
+    public static void Initialize() => Callable.From(Check).CallDeferred();
+    private static void Verify(bool ok, string message)
+    {
+        if (!ok) throw new Exception(message);
+        assertions++;
+    }
+    private static void Fresh()
+    {
+        owner = Player.CreateForNewRun<OttoCharacter>(UnlockState.all, 121);
+        ally = Player.CreateForNewRun<Ironclad>(UnlockState.all, 122);
+        var run = RunState.CreateForTest([owner, ally], seed: "OTTO-EXPANSION");
+        state = new CombatState(runState: run);
+        state.AddPlayer(owner); state.AddPlayer(ally); owner.ResetCombatState(); ally.ResetCombatState();
+        enemy = state.CreateCreature(ModelDb.Monster<MockAttackMonster>().ToMutable(), CombatSide.Enemy, "enemy1"); state.AddCreature(enemy);
+        enemy2 = state.CreateCreature(ModelDb.Monster<MockAttackMonster>().ToMutable(), CombatSide.Enemy, "enemy2"); state.AddCreature(enemy2);
+        typeof(CombatManager).GetField("_state", BindingFlags.Instance | BindingFlags.NonPublic)!.SetValue(CombatManager.Instance, state);
+        typeof(CombatManager).GetProperty("IsInProgress")!.SetValue(CombatManager.Instance, true);
+    }
+    private static T New<T>(bool upgrade = false, PileType pile = PileType.Hand) where T : CardModel
+    {
+        var card = state.CreateCard<T>(owner);
+        if (upgrade) card.UpgradeInternal();
+        pile.GetPile(owner).AddInternal(card);
+        return card;
+    }
+    private static async Task Play(CardModel card, Creature? target = null, bool auto = false)
+    {
+        // 每次从正确牌堆进入正式出牌包装器，覆盖易拉罐取位置、前后钩子、牌堆及重复出牌清理。
+        if (!auto && card.Pile?.Type != PileType.Hand)
+        {
+            card.RemoveFromCurrentPile(); owner.PlayerCombatState!.Hand.AddInternal(card);
+        }
+        await card.OnPlayWrapper(Ctx, target, auto, default, skipCardPileVisuals: true);
+    }
+    private static bool Allowed(CardModel card) => Hook.ShouldPlay(state, card, out _, AutoPlayType.None);
+    private static async Task StartTurn() => await Hook.AfterSideTurnStart(state, CombatSide.Player, [owner.Creature]);
+    // 测试只派发状态的回合末清理，不启动真实敌方AI。
+    private static async Task EndTurn()
+    {
+        foreach (var power in owner.Creature.Powers.ToArray())
+            await power.AfterSideTurnEnd(Ctx, CombatSide.Player, [owner.Creature]);
+    }
+    private static void DrawPile(int count)
+    {
+        for (int i = 0; i < count; i++) New<OttoStrike>(pile: PileType.Draw);
+    }
+    private static async Task ClearPowers(Creature c)
+    {
+        foreach (var p in c.Powers.ToArray()) await PowerCmd.Remove(p);
+    }
+    private static void SetMove(Creature target, params AbstractIntent[] intents)
+    {
+        // 测试专用：改变内存目标的可见招式，不调用敌人的行动或AI。
+        typeof(MonsterModel).GetProperty("NextMove")!.SetValue(target.Monster, new MoveState("PROBE", _ => Task.CompletedTask, intents));
+    }
+    private static async void Check()
+    {
+        var tree = (SceneTree)Engine.GetMainLoop();
+        try
+        {
+            for (int i = 0; i < 40; i++) await tree.ToSignal(tree, SceneTree.SignalName.ProcessFrame);
+            TestMode.IsOn = true;
+            Fresh();
+            var all = ModelDb.CardPool<OttoCardPool>().AllCards.ToArray();
+            Verify(all.Length == 33, "注册30张设计卡和3张水果，实际=" + all.Length);
+            Verify(all.Count(c => c.Rarity == CardRarity.Common) == 10 && all.Count(c => c.Rarity == CardRarity.Uncommon) == 8 && all.Count(c => c.Rarity == CardRarity.Rare) == 9, "奖励稀有度10/8/9");
+            Verify(owner.Deck.Cards.Count == 11 && owner.Relics.Single() is OttoTalisman, "初始牌组和棍亩保留");
+            foreach (var canonical in all)
+            {
+                var c = state.CreateCard(canonical, owner);
+                Verify(!c.Title.Contains("OTTO_"), "中文标题 " + c.Id);
+                Verify(ResourceLoader.Exists(c.PortraitPath), "卡图存在 " + c.Id);
+                foreach (bool up in new[] { false, true })
+                {
+                    if (up && c.MaxUpgradeLevel > 0) c.UpgradeInternal();
+                    string d = c.GetDescriptionForPile(PileType.Hand);
+                    if (c is HaliluTornado) Verify(d.Contains("升级过") == up, "大旋风升级前后说明切换");
+                    Verify(!d.Contains("???") && !d.Contains("{IsUpgraded") && !d.Contains("{Calculated") && !d.Contains("{Energy"), "动态文本 " + c.Id + ":" + d);
+                }
+            }
+            foreach (var keyword in new[] { OttoKeywords.Can, OttoKeywords.Hand, OttoKeywords.Delayed })
+            {
+                var key = CustomKeywords.KeywordIDs[(int)keyword].Key;
+                var title = new LocString("card_keywords", key + ".title").GetFormattedText();
+                Verify(!title.Contains("OTTO") && !title.Contains("???"), "关键词本地化 " + key);
+            }
+            GD.Print("OTTO_EXPANSION_REGISTRATION_OK");
+
+            // 哇沃：只锁新抽到的牌，回合开始解锁，保留仍在。
+            Fresh(); var wawo = New<Wawo>(); var existing = New<OttoDefend>(); DrawPile(6);
+            await Play(wawo);
+            var delayed = owner.PlayerCombatState!.Hand.Cards.Where(c => c != existing).ToArray();
+            Verify(delayed.Length == 3 && delayed.All(c => c.Keywords.Contains(CardKeyword.Retain) && !Allowed(c)), "哇沃抽3保留并禁用");
+            Verify(Allowed(existing), "哇沃不禁原有手牌");
+            await StartTurn();
+            Verify(delayed.All(c => Allowed(c) && c.Keywords.Contains(CardKeyword.Retain)), "下回合解锁且保留持续");
+            Fresh(); DrawPile(6); await Play(New<Wawo>(true)); Verify(owner.PlayerCombatState!.Hand.Cards.Count == 4, "哇沃升级抽4");
+
+            // 手：同名不互相触发，异名触发；回合重置；预览变量与实际伤害相符。
+            Fresh(); var hand = New<OneHand>(); await Play(hand); Verify(owner.Creature.Block == 8, "第一手8格挡");
+            await Play(New<OneHand>()); Verify(owner.Creature.Block == 16, "同名手仍8格挡");
+            var amino = New<AminoHand>(); int hp = enemy.CurrentHp; await Play(amino, enemy); Verify(hp - enemy.CurrentHp == 16, "异名手16伤害");
+            await Play(New<OneHand>(true)); Verify(owner.Creature.Block == 40, "升级另一手24格挡");
+            await StartTurn(); hp = enemy.CurrentHp; await Play(New<AminoHand>(true), enemy); Verify(hp - enemy.CurrentHp == 12, "下回合清空手连招");
+
+            // 唢呐和白银：下一回合生效、正确重置，其他玩家不受限制。
+            Fresh(); await PlayerCmd.SetEnergy(0, owner); await Play(New<Suona>());
+            Verify(owner.PlayerCombatState!.Energy == 3, "唢呐获得3能量");
+            var attack = New<OttoStrike>(); Verify(Allowed(attack), "唢呐当前回合可攻击");
+            await StartTurn(); Verify(!Allowed(attack) && Allowed(New<OttoDefend>()), "下回合只禁攻击");
+            Verify(owner.Creature.GetPower<NoAttackNextTurnPower>()!.Description.GetFormattedText().Contains("本回合"), "唢呐生效后说明显示当前回合");
+            await Play(New<Suona>(true)); Verify(owner.PlayerCombatState.Energy == 8, "唢呐升级获得5能量");
+            await EndTurn();
+            await StartTurn(); Verify(!Allowed(attack), "禁攻击回合再吹唢呐仍保留下次代价");
+            await EndTurn(); Verify(Allowed(attack), "禁攻击到期恢复");
+            Fresh(); await Play(New<SilverTerminal>()); Verify(!Allowed(New<OttoStrike>()) && !Allowed(New<OttoDefend>()), "白银禁止所有牌");
+            var allyCard = state.CreateCard<StrikeIronclad>(ally); ally.PlayerCombatState!.Hand.AddInternal(allyCard);
+            Verify(Hook.ShouldPlay(state, allyCard, out _, AutoPlayType.None), "白银不锁队友");
+            await EndTurn();
+            await PlayerCmd.SetEnergy(3, owner); await owner.Creature.GetPower<EnergyNextTurnPower>()!.AfterEnergyReset(owner);
+            Verify(owner.PlayerCombatState!.Energy == 6 && Allowed(New<OttoStrike>()), "下回合额外3能量且可以出牌");
+            GD.Print("OTTO_EXPANSION_TURNS_OK");
+
+            // 易拉罐边缘：真实手牌左右两侧触发，中间不触发；自动打出不触发；牛魔共享计数。
+            Fresh(); DrawPile(8); var left = New<VoidSnorlax>(); var middle = New<VoidSnorlax>(); var right = New<VoidSnorlax>();
+            await Play(middle); Verify(owner.PlayerCombatState!.Hand.Cards.Count == 2, "中间易拉罐不抽牌");
+            await Play(left); Verify(owner.PlayerCombatState.Hand.Cards.Count == 2, "最左易拉罐抽1");
+            var edgeRight = New<VoidSnorlax>(); int n = owner.PlayerCombatState.Hand.Cards.Count; await Play(edgeRight); Verify(owner.PlayerCombatState.Hand.Cards.Count == n, "最右易拉罐抽1");
+            var autoCan = New<VoidSnorlax>(); n = owner.PlayerCombatState.Hand.Cards.Count; await Play(autoCan, auto: true); Verify(owner.PlayerCombatState.Hand.Cards.Count == n - 1, "自动打出的易拉罐不额外抽牌");
+            var bull1 = New<BullDemon>(); var bull2 = New<BullDemon>(true);
+            Verify(bull1.EnergyCost.GetWithModifiers(CostModifiers.All) == 0 && bull2.EnergyCost.GetWithModifiers(CostModifiers.All) == 0, "所有牛魔共享减费下限0");
+            decimal blockBefore = owner.Creature.Block; await Play(bull2);
+            Verify(owner.Creature.Block == blockBefore + 15 && bull1.EnergyCost.GetWithModifiers(CostModifiers.All) == 2, "打出升级牛魔15格挡且共享减费清零");
+            Fresh(); var johnnie = New<JohnnieWalker>(); var originalCard = New<OttoDefend>(); await Play(johnnie);
+            Verify(originalCard.Keywords.Contains(OttoKeywords.Can), "尊尼获加给当前手牌加属性");
+            var later = New<OttoDefend>(); Verify(!later.Keywords.Contains(OttoKeywords.Can), "之后获取的牌不受影响");
+            Verify(!owner.Deck.Cards.Any(c => c.Keywords.Contains(OttoKeywords.Can)), "永久牌组不受污染");
+            await StartTurn(); Verify(originalCard.Keywords.Contains(OttoKeywords.Can), "易拉罐属性跨回合保留");
+            DrawPile(4); int beforeHand = owner.PlayerCombatState!.Hand.Cards.Count; await Play(originalCard); Verify(owner.PlayerCombatState.Hand.Cards.Count == beforeHand, "赋予的易拉罐也触发边缘抽牌");
+            Fresh(); var sponge = New<SpongeEkko>(); await Play(sponge, enemy); var nextCan = New<VoidSnorlax>();
+            Verify(nextCan.EnergyCost.GetWithModifiers(CostModifiers.All) == 0, "艾克儿使下张易拉罐显示0费");
+            await Play(New<OttoDefend>()); Verify(nextCan.EnergyCost.GetWithModifiers(CostModifiers.All) == 0, "非易拉罐不消耗免费");
+            await Play(nextCan); Verify(!owner.Creature.HasPower<FreeCanPower>() && New<VoidSnorlax>().EnergyCost.GetWithModifiers(CostModifiers.All) == 2, "免费仅消费一次");
+            GD.Print("OTTO_EXPANSION_CANS_OK");
+
+            // 卡比兽：平减在力量、易伤、无实体之后，覆盖敌回合，自己的下回合开始失效。
+            Fresh(); await Play(New<VoidSnorlax>()); await CreatureCmd.LoseBlock(owner.Creature, owner.Creature.Block);
+            hp = owner.Creature.CurrentHp; await CreatureCmd.Damage(Ctx, owner.Creature, 10, ValueProp.Move, enemy);
+            Verify(hp - owner.Creature.CurrentHp == 8, "卡比兽10伤害减为8");
+            await PowerCmd.Apply<IntangiblePower>(Ctx, owner.Creature, 1, owner.Creature, null);
+            hp = owner.Creature.CurrentHp; await CreatureCmd.Damage(Ctx, owner.Creature, 10, ValueProp.Move, enemy);
+            Verify(owner.Creature.CurrentHp == hp, "平减与无实体组合最低0");
+            await PowerCmd.Remove<IntangiblePower>(owner.Creature); await StartTurn();
+            Verify(!owner.Creature.HasPower<FlatGuardPower>(), "卡比兽下次自身回合到期");
+            Fresh(); await Play(New<VoidSnorlax>(true)); Verify(owner.Creature.GetPowerAmount<FlatGuardPower>() == 3 && owner.Creature.Block == 16, "卡比兽升级只提升减伤");
+            Fresh(); var oldHand = New<OttoStrike>(); var essay = New<VtuberEssay>(); var tail = New<OttoDefend>();
+            for (int i = 0; i < 4; i++) { New<OttoStrike>(pile: PileType.Draw); New<VoidSnorlax>(pile: PileType.Draw); }
+            await Play(essay);
+            Verify(owner.PlayerCombatState!.Hand.Cards.Contains(oldHand), "小作文保留原有非易拉罐");
+            Verify(owner.PlayerCombatState.Hand.Cards.Count(c => c is VoidSnorlax) == 4, "小作文留下抽到的4张易拉罐");
+            Verify(owner.PlayerCombatState.DiscardPile.Cards.Count(c => c is OttoStrike) >= 3, "小作文丢弃新抽的非易拉罐: hand=" + string.Join(",", owner.PlayerCombatState.Hand.Cards.Select(c => c.Id.Entry)) + " discard=" + string.Join(",", owner.PlayerCombatState.DiscardPile.Cards.Select(c => c.Id.Entry)) + " draw=" + string.Join(",", owner.PlayerCombatState.DrawPile.Cards.Select(c => c.Id.Entry)));
+
+            // 大旋风：真实X支付记录、全职业候选池、升级和0费期限。
+            Fresh(); var tornado = New<HaliluTornado>(true); await PlayerCmd.SetEnergy(4, owner);
+            var spent = await tornado.SpendResources(); Verify(spent.Item1 == 4, "X牌实际消耗4能量");
+            var pools = HaliluTornado.AttackPool(tornado).Select(c => c.Pool.Id).Distinct().Count(); Verify(pools >= 6, "攻击池覆盖5原版职业和OTTO");
+            await Play(tornado); var generated = owner.PlayerCombatState!.Hand.Cards.ToArray();
+            Verify(generated.Length == 4 && generated.All(c => c.Type == CardType.Attack && c.IsUpgraded), "X=4生成4张升级攻击");
+            Verify(generated.All(c => c.EnergyCost.GetWithModifiers(CostModifiers.Local) == 0), "生成攻击本回合0费");
+            foreach (var c in generated) c.EndOfTurnCleanup();
+            Verify(generated.Any(c => c.EnergyCost.GetWithModifiers(CostModifiers.Local) > 0 || c.EnergyCost.CostsX), "回合结束恢复原费用");
+            // 专项检查原版X费和星星费用，不能只检查显示出来的普通能量数字。
+            var freeX = New<Whirlwind>(); OttoFreeCostRules.MakeFreeThisTurn(freeX); await PlayerCmd.SetEnergy(5, owner);
+            var xSpent = await freeX.SpendResources(); Verify(xSpent.Item1 == 0 && owner.PlayerCombatState!.Energy == 5 && freeX.ResolveEnergyXValue() == 0, "免费X牌不会消耗剩余能量");
+            freeX.EndOfTurnCleanup(); Verify(freeX.EnergyCost.GetAmountToSpend() == 5, "免费X牌回合后恢复耗费全部能量");
+            var starCanonical = HaliluTornado.AttackPool(tornado).First(c => c.CanonicalStarCost > 0);
+            var starCard = state.CreateCard(starCanonical, owner); owner.PlayerCombatState!.Hand.AddInternal(starCard);
+            OttoFreeCostRules.MakeFreeThisTurn(starCard); Verify(starCard.GetStarCostWithModifiers() == 0, "跨职业生成牌免除星星费用");
+            starCard.EndOfTurnCleanup(); Verify(starCard.GetStarCostWithModifiers() > 0, "回合后恢复星星费用");
+            Fresh(); await PowerCmd.Apply<ArtifactPower>(Ctx, owner.Creature, 1, owner.Creature, null);
+            await Play(New<Suona>()); Verify(!owner.Creature.HasPower<NoAttackNextTurnPower>(), "人工制品挡下唢呐负面效果而不崩溃");
+            Fresh(); hp = enemy.CurrentHp; await Play(New<BackElephant>(), enemy); Verify(hp - enemy.CurrentHp == 120, "大象120伤害");
+            hp = enemy.CurrentHp; await Play(New<BackElephant>(true), enemy); Verify(hp - enemy.CurrentHp == 150, "大象升级150伤害");
+            await Play(New<NonexistentThing>()); Verify(owner.Creature.GetPowerAmount<IntangiblePower>() == 2, "棍亩触发2次得2层");
+            await PowerCmd.Remove<IntangiblePower>(owner.Creature);
+            await RelicCmd.Replace(owner.GetRelic<OttoTalisman>()!, ModelDb.Relic<OttoUpgradedTalisman>().ToMutable());
+            await Play(New<NonexistentThing>(true)); Verify(owner.Creature.GetPowerAmount<IntangiblePower>() == 6, "升级遗物触发3次得6层");
+            GD.Print("OTTO_EXPANSION_VALUES_OK");
+
+            // 伙伴共存、强化不叠加、换走保留和牺牲只移除炫狗。
+            Fresh(); await Play(New<ZooBond>()); Verify(Zoo.Count(owner.Creature) == 3, "羁绊召齐三只");
+            hp = enemy.CurrentHp; await Play(New<OttoRush>(), enemy); Verify(hp - enemy.CurrentHp == 27, "三伙伴冲刺27伤害");
+            await Play(New<CallFriends>()); Verify(Zoo.Count(owner.Creature) == 3, "羁绊下呼朋唤友不移除其他种类");
+            await Play(New<SecondStreamGoat>()); await Play(New<SecondStreamGoat>(true));
+            await Play(New<ComebackDirector>()); await Play(New<EternalGod>());
+            Verify(Zoo.Count(owner.Creature) == 3 && owner.Creature.GetPowerAmount<DogTrainingPower>() == 1, "强化不增加重复伙伴或叠加层数");
+            Verify(owner.Creature.GetPower<XuanDogPower>()!.Description.GetFormattedText().Contains("10"), "炫狗悬停显示强化10点");
+            Verify(owner.Creature.GetPower<ShanNiRuoPower>()!.Description.GetFormattedText().Contains("中毒"), "山泥若悬停显示强化中毒");
+            Verify(owner.Creature.GetPower<HuoXingBaoPower>()!.Description.GetFormattedText().Contains("3"), "火星包悬停显示强化3点");
+            owner.Creature.SetCurrentHpInternal(40); int totalHp = enemy.CurrentHp + enemy2.CurrentHp;
+            foreach (var pet in Zoo.All(owner.Creature).ToArray()) await pet.BeforeSideTurnEnd(Ctx, CombatSide.Player, [owner.Creature]);
+            Verify(totalHp - enemy.CurrentHp - enemy2.CurrentHp == 10 && owner.Creature.Block == 10, "强化炫狗10攻10防");
+            Verify(owner.Creature.CurrentHp == 44 && enemy.GetPowerAmount<PoisonPower>() == 4 && enemy2.GetPowerAmount<PoisonPower>() == 4, "强化山泥若回血和全体4毒");
+            Verify(owner.Creature.GetPowerAmount<StrengthPower>() == 3 && owner.Creature.GetPowerAmount<DexterityPower>() == 3, "强化火星包3力3敏");
+            await Play(New<BlueCandy>()); Verify(Zoo.Count(owner.Creature) == 2 && !owner.Creature.HasPower<XuanDogPower>(), "蓝色M豆仅牺牲炫狗");
+            Verify(!owner.Creature.HasPower<PoisonPower>() && ally.Creature.GetPowerAmount<PoisonPower>() == 20, "牺牲仅保护自己");
+            await Zoo.Summon(Ctx, New<CallFriends>(), 0); Verify(Zoo.Count(owner.Creature) == 3 && owner.Creature.HasPower<DogTrainingPower>(), "补回炫狗且强化仍在");
+            Fresh(); await Play(New<SecondStreamGoat>()); await Zoo.Summon(Ctx, New<CallFriends>(), 1);
+            Verify(Zoo.Count(owner.Creature) == 1 && owner.Creature.HasPower<ShanNiRuoPower>(), "没有羁绊仍为单伙伴并允许换走炫狗");
+            await Zoo.Summon(Ctx, New<CallFriends>(), 0); totalHp = enemy.CurrentHp + enemy2.CurrentHp;
+            await Zoo.Current(owner.Creature)!.BeforeSideTurnEnd(Ctx, CombatSide.Player, [owner.Creature]);
+            Verify(totalHp - enemy.CurrentHp - enemy2.CurrentHp == 10, "换走再召回强化保持");
+            GD.Print("OTTO_EXPANSION_ZOO_OK");
+
+            // 意图复制：单段/多段、目标过滤、已核对的格挡与强化，且不改变敌人的下一步行动。
+            Fresh(); var copy = New<TheirOwnWay>(); SetMove(enemy, new MultiAttackIntent(7, 3)); var move = enemy.Monster!.NextMove;
+            Verify(copy.IsValidTarget(enemy), "可选择纯多段攻击"); hp = enemy.CurrentHp; await Play(copy, enemy);
+            Verify(hp - enemy.CurrentHp == 21 && enemy.Monster.NextMove == move, "复制7x3且不消耗敌方意图");
+            SetMove(enemy, new SummonIntent()); Verify(!copy.IsValidTarget(enemy), "召唤意图禁止选择");
+            SetMove(enemy, new SingleAttackIntent(8), new DebuffIntent()); Verify(!copy.IsValidTarget(enemy), "包含未支持减益的混合意图不可选");
+            var punch = state.CreateCreature(ModelDb.Monster<PunchConstruct>().ToMutable(), CombatSide.Enemy, "punch"); state.AddCreature(punch);
+            typeof(MonsterModel).GetProperty("NextMove")!.SetValue(punch.Monster, new MoveState("READY_MOVE", _ => Task.CompletedTask, new DefendIntent()));
+            await Play(copy, punch); Verify(owner.Creature.Block == 10, "复制已核对招式的10格挡给予自己");
+            var cultist = state.CreateCreature(ModelDb.Monster<CalcifiedCultist>().ToMutable(), CombatSide.Enemy, "cultist"); state.AddCreature(cultist);
+            typeof(MonsterModel).GetProperty("NextMove")!.SetValue(cultist.Monster, new MoveState("INCANTATION_MOVE", _ => Task.CompletedTask, new BuffIntent()));
+            await Play(copy, cultist); Verify(owner.Creature.GetPowerAmount<RitualPower>() == 2 && !cultist.HasPower<RitualPower>(), "复制仪式给予OTTO而非敌人");
+
+            TestMode.IsOn = false;
+            var visuals = ModelDb.Character<OttoCharacter>().CreateVisuals(); tree.Root.AddChild(visuals);
+            var group = ZooVisuals.AttachMany(visuals, ["xuan_dog", "shan_ni_ruo", "huo_xing_bao"])!;
+            Verify(group.GetChildCount() == 3, "同时创建三位伙伴视觉节点");
+            Verify(!group.FindChildren("*", "Label", true, false).Any(), "伙伴仍不显示头顶名字");
+            var positions = group.GetChildren().Cast<Node2D>().Select(n => n.Position.X).ToArray(); Verify(positions.Distinct().Count() == 3, "三伙伴横向排开");
+            ZooVisuals.Attach(visuals, "xuan_dog"); Verify(visuals.GetNode("OttoZooCompanion").GetChildCount() == 1, "恢复单伙伴清除多伙伴容器");
+            visuals.QueueFree();
+            GD.Print($"OTTO_EXPANSION_OK: {assertions} assertions passed");
+        }
+        catch (Exception error) { GD.PrintErr("OTTO_EXPANSION_FAILED: " + error); }
+        finally { TestMode.IsOn = false; tree.Quit(); }
+    }
+}

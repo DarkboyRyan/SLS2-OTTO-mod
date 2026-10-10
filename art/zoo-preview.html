@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="zh-CN"><meta charset="utf-8"><title>OTTO · 动物园伙伴预览</title>
+<style>
+*{box-sizing:border-box}body{margin:0;padding:32px;background:#171822;color:#ede5d3;font:16px system-ui}main{max-width:980px;margin:auto}h1{font-size:24px;margin:0 0 8px}p{color:#b8b4b0;line-height:1.6}nav{display:flex;gap:10px;margin:20px 0}button{background:#292936;border:1px solid #5e5745;color:#eedeae;border-radius:8px;padding:10px 20px;cursor:pointer}button.active{background:#766340;color:#fff}canvas{width:100%;border:1px solid #393743;border-radius:12px}#rule{min-height:32px;color:#edcf83}small{color:#928d8d}
+</style><main><h1>OTTO · 动物园</h1><p>同一时间一位伙伴。选择按钮查看替换效果与实际显示比例。</p>
+<nav><button data-key="xuan_dog" class="active">炫狗</button><button data-key="shan_ni_ruo">山泥若</button><button data-key="huo_xing_bao">火星包</button><button data-key="none">无伙伴</button></nav>
+<canvas width="980" height="430"></canvas><p id="rule"></p><small>这是素材与位置预览，不是游戏实战截图。OTTO 高约 304px，伙伴高 172px。</small></main>
+<script>
+// 预览直接读取游戏同一份素材和裁切参数，避免另做一套不一致的缩略图。
+const canvas=document.querySelector('canvas'),ctx=canvas.getContext('2d');
+const labels={xuan_dog:'炫狗',shan_ni_ruo:'山泥若',huo_xing_bao:'火星包'};
+const rules={xuan_dog:'回合结束：4点格挡，并对随机敌人造成4点伤害。',shan_ni_ruo:'回合结束：回复2点生命。',huo_xing_bao:'回合结束：获得1力量和1敏捷。',none:'打出「呼朋唤友」即可随机召唤一位伙伴。'};
+let selected='xuan_dog',started=performance.now(),images={},report;
+const load=async(key,path)=>{const im=new Image();im.src=path;await im.decode();images[key]=im;};
+Promise.all([fetch('zoo-asset-report.json').then(r=>r.json()).then(r=>report=r),load('otto','../OTTO/images/character/otto_combat.png'),...Object.keys(labels).map(k=>load(k,`../OTTO/images/companions/${k}.png`))]).then(()=>requestAnimationFrame(draw));
+document.querySelectorAll('button').forEach(b=>b.onclick=()=>{selected=b.dataset.key;started=performance.now();document.querySelectorAll('button').forEach(x=>x.classList.toggle('active',x===b));});
+function draw(now){
+ ctx.fillStyle='#292833';ctx.fillRect(0,0,980,430);
+ // 地面刻度用于确认脚底对齐；淡入与呼吸是游戏效果的浏览器预览。
+ ctx.strokeStyle='#45404a';ctx.beginPath();ctx.moveTo(80,354);ctx.lineTo(900,354);ctx.stroke();
+ ctx.fillStyle='#09090a66';ctx.beginPath();ctx.ellipse(350,356,65,10,0,0,Math.PI*2);ctx.fill();
+ ctx.drawImage(images.otto,271,25,508,1492,298,50,104,304);
+ if(selected!=='none'){
+  const [x,y,w,h]=report[selected].body_region,s=172/h,breath=1+.012*Math.sin(now/350);
+  ctx.save();ctx.globalAlpha=Math.min(1,(now-started)/250);ctx.drawImage(images[selected],x,y,w,h,462-w*s/2,354-172*breath,w*s,172*breath);ctx.restore();
+  // 与游戏保持一致，伙伴头顶不再绘制名字。
+ }
+ ctx.fillStyle='#aaa3a1';ctx.font='14px system-ui';ctx.textAlign='left';ctx.fillText('同一脚底基线',760,380);document.querySelector('#rule').textContent=rules[selected];requestAnimationFrame(draw);
+}
+</script></html>

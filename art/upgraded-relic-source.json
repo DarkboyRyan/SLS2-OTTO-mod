@@ -1,0 +1,10 @@
+{
+  "name": "老棍和棍亩",
+  "source": "/var/folders/j0/1zgwylvj0_5c7ndz4wvq7ntr0000gn/T/codex-clipboard-c91c3c5d-387d-4cfd-86f1-5c7a4f4b4350.png",
+  "project_asset": "OTTO/images/relics/otto_upgraded_talisman.png",
+  "handling": "原图复制，由游戏界面缩放；未使用图像生成或图像编辑",
+  "width": 492,
+  "height": 230,
+  "sha256": "e843d6b723360199ccf83207c6d24a29369c9ab5b60b58c461aa5bbf0131be32",
+  "effect": "原版Orobas初始遗物升级事件将棍亩替换为本遗物；每场战斗开始获得2层原版IntangiblePower"
+}

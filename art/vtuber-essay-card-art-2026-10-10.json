@@ -1,0 +1,14 @@
+{
+  "version": "v0.6.51",
+  "card": "皮套小作文",
+  "asset": "OTTO/images/cards/vtuber_essay.png",
+  "source_unchanged": true,
+  "packed_texture_loaded": true,
+  "build_errors": 0,
+  "installed_files_verified": true,
+  "files": {
+    "OTTO.dll": "624b28142eccd58e6ea8683fca82ea92677d3921a97ccd92188657b4d0144645",
+    "OTTO.pck": "0b6bc1b0993a7f7b29817d3841665657d656ca9aeb3abb55ccb62f75d6476342",
+    "OTTO.json": "892d3144bb8e2a0329fdeb981d2930dfc5305130fe39b2ce26aa75b652a8350e"
+  }
+}

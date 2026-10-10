@@ -1,0 +1,8 @@
+{
+  "name": "棍亩",
+  "source": "/var/folders/j0/1zgwylvj0_5c7ndz4wvq7ntr0000gn/T/codex-clipboard-f1639c42-ecc1-463a-84c7-63d1876b4f93.png",
+  "project_asset": "OTTO/images/relics/otto_talisman.png",
+  "handling": "原图复制，由游戏界面缩放；未使用图像生成或图像编辑",
+  "sha256": "537e1cce88d208d541887b838798d9c5ae2b360d7d983958196f023c8b7921b9",
+  "effect": "每场战斗开始时获得1层原版IntangiblePower；替换燃烧之血；仅对新对局生效"
+}

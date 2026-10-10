@@ -1,0 +1,17 @@
+{
+  "version": "v0.6.33",
+  "card": "名为侯国玉",
+  "checks": {
+    "build_errors": 0,
+    "source_unchanged": true,
+    "packed_texture_loaded": true,
+    "archive_verified": true,
+    "installed_files_verified": true
+  },
+  "files": {
+    "OTTO.dll": "c2e318692f2963120f9d5f6251319800263dba791b2f19a14bfa0385212ec31e",
+    "OTTO.pck": "36cbc6e536e1dd4e58c443c70c3be18a20baad89000794be13fa31882b2cf50f",
+    "OTTO.json": "c2567fb7c5366a4ad54ae623354e464538776b5676e1b4124bfe3484e7f23d08"
+  },
+  "installed_backup": "/Users/ryanding/Desktop/SLS2 mod/.backups/installed-before-named-hou-art-2026-10-09"
+}

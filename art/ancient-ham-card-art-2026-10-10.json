@@ -1,0 +1,14 @@
+{
+  "version": "v0.6.63",
+  "card": "古神哈姆子",
+  "asset": "OTTO/images/cards/ancient_ham.png",
+  "source_unchanged": true,
+  "packed_texture_loaded": true,
+  "build_errors": 0,
+  "installed_files_verified": true,
+  "files": {
+    "OTTO.dll": "08be8531b73f00512a32dcd9bdce2b16401399b9c1ca33e94c6371c8f088ffba",
+    "OTTO.pck": "addc269eac282b89cae325ae8a5f3a8b5cefdc258881768c3f56998a7afa0a22",
+    "OTTO.json": "ce45cc11a8866b395b77b702e8bc3aeeea47eae735ae98d6fca05966ab2da33e"
+  }
+}

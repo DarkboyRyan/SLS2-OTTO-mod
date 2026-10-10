@@ -1,0 +1,13 @@
+{
+  "version": "v0.6.90",
+  "asset": "OTTO/audio/ancient/ancient_speech.ogg",
+  "clip_count": 6,
+  "duration_seconds": 13.396,
+  "audio_checks_passed": true,
+  "installed_files_verified": true,
+  "files": {
+    "OTTO.dll": "ebba2cf16cccc10ff2ab5ae443ff91d901aab9bdc6365fc4b23a65fcc2297fa2",
+    "OTTO.pck": "7c17f26ca94aa8d18feeffeb9cf20d08faad5d25aa34a7bc3223d9adcb489de6",
+    "OTTO.json": "3533d467ba552964fef4e4ed35a5018011a392b98ba02e0c34d17966a5361b5e"
+  }
+}

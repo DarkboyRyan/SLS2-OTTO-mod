@@ -1,0 +1,25 @@
+{
+  "version": "v0.6.20",
+  "card": "我砍，我再砍",
+  "image": "/Users/ryanding/Desktop/SLS2 mod/OTTO/OTTO/images/cards/chop_again.png",
+  "dimensions": [
+    556,
+    412
+  ],
+  "source_sha256": "4c97b814194d91fddec4d70e91e5784230bb4ffc89bb8da58ed436463e7c802f",
+  "checks": {
+    "source_unchanged": true,
+    "build_errors": 0,
+    "packed_texture_loaded": true,
+    "archive_verified": true,
+    "installed_files_verified": true
+  },
+  "files": {
+    "OTTO.dll": "80d0f6bfcda7a3a34c65886ad9470b452953eb7c53caa6a61904d2e42b9d533a",
+    "OTTO.pck": "44fe0ad849f83d06ea6202c6a9eaf2615b5787e06ba6d6e73400c1769c87dcf0",
+    "OTTO.json": "36b3897917727fd85adf34d094979b4031c1d361d66a10113053e9d99a3c853b"
+  },
+  "archive": "/Users/ryanding/Desktop/SLS2 mod/OTTO/dist/OTTO-v0.6.20.zip",
+  "archive_sha256": "e575628f0b39675868cec30261969f6b6b153d21c2ef85b075411280beb31477",
+  "installed_backup": "/Users/ryanding/Desktop/SLS2 mod/.backups/installed-before-chop-again-art-2026-10-09"
+}

@@ -1,0 +1,15 @@
+{
+  "version": "v0.6.36",
+  "card": "腾杨天下",
+  "asset": "OTTO/images/cards/teng_yang.png",
+  "source": "user-provided clipboard image",
+  "source_sha256": "fb36da16117051d0d7a49f1bb7e9203d212819f9e03f65e658094d08d2c3e59d",
+  "width": 288,
+  "height": 356,
+  "edits": "none",
+  "usage": [
+    "normal card portrait",
+    "upgraded card portrait",
+    "enlarged card preview"
+  ]
+}

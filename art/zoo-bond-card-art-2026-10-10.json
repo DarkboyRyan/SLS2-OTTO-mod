@@ -1,0 +1,14 @@
+{
+  "version": "v0.6.84",
+  "card": "动物园的羁绊",
+  "asset": "OTTO/images/cards/zoo_bond.png",
+  "source_unchanged": true,
+  "packed_texture_loaded": true,
+  "build_errors": 0,
+  "installed_files_verified": true,
+  "files": {
+    "OTTO.dll": "a4feeb94947640b975c507991fdc5fbb762380bf46cd59b31174ad968ee43244",
+    "OTTO.pck": "f029b314b2c5925a144b03d1b161b908c8f794ab7c06f2ec7bbb019930400768",
+    "OTTO.json": "21c8b057b3c8308410d5ae51df24f85987b4eb0f229d8a097850c0889f73f890"
+  }
+}

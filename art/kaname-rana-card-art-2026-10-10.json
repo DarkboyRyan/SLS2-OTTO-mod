@@ -1,0 +1,14 @@
+{
+  "version": "v0.6.57",
+  "card": "要乐奈-official",
+  "asset": "OTTO/images/cards/kaname_rana.png",
+  "source_unchanged": true,
+  "packed_texture_loaded": true,
+  "build_errors": 0,
+  "installed_files_verified": true,
+  "files": {
+    "OTTO.dll": "ff0af6c329d17ea30746fc9db17ced18eb98f9418721839ce72ac4f2c9aba6fc",
+    "OTTO.pck": "8d36bb61cb59bb6ca2ddcaa24c4dc3610e4188100c5cd6a580588ae8d756b335",
+    "OTTO.json": "7bca36c9e702d513e0116ed9e483276e08ac83a5080457317acddcbfca83e123"
+  }
+}

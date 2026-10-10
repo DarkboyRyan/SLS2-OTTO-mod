@@ -1,0 +1,14 @@
+{
+  "version": "v0.6.80",
+  "card": "鸡掰！",
+  "asset": "OTTO/images/cards/ji_bai.png",
+  "source_unchanged": true,
+  "packed_texture_loaded": true,
+  "build_errors": 0,
+  "installed_files_verified": true,
+  "files": {
+    "OTTO.dll": "1e7713356170083d164eea70f26501ca071338f6076b91b7156c9d0f387a0048",
+    "OTTO.pck": "a4d0575cca11aee88406462f1d4eb0e1734dda971ad0d66057449f59e85d6839",
+    "OTTO.json": "5883c74674cfcf7490ef873749535d78c88fb8e8cb5c0a611f7d893648e3e4d5"
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "version": "v0.6.99",
+  "crash": {
+    "date": "2026-10-10 14:45:34 +0800",
+    "signal": "SIGABRT",
+    "thread": "FMOD native thread, std::mutex::lock",
+    "exact_trigger": "not established from crash log",
+    "loaded_mod": "0.6.98"
+  },
+  "volume": {
+    "user_master": 0.5,
+    "user_sfx": 0.5,
+    "measured_master_bus_db": -12.0412,
+    "old_player_gain": 0.0625,
+    "new_player_gain": 0.5,
+    "relative_gain_db": 18.0618,
+    "master_mute": true,
+    "sfx_mute": true,
+    "max_player_gain": 1
+  },
+  "mitigation": "No runtime bus topology/effect mutations; use existing Master bus; retain per-clip offline peak limits; divide parallel summon voice gain by count.",
+  "checks": {
+    "build": "0 warnings, 0 errors",
+    "assets": "death once, prone held, revive reset",
+    "rules_assertions": 52,
+    "fmod_stress": "400 replacements, stop/restart, triple concurrent, stable bus topology, gain/mute/cap and registered death patch"
+  },
+  "installed": "/Users/ryanding/Library/Application Support/Steam/steamapps/common/Slay the Spire 2/SlayTheSpire2.app/Contents/MacOS/mods/OTTO",
+  "sha256": {
+    "OTTO.dll": "41eb7a3d8f6561a4dfc4b7f79fe33992ee6b90942d4178da00a932b659d13bc8",
+    "OTTO.pck": "e3297bb4b18be6108130b89f9fced5a3539f78ae26d9fe5a5e54eed179ad0276",
+    "OTTO.json": "84a58564806d7d1f0ab49faf1dbc9acdd964bf8e78163b29846cacf0e6d41dd3"
+  }
+}

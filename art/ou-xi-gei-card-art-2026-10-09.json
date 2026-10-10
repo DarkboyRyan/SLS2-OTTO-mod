@@ -1,0 +1,17 @@
+{
+  "version": "v0.6.26",
+  "card": "欧西给",
+  "checks": {
+    "build_errors": 0,
+    "source_unchanged": true,
+    "packed_textures_loaded": true,
+    "archive_verified": true,
+    "installed_files_verified": true
+  },
+  "files": {
+    "OTTO.dll": "7b41bacba8543f8a423257d9d02ea1739468cf4a3c2406e888101bbee33ef72a",
+    "OTTO.pck": "d3e77e0df8572703eff65590ebd37b911df125bbe4c298c35e729fee3d134a48",
+    "OTTO.json": "1e3acf8a68786568ea7dc5fd8156ece4b43c981417ce0d1088cdf4f19c0f5dc0"
+  },
+  "installed_backup": "/Users/ryanding/Desktop/SLS2 mod/.backups/installed-before-ou-xi-gei-art-2026-10-09"
+}

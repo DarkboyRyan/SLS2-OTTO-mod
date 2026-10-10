@@ -1,0 +1,14 @@
+{
+  "version": "v0.6.81",
+  "card": "阿米诺斯",
+  "asset": "OTTO/images/cards/aminos.png",
+  "source_unchanged": true,
+  "packed_texture_loaded": true,
+  "build_errors": 0,
+  "installed_files_verified": true,
+  "files": {
+    "OTTO.dll": "77f5d9c5f1dd6c9b6c0eb408ad8f9892d1ead75eef6a3fb19b6793e324bcc148",
+    "OTTO.pck": "3612027ebbe87ba17bc321242c7696c5bf6d49bb97b6028e2506603497223573",
+    "OTTO.json": "ade1666383f68d9f9a35326382c17ab310f852b0ffb36e0a16939bb3a62f64e2"
+  }
+}

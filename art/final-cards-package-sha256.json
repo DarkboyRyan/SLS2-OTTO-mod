@@ -1,0 +1,10 @@
+{
+  "version": "v0.6.0",
+  "before_install_backup": "/Users/ryanding/Desktop/SLS2 mod/.backups/installed-before-v0.6.0",
+  "sha256": {
+    "OTTO.dll": "1460004cb4d82fb09997a13c5273dc219c2a2ff26e282fe283f8a11ea68773db",
+    "OTTO.pck": "786d30599b5973e452998bc74697316ccda9915fcdd748c25c4f405bc13e93df",
+    "OTTO.json": "a6312bbb76e23b7962ff5a5d8ddeab69e8d935cf868edc486bdf7a754c047899",
+    "OTTO-v0.6.0.zip": "31e596b7874b568ab2e1351f9537fc9193ce46aca18a936a7aca500dde74a855"
+  }
+}

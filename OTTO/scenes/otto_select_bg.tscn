@@ -1,0 +1,86 @@
+; OTTO 的角色选择背景，使用用户新提供的黑金队服海报。
+; 所有控件忽略鼠标事件，防止遮挡选人按钮。
+; 照片始终等比例完整显示；渐变遮罩只在游戏中叠加，不修改原始 PNG。
+[gd_scene load_steps=6 format=3]
+
+[ext_resource type="Texture2D" path="res://OTTO/images/backgrounds/otto_select_poster.png" id="1_portrait"]
+
+[sub_resource type="Gradient" id="Gradient_readability"]
+offsets = PackedFloat32Array(0, 0.35, 0.45, 0.57, 1)
+colors = PackedColorArray(0.045, 0.035, 0.045, 1, 0.045, 0.035, 0.045, 1, 0.045, 0.035, 0.045, 0.88, 0.045, 0.035, 0.045, 0, 0.045, 0.035, 0.045, 0)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture_readability"]
+gradient = SubResource("Gradient_readability")
+width = 1024
+height = 16
+fill_from = Vector2(0, 0)
+fill_to = Vector2(1, 0)
+
+[sub_resource type="Gradient" id="Gradient_bottom"]
+offsets = PackedFloat32Array(0, 0.68, 1)
+colors = PackedColorArray(0.035, 0.025, 0.035, 0, 0.035, 0.025, 0.035, 0, 0.035, 0.025, 0.035, 0.95)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture_bottom"]
+gradient = SubResource("Gradient_bottom")
+width = 16
+height = 512
+fill_from = Vector2(0, 0)
+fill_to = Vector2(0, 1)
+
+[node name="OttoSelectBackground" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+clip_contents = true
+
+; 底色填满整个窗口，照片以外的区域不会露出其他角色的背景。
+[node name="Backdrop" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.045, 0.035, 0.045, 1)
+
+; 右侧展示照片。IGNORE_SIZE + KEEP_ASPECT_CENTERED 适配窗口并保留完整人物。
+[node name="Portrait" type="TextureRect" parent="."]
+layout_mode = 1
+anchor_left = 0.4
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("1_portrait")
+expand_mode = 1
+stretch_mode = 5
+
+; 左侧文字区使用不透明深色，向照片方向逐渐透明。
+[node name="TextReadability" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = SubResource("GradientTexture_readability")
+expand_mode = 1
+
+; 底部渐暗，为头像选择条和开始按钮提供稳定的对比度。
+[node name="BottomShade" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = SubResource("GradientTexture_bottom")
+expand_mode = 1

@@ -1,0 +1,285 @@
+using System.Reflection;
+using MegaCrit.Sts2.Core.Context;
+using Godot;
+using BaseLib.Patches.Content;
+using MegaCrit.Sts2.Core.Combat;
+using MegaCrit.Sts2.Core.Commands;
+using MegaCrit.Sts2.Core.Entities.Cards;
+using MegaCrit.Sts2.Core.Entities.Creatures;
+using MegaCrit.Sts2.Core.Entities.Players;
+using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using MegaCrit.Sts2.Core.Hooks;
+using MegaCrit.Sts2.Core.Localization;
+using MegaCrit.Sts2.Core.Modding;
+using MegaCrit.Sts2.Core.Models;
+using MegaCrit.Sts2.Core.Models.Cards;
+using MegaCrit.Sts2.Core.Models.Characters;
+using MegaCrit.Sts2.Core.Models.Monsters;
+using MegaCrit.Sts2.Core.Models.Monsters.Mocks;
+using MegaCrit.Sts2.Core.Models.Powers;
+using MegaCrit.Sts2.Core.MonsterMoves.Intents;
+using MegaCrit.Sts2.Core.MonsterMoves.MonsterMoveStateMachine;
+using MegaCrit.Sts2.Core.Runs;
+using MegaCrit.Sts2.Core.TestSupport;
+using MegaCrit.Sts2.Core.Unlocks;
+using MegaCrit.Sts2.Core.ValueProps;
+using OttoMod;
+
+// 在真实引擎创建独立内存战斗，使用真实出牌包装器；不进入地图、不保存用户进度。
+[ModInitializer(nameof(Initialize))]
+public static class Probe
+{
+    private static readonly PlayerChoiceContext Ctx = new ThrowingPlayerChoiceContext();
+    private static int assertions;
+    private static Player owner = null!, ally = null!;
+    private static Creature enemy = null!, enemy2 = null!;
+    private static CombatState state = null!;
+    public static void Initialize() => Callable.From(Check).CallDeferred();
+    private static void Verify(bool ok, string message)
+    {
+        if (!ok) throw new Exception(message);
+        assertions++;
+    }
+    private static void Fresh()
+    {
+        typeof(CombatManager).GetField("_pendingLoss", BindingFlags.Instance | BindingFlags.NonPublic)!.SetValue(CombatManager.Instance, null);
+        CombatManager.Instance.History.Clear();
+        owner = Player.CreateForNewRun<OttoCharacter>(UnlockState.all, 121);
+        ally = Player.CreateForNewRun<Ironclad>(UnlockState.all, 122);
+        var run = RunState.CreateForTest([owner, ally], seed: "OTTO-ANCIENT");
+        state = new CombatState(runState: run);
+        state.AddPlayer(owner); state.AddPlayer(ally); owner.ResetCombatState(); ally.ResetCombatState();
+        enemy = state.CreateCreature(ModelDb.Monster<MockAttackMonster>().ToMutable(), CombatSide.Enemy, "enemy1"); state.AddCreature(enemy);
+        enemy2 = state.CreateCreature(ModelDb.Monster<MockAttackMonster>().ToMutable(), CombatSide.Enemy, "enemy2"); state.AddCreature(enemy2);
+        foreach (var e in new[] { enemy, enemy2 }) { e.Monster!.SetUpForCombat(); e.Monster.RollMove([owner.Creature, ally.Creature]); }
+        LocalContext.NetId = null;
+        typeof(CombatManager).GetField("_state", BindingFlags.Instance | BindingFlags.NonPublic)!.SetValue(CombatManager.Instance, state);
+        typeof(CombatManager).GetProperty("IsInProgress")!.SetValue(CombatManager.Instance, true);
+    }
+    private static T New<T>(bool upgrade = false, PileType pile = PileType.Hand) where T : CardModel
+    {
+        var card = state.CreateCard<T>(owner);
+        if (upgrade) card.UpgradeInternal();
+        pile.GetPile(owner).AddInternal(card);
+        return card;
+    }
+    private static async Task Play(CardModel card, Creature? target = null, bool auto = false)
+    {
+        // 每次从正确牌堆进入正式出牌包装器，覆盖易拉罐取位置、前后钩子、牌堆及重复出牌清理。
+        if (!auto && card.Pile?.Type != PileType.Hand)
+        {
+            card.RemoveFromCurrentPile(); owner.PlayerCombatState!.Hand.AddInternal(card);
+        }
+        await card.OnPlayWrapper(Ctx, target, auto, default, skipCardPileVisuals: true);
+    }
+    private static bool Allowed(CardModel card) => Hook.ShouldPlay(state, card, out _, AutoPlayType.None);
+    private static async Task StartTurn() => await Hook.AfterSideTurnStart(state, CombatSide.Player, [owner.Creature]);
+    // 测试只派发状态的回合末清理，不启动真实敌方AI。
+    private static async Task EndTurn()
+    {
+        foreach (var power in owner.Creature.Powers.ToArray())
+            await power.AfterSideTurnEnd(Ctx, CombatSide.Player, [owner.Creature]);
+    }
+    private static void DrawPile(int count)
+    {
+        for (int i = 0; i < count; i++) New<OttoStrike>(pile: PileType.Draw);
+    }
+    private static async Task ClearPowers(Creature c)
+    {
+        foreach (var p in c.Powers.ToArray()) await PowerCmd.Remove(p);
+    }
+    private static void SetMove(Creature target, params AbstractIntent[] intents)
+    {
+        // 测试专用：改变内存目标的可见招式，不调用敌人的行动或AI。
+        typeof(MonsterModel).GetProperty("NextMove")!.SetValue(target.Monster, new MoveState("PROBE", _ => Task.CompletedTask, intents));
+    }
+    // 每组测试在独立的内存战斗中运行，覆盖正式出牌、抽牌与伤害钩子。
+    private static async void Check()
+    {
+        var tree = (SceneTree)Engine.GetMainLoop();
+        try
+        {
+            for (int i = 0; i < 40; i++) await tree.ToSignal(tree, SceneTree.SignalName.ProcessFrame);
+            TestMode.IsOn = true;
+            Fresh();
+            var all = ModelDb.CardPool<OttoCardPool>().AllCards.ToArray();
+            Verify(all.Length == 51, "51 cards actual=" + all.Length);
+            Verify(all.Count(c => c.Rarity == CardRarity.Common) == 16 && all.Count(c => c.Rarity == CardRarity.Uncommon) == 17 && all.Count(c => c.Rarity == CardRarity.Rare) == 12, "rarity16/17/12");
+            Verify(owner.Creature.MaxHp == 91 && owner.Gold == 91 && owner.Deck.Cards.Count == 11 && owner.Relics.Single() is OttoTalisman, "character baseline");
+            foreach (var canonical in all)
+            {
+                var c = state.CreateCard(canonical, owner);
+                Verify(!c.Title.Contains("OTTO_"), "localized title " + c.Id);
+                Verify(ResourceLoader.Exists(c.PortraitPath), "portrait " + c.Id);
+                foreach (bool up in new[] { false, true })
+                {
+                    if (up && c.MaxUpgradeLevel > 0) c.UpgradeInternal();
+                    string d = c.GetDescriptionForPile(PileType.Hand);
+                    Verify(!d.Contains("???") && !d.Contains("{"), "description " + c.Id + ":" + d);
+                }
+            }
+            GD.Print("OTTO_ANCIENT_REGISTRATION_OK");
+            // 100点阈值、清空溢出、禁止积攒、双倍伤害、免伤、两次自己回合开始到期。
+            Fresh(); var charge = New<SpokenReason>(); await AncientForm.Gain(Ctx, charge, 90);
+            Verify(owner.Creature.GetPowerAmount<AncientMeterPower>() == 90, "charge90");
+            await AncientForm.Gain(Ctx, charge, 20);
+            Verify(!owner.Creature.HasPower<AncientMeterPower>() && owner.Creature.GetPowerAmount<AncientFormPower>() == 2, "threshold clears overflow");
+            await AncientForm.Gain(Ctx, charge, 60); Verify(!owner.Creature.HasPower<AncientMeterPower>(), "no charge in form");
+            int hp = enemy.CurrentHp; await Play(charge, enemy); Verify(hp-enemy.CurrentHp == 12, "double attack");
+            hp = owner.Creature.CurrentHp;
+            await DamageCmd.Attack(50).FromMonster(enemy.Monster!).WithHitCount(3).Execute(Ctx);
+            await CreatureCmd.Damage(Ctx, owner.Creature, 30, ValueProp.Unblockable | ValueProp.Unpowered, (Creature?)null);
+            Verify(owner.Creature.CurrentHp == hp, "immune attack and HP-loss");
+            await Hook.AfterSideTurnStart(state, CombatSide.Enemy, [enemy, enemy2]);
+            await Hook.AfterSideTurnStart(state, CombatSide.Player, [ally.Creature]);
+            Verify(owner.Creature.GetPowerAmount<AncientFormPower>() == 2, "enemy/ally turns do not expire");
+            await StartTurn(); Verify(owner.Creature.GetPowerAmount<AncientFormPower>() == 1, "first own turn remains");
+            await Play(New<AncientHam>(true)); Verify(owner.Creature.GetPowerAmount<AncientFormPower>() == 2, "direct refresh2");
+            await StartTurn(); await StartTurn(); Verify(!owner.Creature.HasPower<AncientFormPower>(), "second own start expires");
+            await Play(New<SpokenReasonGuard>(true)); Verify(owner.Creature.Block == 8 && owner.Creature.GetPowerAmount<AncientMeterPower>() == 20, "guard + upgraded charge");
+            var direct = New<AncientHam>(); await Play(direct);
+            Verify(direct.Pile?.Type == PileType.Exhaust && !owner.Creature.HasPower<AncientMeterPower>(), "direct clear/exhaust");
+            await CreatureCmd.Kill(owner.Creature); Verify(owner.Creature.IsDead, "direct kill bypasses form");
+            GD.Print("OTTO_ANCIENT_FORM_RULES_OK");
+            // 实际扣血包含残血击杀，排除格挡：1点残血 + 15-5格挡 = 11。
+            Fresh(); enemy.SetCurrentHpInternal(1); await CreatureCmd.GainBlock(enemy2, 5, ValueProp.Unpowered, null);
+            await Play(New<HaBiXia>()); Verify(owner.Creature.GetPowerAmount<AncientMeterPower>() == 11, "HaBiXia overkill/block aggregate");
+            Fresh(); await Zoo.Summon(Ctx, New<CallFriends>(), 0); enemy.SetCurrentHpInternal(1);
+            await CreatureCmd.GainBlock(enemy2, 5, ValueProp.Unpowered, null);
+            await PowerCmd.Apply<DexterityPower>(Ctx, owner.Creature, 7, owner.Creature, null);
+            await Play(New<KneelingRedBoots>());
+            Verify(owner.Creature.Block == 6 && owner.Creature.HasPower<DogPrisonPower>() && !owner.Creature.HasPower<XuanDogPower>(), "redboots actual6 not dex/overkill");
+            Fresh(); await Play(New<HaBiXia>(true)); Verify(owner.Creature.GetPowerAmount<AncientMeterPower>() == 40, "upgraded all20 each");
+            // 小强化独立于在场伙伴，可叠加并与大强化相加。
+            Fresh(); var aug=New<Aug>(); Verify(!Allowed(aug), "AUG needs another hand card");
+            var sacrifice=New<OttoDefend>();
+            using (var scope=CardSelectCmd.UseSelector(new TestCardSelector())) await Play(aug);
+            Verify(sacrifice.Pile?.Type == PileType.Exhaust && owner.Creature.GetPowerAmount<DogBoostPower>() == 3, "AUG exhaust3");
+            var aug2=New<Aug>(true); sacrifice=New<OttoDefend>();
+            using (var scope=CardSelectCmd.UseSelector(new TestCardSelector())) await Play(aug2);
+            Verify(owner.Creature.GetPowerAmount<DogBoostPower>() == 8, "AUG stacked8");
+            await Play(New<SecondStreamGoat>()); Verify(owner.Creature.GetPower<XuanDogPower>()!.EffectAmount == 18, "dog10+8");
+            await Zoo.Imprison(Ctx, owner.Creature, 0, null); await Play(New<SecondStreamGoat>());
+            Verify(Zoo.Count(owner.Creature)==0 && owner.Creature.GetPowerAmount<DogBoostPower>()==8, "training cannot release");
+            await Play(New<YourYouth>()); Verify(owner.Creature.GetPower<XuanDogPower>()!.EffectAmount==18, "release retains dog buff");
+            await Play(New<PerfectHeader>(), enemy); await Play(New<PerfectHeader>(true), enemy); await Play(New<EternalGod>());
+            Verify(owner.Creature.GetPower<ShanNiRuoPower>()!.HealAmount==9, "pig4+2+3");
+            var ma=New<MaMaiPi>(); await Play(ma,enemy); var maUp=New<MaMaiPi>(true); await Play(maUp,enemy); await Play(New<ComebackDirector>());
+            Verify(ma.Pile?.Type==PileType.Exhaust && maUp.Pile?.Type==PileType.Discard, "Ma upgrade removes exhaust");
+            Verify(owner.Creature.GetPower<HuoXingBaoPower>()!.EffectAmount==5, "mars3+1+1");
+            Verify(enemy.GetPowerAmount<WeakPower>()==2 && enemy.GetPowerAmount<VulnerablePower>()==2, "Ma weak/vulnerable");
+            await owner.Creature.GetPower<HuoXingBaoPower>()!.BeforeSideTurnEnd(Ctx,CombatSide.Player,[owner.Creature]);
+            Verify(owner.Creature.GetPowerAmount<StrengthPower>()==5 && owner.Creature.GetPowerAmount<DexterityPower>()==5, "mars actual5/5");
+            // 三只都入狱，普通召唤与羁绊均无法释放；专属救援全部同场。
+            Fresh(); var source=New<CallFriends>(); await Play(New<ZooBond>());
+            for(int k=0;k<3;k++) await Zoo.Imprison(Ctx,owner.Creature,k,source);
+            for(int i=0;i<5;i++) await Zoo.SummonRandom(Ctx,source);
+            await Play(New<ZooBond>()); Verify(Zoo.Count(owner.Creature)==0, "all prison no random/bond summon");
+            await PowerCmd.Remove(owner.Creature.GetPower<ZooBondPower>()!);
+            await Play(New<YourYouth>(true)); Verify(Zoo.Count(owner.Creature)==3 && !owner.Creature.Powers.OfType<ZooPrisonPower>().Any(), "release all without bond");
+            await Zoo.Summon(Ctx,source,1); Verify(Zoo.Count(owner.Creature)==1, "later normal summon restores usual limit");
+            await Zoo.Imprison(Ctx,owner.Creature,1,source); await Zoo.Summon(Ctx,source,0);
+            await Zoo.Summon(Ctx,source,1); Verify(owner.Creature.HasPower<XuanDogPower>(), "failed prison summon preserves current pet");
+            Fresh(); Verify(!Allowed(New<TengYangWorld>()) && !Allowed(New<DeepSeaFish>()) && !Allowed(New<KneelingRedBoots>()), "required pets block play");
+            await Zoo.Summon(Ctx,New<CallFriends>(),2); await Play(New<DeepSeaFish>());
+            Verify(owner.Creature.HasPower<MarsPrisonPower>() && owner.Creature.GetPowerAmount<StrengthPower>()==5 && owner.Creature.GetPowerAmount<DexterityPower>()==5, "fish prison5/5");
+            // 保护覆盖整条三连击，结束后入狱；之后的新攻击恢复扣血。
+            Fresh(); await Zoo.Summon(Ctx,New<CallFriends>(),1); await Play(New<TengYangWorld>());
+            hp=owner.Creature.CurrentHp; int allyHp=ally.Creature.CurrentHp;
+            var allyAttack=DamageCmd.Attack(7).FromMonster(enemy.Monster!);
+            // 测试专用：把原版默认全体攻击改为单独攻击队友，验证未命中 OTTO 时不消耗。
+            allyAttack.GetType().GetField("_combatState",BindingFlags.Instance|BindingFlags.NonPublic)!.SetValue(allyAttack,null);
+            await allyAttack.Targeting(ally.Creature).Execute(Ctx);
+            Verify(owner.Creature.HasPower<PigGuardPower>() && owner.Creature.HasPower<ShanNiRuoPower>(), "ally attack does not consume guard");
+            await DamageCmd.Attack(12).FromMonster(enemy.Monster!).WithHitCount(3).Execute(Ctx);
+            Verify(owner.Creature.CurrentHp==hp && ally.Creature.CurrentHp==allyHp-43, "all3 hits blocked only OTTO");
+            Verify(owner.Creature.HasPower<PigPrisonPower>() && !owner.Creature.HasPower<PigGuardPower>() && !owner.Creature.HasPower<ShanNiRuoPower>(), "guard consumed and imprisoned after whole attack");
+            await DamageCmd.Attack(7).FromMonster(enemy.Monster!).Execute(Ctx); Verify(owner.Creature.CurrentHp==hp-7, "next attack hits normally");
+            GD.Print("OTTO_ANCIENT_ZOO_OK");
+            // 回合累计上限，包含多次攻击、固定扣血；队友和敌方回合均不重置。
+            Fresh(); await Play(New<NamedHouGuoyu>()); hp=owner.Creature.CurrentHp;
+            await DamageCmd.Attack(7).FromMonster(enemy.Monster!).WithHitCount(3).Execute(Ctx);
+            Verify(owner.Creature.CurrentHp==hp-10, "3x7 capped total10");
+            await Hook.AfterSideTurnStart(state,CombatSide.Enemy,[enemy]);
+            await Hook.AfterSideTurnStart(state,CombatSide.Player,[ally.Creature]);
+            await CreatureCmd.Damage(Ctx,owner.Creature,9,ValueProp.Unpowered|ValueProp.Unblockable,(Creature?)null);
+            Verify(owner.Creature.CurrentHp==hp-10, "HP loss/enemy/ally no reset");
+            await Play(New<NamedHouGuoyu>(true)); await DamageCmd.Attack(2).FromMonster(enemy.Monster!).Execute(Ctx);
+            Verify(owner.Creature.CurrentHp==hp-10, "duplicate power no cap reset");
+            await StartTurn(); await CreatureCmd.GainBlock(owner.Creature,5,ValueProp.Unpowered,null);
+            await DamageCmd.Attack(12).FromMonster(enemy.Monster!).Execute(Ctx);
+            Verify(owner.Creature.CurrentHp==hp-17 && owner.Creature.GetPower<HouGuoyuPower>()!.Spent==7, "cap counts actual HP after block");
+            Verify(owner.Creature.GetPower<HouGuoyuPower>()!.Description.GetFormattedText().Contains("3"), "remaining tooltip3");
+            ally.Creature.SetCurrentHpInternal(0); // 隔离测试无真实行动队列，避免单个队友死亡自动结束回合。
+            await CreatureCmd.Kill(owner.Creature); Verify(owner.Creature.IsDead,"cap does not prevent direct kill");
+            // 眩晕在真实怪物状态机中跳过三次行动，第四次恢复原攻击。
+            Fresh(); var king=New<AdvancingKing>(); await Play(king,enemy);
+            Verify(owner.Creature.GetPowerAmount<AncientMeterPower>()==30 && king.Pile?.Type==PileType.Exhaust,"king30/exhaust");
+            hp=owner.Creature.CurrentHp;
+            for(int i=0;i<3;i++)
+            {
+                Verify(enemy.Monster!.NextMove.Intents.Single() is StunIntent,"stun intent "+i);
+                await enemy.Monster.PerformMove(); enemy.Monster.RollMove([owner.Creature,ally.Creature]);
+                Verify(owner.Creature.CurrentHp==hp,"stun skips action "+i);
+            }
+            Verify(!enemy.HasPower<KingStunPower>() && enemy.Monster!.NextMove.Id=="ATTACK","resume original move");
+            await enemy.Monster!.PerformMove(); Verify(owner.Creature.CurrentHp==hp-1,"fourth action attacks");
+            Fresh(); await PowerCmd.Apply<ArtifactPower>(Ctx,enemy,1,enemy,null); await Play(New<AdvancingKing>(),enemy);
+            Verify(!enemy.HasPower<KingStunPower>() && enemy.Monster!.NextMove.Id=="ATTACK","artifact blocks stun only");
+            GD.Print("OTTO_ANCIENT_DEFENSE_STUN_OK");
+            // 为什么呀：所有战斗牌先随机，抽到再随机，X/不可打出/队友/永久牌组保持原规则。
+            Fresh(); var tracked=new List<CardModel>();
+            foreach(var pile in new[]{PileType.Hand,PileType.Draw,PileType.Discard,PileType.Exhaust})
+                for(int i=0;i<6;i++) tracked.Add(New<OttoStrike>(pile:pile));
+            var x=New<HaliluTornado>(); var unplayable=New<Wound>();
+            var allyCard=state.CreateCard<StrikeIronclad>(ally); ally.PlayerCombatState!.Hand.AddInternal(allyCard);
+            await Play(New<WhyOhWhy>());
+            Verify(tracked.All(c=>c.EnergyCost.GetWithModifiers(CostModifiers.All) is >=0 and <=3) && tracked.Select(c=>c.EnergyCost.GetWithModifiers(CostModifiers.All)).Distinct().Count()>1,"all piles randomized");
+            Verify(x.EnergyCost.CostsX && unplayable.EnergyCost.Canonical<0 && allyCard.EnergyCost.GetWithModifiers(CostModifiers.All)==1,"X/unplayable/ally unchanged");
+            Verify(owner.Deck.Cards.OfType<OttoStrike>().All(c=>c.EnergyCost.GetWithModifiers(CostModifiers.All)==1),"permanent deck unchanged");
+            var why=owner.Creature.GetPower<WhyPower>()!;
+            Verify(why.ModifyHandDraw(owner,5)==7 && why.ModifyHandDraw(ally,5)==5,"extra2 own only");
+            var test=tracked[0]; var costs=new HashSet<int>();
+            for(int i=0;i<20;i++){await why.AfterCardDrawn(Ctx,test,true); costs.Add(test.EnergyCost.GetWithModifiers(CostModifiers.All));}
+            Verify(costs.Count>1 && costs.All(c=>c>=0 && c<=3),"redraw rerolls");
+            int savedCost=test.EnergyCost.GetWithModifiers(CostModifiers.All); test.EnergyCost.EndOfTurnCleanup();
+            Verify(test.EnergyCost.GetWithModifiers(CostModifiers.All)==savedCost,"random cost lasts across turns");
+            LocalContext.NetId=121; Verify(HiddenIntentVisuals.IsHidden(state),"OTTO intents hidden");
+            LocalContext.NetId=122; Verify(!HiddenIntentVisuals.IsHidden(state),"ally intents visible"); LocalContext.NetId=121;
+            await Play(New<WhyOhWhy>(true)); Verify(why.Amount==5 && why.ModifyHandDraw(owner,5)==10,"upgraded draw3 stacks");
+            // 翻云覆雨只选新抽牌；旧手牌不会被选走，剩余牌免费打出。
+            foreach(bool upgrade in new[]{false,true})
+            {
+                Fresh(); var old=New<OttoDefend>(); DrawPile(5); await PlayerCmd.SetEnergy(0,owner);
+                var selector=new TestCardSelector(); selector.PrepareToSelect(new[]{0}); hp=enemy.CurrentHp+enemy2.CurrentHp;
+                using(var scope=CardSelectCmd.UseSelector(selector)) await Play(New<FlipClouds>(upgrade));
+                Verify(old.Pile?.Type==PileType.Hand && owner.PlayerCombatState!.Hand.Cards.Count==1,"flip preserves old hand");
+                Verify(hp-enemy.CurrentHp-enemy2.CurrentHp==(upgrade?18:12),"flip autoplays correct count free");
+                Verify(owner.PlayerCombatState!.Energy==0,"flip spends no energy for auto cards");
+            }
+            Fresh(); var chop=New<ChopAgain>(true); hp=enemy.CurrentHp; await Play(chop,enemy); Verify(hp-enemy.CurrentHp==18 && chop.Keywords.Contains(OttoKeywords.Can),"chop2x9 can");
+            Fresh(); var steal=New<HandsomeOtto>(true); await Play(steal,enemy);
+            Verify(owner.Creature.GetPowerAmount<StrengthPower>()==3 && enemy.GetPowerAmount<StrengthPower>()==-3 && steal.Pile?.Type==PileType.Exhaust,"steal3 exhaust");
+            Fresh(); var execute=New<HumiliateWeak>(); enemy.SetCurrentHpInternal(91); enemy2.SetCurrentHpInternal(90);
+            Verify(!execute.IsValidTarget(enemy) && execute.IsValidTarget(enemy2) && Allowed(execute),"execute strict current HP per target");
+            await Play(execute,enemy2); Verify(enemy2.IsDead && !enemy.IsDead,"execute chosen target");
+            Fresh(); var ownWay=New<TheirOwnWay>(); Verify(ownWay.IsValidTarget(enemy)&&ownWay.IsValidTarget(enemy2),"ownWay multiple targets unchanged");
+            await Play(ownWay,enemy2); Verify(ownWay.Pile?.Type==PileType.Exhaust,"ownWay now exhausts");
+            GD.Print("OTTO_ANCIENT_CARD_EFFECTS_OK");
+            // 真实游戏资源与 Tween：只有主体替换，连续摆动，退出后恢复原精灵且移除动画节点。
+            Fresh(); var visuals=ResourceLoader.Load<PackedScene>("res://OTTO/scenes/otto_combat.tscn").Instantiate<Node2D>(); tree.Root.AddChild(visuals);
+            var original=visuals.GetNode<Sprite2D>("Visuals/Body/Sprite");
+            var root=AncientFormVisuals.SetActive(visuals,true)!; var sprite=root.GetNode<Sprite2D>("Sprite");
+            Verify(!original.Visible && sprite.Texture.GetWidth()==1095 && sprite.Texture.GetHeight()==1055,"ancient resource and hide original");
+            float start=root.Position.X; await tree.ToSignal(tree.CreateTimer(.65),SceneTreeTimer.SignalName.Timeout);
+            Verify(Math.Abs(root.Position.X-start)>15,"sway moves right");
+            await tree.ToSignal(tree.CreateTimer(.65),SceneTreeTimer.SignalName.Timeout); Verify(root.Position.X<0,"sway returns left");
+            Verify(AncientFormVisuals.SetActive(visuals,true)==root,"no duplicate sway on refresh");
+            AncientFormVisuals.SetActive(visuals,false); Verify(original.Visible && !visuals.HasNode("Visuals/Body/OttoAncientForm"),"restore original form");
+            visuals.QueueFree();
+            GD.Print($"OTTO_ANCIENT_OK: {assertions} assertions passed");
+        }
+        catch(Exception error){GD.PrintErr("OTTO_ANCIENT_FAILED: "+error);}
+        finally{TestMode.IsOn=false; tree.Quit();}
+    }
+}

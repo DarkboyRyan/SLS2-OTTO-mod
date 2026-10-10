@@ -1,0 +1,53 @@
+{
+  "xuan_dog": {
+    "size": [
+      1024,
+      1536
+    ],
+    "alpha_range": [
+      0,
+      254
+    ],
+    "body_region": [
+      44,
+      190,
+      948,
+      1179
+    ],
+    "display_height": 172
+  },
+  "shan_ni_ruo": {
+    "size": [
+      1024,
+      1536
+    ],
+    "alpha_range": [
+      0,
+      254
+    ],
+    "body_region": [
+      112,
+      160,
+      889,
+      1271
+    ],
+    "display_height": 172
+  },
+  "huo_xing_bao": {
+    "size": [
+      960,
+      1639
+    ],
+    "alpha_range": [
+      0,
+      255
+    ],
+    "body_region": [
+      123,
+      29,
+      742,
+      1580
+    ],
+    "display_height": 172
+  }
+}

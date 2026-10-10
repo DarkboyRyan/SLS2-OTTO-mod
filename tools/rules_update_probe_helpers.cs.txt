@@ -1,0 +1,99 @@
+using System.Reflection;
+using MegaCrit.Sts2.Core.GameActions;
+using MegaCrit.Sts2.Core.Context;
+using Godot;
+using BaseLib.Patches.Content;
+using MegaCrit.Sts2.Core.Combat;
+using MegaCrit.Sts2.Core.Commands;
+using MegaCrit.Sts2.Core.Entities.Cards;
+using MegaCrit.Sts2.Core.Entities.Creatures;
+using MegaCrit.Sts2.Core.Entities.Players;
+using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using MegaCrit.Sts2.Core.Hooks;
+using MegaCrit.Sts2.Core.Localization;
+using MegaCrit.Sts2.Core.Modding;
+using MegaCrit.Sts2.Core.Models;
+using MegaCrit.Sts2.Core.Models.Cards;
+using MegaCrit.Sts2.Core.Models.Characters;
+using MegaCrit.Sts2.Core.Models.Monsters;
+using MegaCrit.Sts2.Core.Models.Monsters.Mocks;
+using MegaCrit.Sts2.Core.Models.Powers;
+using MegaCrit.Sts2.Core.MonsterMoves.Intents;
+using MegaCrit.Sts2.Core.MonsterMoves.MonsterMoveStateMachine;
+using MegaCrit.Sts2.Core.Runs;
+using MegaCrit.Sts2.Core.TestSupport;
+using MegaCrit.Sts2.Core.Unlocks;
+using MegaCrit.Sts2.Core.ValueProps;
+using OttoMod;
+
+// 在真实引擎创建独立内存战斗，使用真实出牌包装器；不进入地图、不保存用户进度。
+[ModInitializer(nameof(Initialize))]
+public static partial class Probe
+{
+    private static readonly PlayerChoiceContext Ctx = new ThrowingPlayerChoiceContext();
+    private static int assertions;
+    private static Player owner = null!, ally = null!;
+    private static Creature enemy = null!, enemy2 = null!;
+    private static CombatState state = null!;
+    public static void Initialize() => Callable.From(Check).CallDeferred();
+    private static void Verify(bool ok, string message)
+    {
+        if (!ok) throw new Exception(message);
+        assertions++;
+    }
+    private static void Fresh()
+    {
+        typeof(CombatManager).GetField("_pendingLoss", BindingFlags.Instance | BindingFlags.NonPublic)!.SetValue(CombatManager.Instance, null);
+        CombatManager.Instance.History.Clear();
+        var ready=typeof(CombatManager).GetField("_playersReadyToEndTurn", BindingFlags.Instance|BindingFlags.NonPublic)!.GetValue(CombatManager.Instance)!;
+        ready.GetType().GetMethod("Clear")!.Invoke(ready,null);
+        owner = Player.CreateForNewRun<OttoCharacter>(UnlockState.all, 121);
+        ally = Player.CreateForNewRun<Ironclad>(UnlockState.all, 122);
+        var run = RunState.CreateForTest([owner, ally], seed: "OTTO-ANCIENT");
+        state = new CombatState(runState: run);
+        state.AddPlayer(owner); state.AddPlayer(ally); owner.ResetCombatState(); ally.ResetCombatState();
+        enemy = state.CreateCreature(ModelDb.Monster<MockAttackMonster>().ToMutable(), CombatSide.Enemy, "enemy1"); state.AddCreature(enemy);
+        enemy2 = state.CreateCreature(ModelDb.Monster<MockAttackMonster>().ToMutable(), CombatSide.Enemy, "enemy2"); state.AddCreature(enemy2);
+        foreach (var e in new[] { enemy, enemy2 }) { e.Monster!.SetUpForCombat(); e.Monster.RollMove([owner.Creature, ally.Creature]); }
+        LocalContext.NetId = null;
+        typeof(CombatManager).GetField("_state", BindingFlags.Instance | BindingFlags.NonPublic)!.SetValue(CombatManager.Instance, state);
+        typeof(CombatManager).GetProperty("IsInProgress")!.SetValue(CombatManager.Instance, true);
+    }
+    private static T New<T>(bool upgrade = false, PileType pile = PileType.Hand) where T : CardModel
+    {
+        var card = state.CreateCard<T>(owner);
+        if (upgrade) card.UpgradeInternal();
+        pile.GetPile(owner).AddInternal(card);
+        return card;
+    }
+    private static async Task Play(CardModel card, Creature? target = null, bool auto = false)
+    {
+        // 每次从正确牌堆进入正式出牌包装器，覆盖易拉罐取位置、前后钩子、牌堆及重复出牌清理。
+        if (!auto && card.Pile?.Type != PileType.Hand)
+        {
+            card.RemoveFromCurrentPile(); owner.PlayerCombatState!.Hand.AddInternal(card);
+        }
+        await card.OnPlayWrapper(Ctx, target, auto, default, skipCardPileVisuals: true);
+    }
+    private static bool Allowed(CardModel card) => Hook.ShouldPlay(state, card, out _, AutoPlayType.None);
+    private static async Task StartTurn() => await Hook.AfterSideTurnStart(state, CombatSide.Player, [owner.Creature]);
+    // 测试只派发状态的回合末清理，不启动真实敌方AI。
+    private static async Task EndTurn()
+    {
+        foreach (var power in owner.Creature.Powers.ToArray())
+            await power.AfterSideTurnEnd(Ctx, CombatSide.Player, [owner.Creature]);
+    }
+    private static void DrawPile(int count)
+    {
+        for (int i = 0; i < count; i++) New<OttoStrike>(pile: PileType.Draw);
+    }
+    private static async Task ClearPowers(Creature c)
+    {
+        foreach (var p in c.Powers.ToArray()) await PowerCmd.Remove(p);
+    }
+    private static void SetMove(Creature target, params AbstractIntent[] intents)
+    {
+        // 测试专用：改变内存目标的可见招式，不调用敌人的行动或AI。
+        typeof(MonsterModel).GetProperty("NextMove")!.SetValue(target.Monster, new MoveState("PROBE", _ => Task.CompletedTask, intents));
+    }
+}

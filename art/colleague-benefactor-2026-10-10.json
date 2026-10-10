@@ -1,0 +1,22 @@
+{
+  "version": "v0.6.96",
+  "card": "同事是恩人",
+  "card_id": "OTTO_COLLEAGUE_BENEFACTOR",
+  "acquisition": "Orobas / ArchaicTooth transcendence: CallFriends -> ColleagueBenefactor",
+  "cost": 1,
+  "upgraded_cost": 0,
+  "actions": 5,
+  "summon_rules_unchanged": true,
+  "asset": "OTTO/images/cards/colleague_benefactor.png",
+  "zhs_engine_assertions": 52,
+  "eng_engine_assertions": 52,
+  "event_transform_upgrade_inheritance_verified": true,
+  "vanilla_bash_mapping_verified": true,
+  "packed_art_text_verified": true,
+  "installed_files_verified": true,
+  "files": {
+    "OTTO.dll": "d6cfefbc08cb7486b3ce2eca2624590c4cb08a60b3cea6e8908ecb493d9aa34e",
+    "OTTO.pck": "48241a497ecb980abb1869da4bcdb71ba12c21946a7f13b51b2440fd99f920db",
+    "OTTO.json": "066364695d66dd680ce382739a88ad4e92add6f7cd27d49cf29ce9b912ed3676"
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "version": "v0.6.3",
+  "card": "不存在之物",
+  "image": "OTTO/images/cards/nonexistent_thing.png",
+  "dimensions": [
+    178,
+    184
+  ],
+  "image_sha256": "0e4989c0bf0f1127d4067bf99ac5ad1129b4a708e49ac2a64c9b25829294baf1",
+  "checks": [
+    "Source PNG copied unchanged",
+    "Build succeeded, zero errors",
+    "Texture loaded successfully from exported PCK",
+    "ZIP contents verified against staged DLL, PCK and manifest"
+  ],
+  "sha256": {
+    "OTTO.dll": "cd2380f715e5b75643bd67f7c390f99c806af0735190d0e578989f0786488ba6",
+    "OTTO.pck": "7a225f20405813c9b7758091b06951de7afd5c63483cc26e2526041f84162e8a",
+    "OTTO.json": "18072957d3844b7ee60ec0563015e4d469e657649ce8e78811b3dcfa25ce461b"
+  },
+  "archive_sha256": "ff2e0ac98821527bf3f874d8491c16276287c542cb2be7b0ab43dd9966169fff",
+  "backup": "/Users/ryanding/Desktop/SLS2 mod/.backups/installed-before-nonexistent-art-2026-10-08"
+}

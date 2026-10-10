@@ -1,0 +1,17 @@
+{
+  "version": "v0.6.91",
+  "mapping": {
+    "0": "炫狗召唤 → xuan_dog.ogg",
+    "1": "山泥若召唤 → shan_ni_ruo.ogg",
+    "2": "火星包召唤 → huo_xing_bao.ogg"
+  },
+  "trigger": "successful Zoo.Summon only; visual restore does not enqueue",
+  "simultaneous_summons": "queued per creature",
+  "audio_checks_passed": true,
+  "installed_files_verified": true,
+  "files": {
+    "OTTO.dll": "65372b3a608efdb68dae6a91d0bd26b46034fde03871d0203ba3cf846d83be44",
+    "OTTO.pck": "8d9ef11ca7d655f5acaf7787408ac65203b626786dea8d5755b288f9e556c629",
+    "OTTO.json": "75d9be25aafba28335293d8792f67bc260fba0b14bd7ed3e88d9f135af2696c2"
+  }
+}

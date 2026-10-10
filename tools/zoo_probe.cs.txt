@@ -1,0 +1,170 @@
+// 历史首批12张设计牌的验收片段；水果用例已删除。当前全量验收见 final_cards_probe 与 fruit_removal_probe。
+using System.Reflection;
+using Godot;
+using BaseLib.Utils;
+using MegaCrit.Sts2.Core.Combat;
+using MegaCrit.Sts2.Core.Commands;
+using MegaCrit.Sts2.Core.Entities.Cards;
+using MegaCrit.Sts2.Core.Entities.Creatures;
+using MegaCrit.Sts2.Core.Entities.Players;
+using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using MegaCrit.Sts2.Core.Hooks;
+using MegaCrit.Sts2.Core.Modding;
+using MegaCrit.Sts2.Core.Models;
+using MegaCrit.Sts2.Core.Models.Monsters.Mocks;
+using MegaCrit.Sts2.Core.Models.Powers;
+using MegaCrit.Sts2.Core.Runs;
+using MegaCrit.Sts2.Core.TestSupport;
+using MegaCrit.Sts2.Core.Unlocks;
+using OttoMod;
+
+// 一次性引擎验收插件：创建内存中的测试战斗，不读写用户的对局进度。
+[ModInitializer(nameof(Initialize))]
+public static class Probe
+{
+    private static readonly PlayerChoiceContext Ctx = new ThrowingPlayerChoiceContext();
+    private static int assertions;
+    public static void Initialize() => Callable.From(Check).CallDeferred();
+    private static void CheckThat(bool ok, string message)
+    {
+        if (!ok) throw new Exception(message);
+        assertions++;
+    }
+    // 只在测试装置中调用真实卡牌的 OnPlay，测试效果而不操作玩家 UI。
+    private static async Task Play(CardModel card, Creature? target = null)
+    {
+        if (card.Pile is null) card.Owner.PlayerCombatState!.DiscardPile.AddInternal(card);
+        var play = new CardPlay { Card=card, Target=target, ResultPile=PileType.Discard,
+            Resources=default!, IsAutoPlay=false, PlayIndex=0, PlayCount=1 };
+        await Hook.BeforeCardPlayed(card.CombatState!, play);
+        await (Task)card.GetType().GetMethod("OnPlay", BindingFlags.NonPublic|BindingFlags.Instance)!.Invoke(card,[Ctx,play])!;
+        await Hook.AfterCardPlayed(card.CombatState!,Ctx,play);
+    }
+    private static async void Check()
+    {
+        var tree=(SceneTree)Engine.GetMainLoop();
+        try
+        {
+            for(int i=0;i<40;i++) await tree.ToSignal(tree,SceneTree.SignalName.ProcessFrame);
+            var character=ModelDb.Character<OttoCharacter>();
+            var visuals=character.CreateVisuals(); tree.Root.AddChild(visuals);
+            CheckThat(visuals.Bounds!=null && !visuals.HasSpineAnimation,"OTTO 视觉工厂");
+            var anim=visuals.GetNode<AnimationPlayer>("AnimationPlayer");
+            CustomAnimation.PlayCustomAnimation(visuals,"Attack","attack");anim.Advance(.15);
+            CheckThat(visuals.GetNode<Sprite2D>("Visuals/Body/Sprite").Texture is AtlasTexture,"攻击伸拳帧");
+            foreach(var key in new[]{"xuan_dog","shan_ni_ruo","huo_xing_bao"})
+            {
+                var node=ZooVisuals.Attach(visuals,key);
+                var sprite=node.GetNode<Sprite2D>("Body/Sprite");
+                CheckThat(Math.Abs(sprite.Texture.GetHeight()*sprite.Scale.Y-172)<.01,"伙伴脚底尺寸 "+key);
+                CheckThat(visuals.GetChildren().Count(n=>n.Name=="OttoZooCompanion")==1,"替换没有重复视觉节点");
+                CheckThat(ResourceLoader.Exists($"res://OTTO/images/companions/{key}_icon.tres"),"伙伴图标 "+key);
+            }
+            visuals.QueueFree();
+            GD.Print("OTTO_ZOO_VISUALS_OK");
+
+            // 使用游戏官方 TestMode 关闭动画等待、声音与运行中的 UI 寻址。
+            TestMode.IsOn=true;
+            var owner=Player.CreateForNewRun<OttoCharacter>(UnlockState.all,101);
+            var other=Player.CreateForNewRun<OttoCharacter>(UnlockState.all,102);
+            var run=RunState.CreateForTest([owner,other],seed:"OTTO-ZOO-CHECK");
+            var state=new CombatState(runState:run);
+            state.AddPlayer(owner);state.AddPlayer(other);
+            owner.ResetCombatState();other.ResetCombatState();
+            var enemy=state.CreateCreature(ModelDb.Monster<MockAttackMonster>().ToMutable(),CombatSide.Enemy,"enemy1");state.AddCreature(enemy);
+            var enemy2=state.CreateCreature(ModelDb.Monster<MockAttackMonster>().ToMutable(),CombatSide.Enemy,"enemy2");state.AddCreature(enemy2);
+            // 装入隔离战斗，仅修改当前一次性进程内的调度器，不进入地图或保存流程。
+            typeof(CombatManager).GetField("_state",BindingFlags.Instance|BindingFlags.NonPublic)!.SetValue(CombatManager.Instance,state);
+            typeof(CombatManager).GetProperty("IsInProgress")!.SetValue(CombatManager.Instance,true);
+            CheckThat(owner.Deck.Cards.Count==11,"初始牌组共11张");
+            CheckThat(owner.Deck.Cards.Count(c=>c is OttoStrike)==5 && owner.Deck.Cards.Count(c=>c is OttoDefend)==5 && owner.Deck.Cards.Count(c=>c is CallFriends)==1,"初始5/5/1");
+            var all=character.CardPool.AllCards.ToArray();
+            CheckThat(all.Length==12,"历史首批12张设计牌，实际 "+all.Length);
+            CheckThat(all.Count(c=>c.Rarity==CardRarity.Common)==5 && all.Count(c=>c.Rarity==CardRarity.Uncommon)==3 && all.Count(c=>c.Rarity==CardRarity.Rare)==1,"奖励稀有度5/3/1");
+            foreach(var canonical in all)
+            {
+                var card=state.CreateCard(canonical,owner);
+                CheckThat(!card.Title.Contains("OTTO_"),"标题本地化 "+card.Id);
+                CheckThat(ResourceLoader.Exists(card.PortraitPath),"卡图 "+card.Id);
+                var description=card.GetDescriptionForPile(PileType.Hand);
+                CheckThat(!description.Contains("???") && !description.Contains("{Damage"),"文本格式 "+card.Id+" "+description);
+                if(card.MaxUpgradeLevel>0) {card.UpgradeInternal();CheckThat(card.IsUpgraded,"升级 "+card.Id);}
+            }
+            // 预期数值直接来自用户工作簿，确保升级不是仅改变名称。
+            var upgradeCases = new (CardModel card,int cost,string key,int value)[] {
+                (ModelDb.Card<OttoStrike>(),1,"Damage",9),(ModelDb.Card<OttoDefend>(),1,"Block",8),
+                (ModelDb.Card<CallFriends>(),0,"",0),(ModelDb.Card<OttoRush>(),1,"ExtraDamage",9),
+                (ModelDb.Card<Wheelchair>(),1,"DexterityPower",2),(ModelDb.Card<ChivePocket>(),0,"Heal",4),
+                (ModelDb.Card<ThreeWolves>(),2,"Damage",12),(ModelDb.Card<KingJiji>(),0,"",0),
+                (ModelDb.Card<BlueCandy>(),2,"PoisonPower",30),(ModelDb.Card<OttoIce>(),1,"Amount",3),
+                (ModelDb.Card<MissedQ>(),1,"WeakPower",5),(ModelDb.Card<ProPlayer>(),2,"",0)};
+            foreach(var (canonical,cost,key,value) in upgradeCases) {
+                var c=state.CreateCard(canonical,owner);c.UpgradeInternal();
+                CheckThat(c.EnergyCost.GetWithModifiers(CostModifiers.Local)==cost,"升级费用 "+c.Id);
+                if(key.Length>0) CheckThat(c.DynamicVars[key].BaseValue==value,"升级数值 "+c.Id);
+                CheckThat(c.GetDescriptionForPile(PileType.Hand).Length>0,"升级文本 "+c.Id);
+            }
+            GD.Print("OTTO_ZOO_REGISTRATION_OK");
+            var call=state.CreateCard<CallFriends>(owner);
+            await Zoo.Summon(Ctx,call,0);
+            CheckThat(Zoo.Count(owner.Creature)==1 && owner.Creature.HasPower<XuanDogPower>(),"召唤炫狗");
+            await Zoo.Summon(Ctx,call,0);CheckThat(owner.Creature.Powers.OfType<ZooCompanionPower>().Count()==1,"重复不叠加");
+            await Zoo.Current(owner.Creature)!.BeforeSideTurnEnd(Ctx,CombatSide.Player,[other.Creature]);
+            CheckThat(owner.Creature.Block==0,"队友额外回合不触发自己的伙伴");
+            var seen=new HashSet<string>();
+            for(int i=0;i<18;i++) {await Zoo.SummonRandom(Ctx,call);seen.Add(Zoo.Current(owner.Creature)!.SpriteKey);CheckThat(owner.Creature.Powers.OfType<ZooCompanionPower>().Count()==1,"连续随机召唤始终单伙伴");}
+            CheckThat(seen.Count==3,"固定测试种子能抽到三种伙伴");
+            await Zoo.Summon(Ctx,call,0);
+            int hpTotal=enemy.CurrentHp+enemy2.CurrentHp;
+            await Zoo.Current(owner.Creature)!.BeforeSideTurnEnd(Ctx,CombatSide.Player,[owner.Creature,other.Creature]);
+            CheckThat(owner.Creature.Block==4 && hpTotal-enemy.CurrentHp-enemy2.CurrentHp==4,"炫狗四格挡四伤害");
+            await Zoo.Current(owner.Creature)!.BeforeSideTurnEnd(Ctx,CombatSide.Enemy,[enemy,enemy2]);
+            CheckThat(owner.Creature.Block==4,"敌方回合不触发伙伴");
+            var rush=state.CreateCard<OttoRush>(owner);int hp=enemy.CurrentHp;
+            await Play(rush,enemy);CheckThat(hp-enemy.CurrentHp==15,"有伙伴冲刺15伤害");
+            rush.UpgradeInternal();hp=enemy.CurrentHp;await Play(rush,enemy);CheckThat(hp-enemy.CurrentHp==18,"升级冲刺18伤害");
+            await PowerCmd.Remove<XuanDogPower>(owner.Creature);hp=enemy.CurrentHp;await Play(rush,enemy);CheckThat(hp-enemy.CurrentHp==9,"无伙伴冲刺9伤害");
+            await Zoo.Summon(Ctx,call,1);owner.Creature.SetCurrentHpInternal(40);
+            await Zoo.Current(owner.Creature)!.BeforeSideTurnEnd(Ctx,CombatSide.Player,[owner.Creature]);
+            CheckThat(owner.Creature.CurrentHp==42,"山泥若回血2");
+            await Play(state.CreateCard<OttoIce>(owner));int beforeBlock=owner.Creature.Block;
+            await owner.Creature.GetPower<OttoIcePower>()!.AfterSideTurnStart(CombatSide.Player,[owner.Creature],state);
+            CheckThat(owner.Creature.Block==beforeBlock+2 && owner.Creature.CurrentHp==44,"冰与山泥若协同");
+            await Zoo.Summon(Ctx,call,2);await Zoo.Current(owner.Creature)!.BeforeSideTurnEnd(Ctx,CombatSide.Player,[owner.Creature]);
+            CheckThat(owner.Creature.GetPowerAmount<StrengthPower>()==1 && owner.Creature.GetPowerAmount<DexterityPower>()==1,"火星包属性");
+            var q=state.CreateCard<MissedQ>(owner);await Play(q,enemy);
+            CheckThat(enemy.GetPowerAmount<StrengthPower>()==-10 && enemy.GetPowerAmount<WeakPower>()==3 && enemy.GetPowerAmount<VulnerablePower>()==3,"Q临时力量及火星包协同");
+            await enemy.GetPower<DarkShacklesPower>()!.AfterSideTurnEnd(Ctx,CombatSide.Enemy,[enemy]);
+            CheckThat(enemy.GetPowerAmount<StrengthPower>()==0,"Q力量在回合结束恢复");
+            await PowerCmd.Remove<WeakPower>(enemy);await PowerCmd.Remove<VulnerablePower>(enemy);
+            await PowerCmd.Remove<StrengthPower>(owner.Creature);await PowerCmd.Remove<DexterityPower>(owner.Creature);
+            await Play(state.CreateCard<Wheelchair>(owner));CheckThat(owner.Creature.GetPowerAmount<DexterityPower>()==1,"轮椅敏捷");
+            var chive=state.CreateCard<ChivePocket>(owner);hp=owner.Creature.CurrentHp;await Play(chive);CheckThat(owner.Creature.CurrentHp==hp+2 && chive.Keywords.Contains(CardKeyword.Exhaust),"韭菜回血与消耗");
+            var wolves=state.CreateCard<ThreeWolves>(owner);hpTotal=enemy.CurrentHp+enemy2.CurrentHp;await Play(wolves);CheckThat(hpTotal-enemy.CurrentHp-enemy2.CurrentHp==27 && wolves.Keywords.Contains(CardKeyword.Retain),"三狼三次伤害与保留");
+            await Zoo.Summon(Ctx,call,0);await Play(state.CreateCard<BlueCandy>(owner));
+            CheckThat(Zoo.Count(owner.Creature)==0 && !owner.Creature.HasPower<PoisonPower>(),"M豆牺牲炫狗且自己免毒");
+            CheckThat(other.Creature.GetPowerAmount<PoisonPower>()==20 && enemy.GetPowerAmount<PoisonPower>()==20,"其他玩家与敌人中毒20");
+            await Play(state.CreateCard<BlueCandy>(owner));CheckThat(owner.Creature.GetPowerAmount<PoisonPower>()==20,"无炫狗时自己中毒");
+            await Play(state.CreateCard<ProPlayer>(owner));await Play(state.CreateCard<OttoDefend>(owner));
+            CheckThat(owner.Creature.GetPowerAmount<PixPower>()==2,"职业选手与后续一牌各给1皮克斯");
+            var pix=owner.Creature.GetPower<PixPower>()!;int max=owner.Creature.MaxHp;
+            await pix.AfterCombatEnd(null!);CheckThat(owner.Creature.MaxHp==max+2,"皮克斯兑现最大生命");
+            await pix.AfterCombatEnd(null!);CheckThat(owner.Creature.MaxHp==max+2,"不会重复兑现");
+            // 最后一击发生后 AfterCardPlayed 会被游戏忽略，出牌前计数仍然必须保留。
+            var finalCard=state.CreateCard<OttoStrike>(owner);owner.PlayerCombatState.DiscardPile.AddInternal(finalCard);
+            var finalPlay=new CardPlay {Card=finalCard,Target=enemy,ResultPile=PileType.Discard,Resources=default!,IsAutoPlay=false,PlayIndex=0,PlayCount=1};
+            await Hook.BeforeCardPlayed(state,finalPlay);
+            enemy.SetCurrentHpInternal(0);enemy2.SetCurrentHpInternal(0);
+            CheckThat(CombatManager.Instance.IsEnding,"进入最后敌人死亡的结算窗口");
+            await Hook.AfterCardPlayed(state,Ctx,finalPlay);
+            CheckThat(owner.Creature.GetPowerAmount<PixPower>()==1,"致命牌只累计一次皮克斯");
+            await pix.AfterCombatEnd(null!);CheckThat(owner.Creature.MaxHp==max+3,"致命牌皮克斯可兑现");
+            // 状态图标必须能由真实资源加载器读取；大图路径同样参与检查。
+            foreach(var p in new[]{ModelDb.Power<XuanDogPower>(),(PowerModel)ModelDb.Power<ShanNiRuoPower>(),ModelDb.Power<HuoXingBaoPower>(),ModelDb.Power<OttoIcePower>(),ModelDb.Power<ProPlayerPower>(),ModelDb.Power<PixPower>()})
+                CheckThat(p.Icon!=null && p.BigIcon!=null,"状态图标 "+p.Id);
+            GD.Print($"OTTO_ZOO_MECHANICS_OK: {assertions} assertions passed");
+        }
+        catch(Exception error) { GD.PrintErr("OTTO_ZOO_PROBE_FAILED: "+error); }
+        finally {TestMode.IsOn=false;tree.Quit();}
+    }
+}

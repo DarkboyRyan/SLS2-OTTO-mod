@@ -1,0 +1,14 @@
+{
+  "version": "v0.6.53",
+  "card": "强者就是要羞辱弱者",
+  "asset": "OTTO/images/cards/humiliate_weak.png",
+  "source_unchanged": true,
+  "packed_texture_loaded": true,
+  "build_errors": 0,
+  "installed_files_verified": true,
+  "files": {
+    "OTTO.dll": "ff0f01c903d02aeebee79a3b66d8ac0163d53128b914aa9bf10ff57911e3d006",
+    "OTTO.pck": "b6e2ae13b4781d28a3a96209f210d29d3e70d055523bc5907ad2aa534ecc3197",
+    "OTTO.json": "7edd08dc324b4e7e5a69ac100d7e4ecb54bcf347c3e96a887197c2ef20a9bd79"
+  }
+}

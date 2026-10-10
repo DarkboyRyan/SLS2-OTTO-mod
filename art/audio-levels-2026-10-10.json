@@ -1,0 +1,79 @@
+{
+  "version": "v0.6.92",
+  "target_lufs": -16,
+  "measured_range_lufs": [
+    -16.01,
+    -15.99
+  ],
+  "clip_count": 10,
+  "levels": {
+    "otto_select": {
+      "source": "/Users/ryanding/Desktop/SLS2 mod/.backups/before-audio-levels-2026-10-10/OTTO/OTTO/audio/otto_select.ogg",
+      "before_lufs": -13.29,
+      "after_lufs": -16.01,
+      "true_peak_db": -2.66
+    },
+    "ancient/ai_ya_mi_no": {
+      "source": "/Users/ryanding/Movies/哎呀米诺.mp3",
+      "before_lufs": -18.93,
+      "after_lufs": -16.0,
+      "true_peak_db": -2.06,
+      "peak_compression": true
+    },
+    "ancient/ham": {
+      "source": "/Users/ryanding/Movies/哈姆.mp3",
+      "before_lufs": -12.68,
+      "after_lufs": -16.0,
+      "true_peak_db": -3.56
+    },
+    "ancient/one_hand": {
+      "source": "/Users/ryanding/Movies/偶内的手.mp3",
+      "before_lufs": -14.0,
+      "after_lufs": -15.99,
+      "true_peak_db": -2.03
+    },
+    "ancient/spoken_reason": {
+      "source": "/Users/ryanding/Movies/说的道理.mp3",
+      "before_lufs": -6.33,
+      "after_lufs": -15.99,
+      "true_peak_db": -9.44
+    },
+    "ancient/wawo": {
+      "source": "/Users/ryanding/Movies/哇偶.mp3",
+      "before_lufs": -1.26,
+      "after_lufs": -16.01,
+      "true_peak_db": -10.46
+    },
+    "ancient/ancient_speech": {
+      "source": "/Users/ryanding/Movies/古神语.mp3",
+      "before_lufs": -7.28,
+      "after_lufs": -15.99,
+      "true_peak_db": -8.19
+    },
+    "summon/xuan_dog": {
+      "source": "/Users/ryanding/Movies/炫狗召唤.mp3",
+      "before_lufs": -18.18,
+      "after_lufs": -16.0,
+      "true_peak_db": -6.55
+    },
+    "summon/shan_ni_ruo": {
+      "source": "/Users/ryanding/Movies/山泥若召唤.mp3",
+      "before_lufs": -1.13,
+      "after_lufs": -16.01,
+      "true_peak_db": -13.82
+    },
+    "summon/huo_xing_bao": {
+      "source": "/Users/ryanding/Movies/火星包召唤.mp3",
+      "before_lufs": -7.37,
+      "after_lufs": -16.01,
+      "true_peak_db": -7.92
+    }
+  },
+  "audio_checks_passed": true,
+  "installed_files_verified": true,
+  "files": {
+    "OTTO.dll": "422f9e12e098096741c608501c17a5e08a9dd299c3acb547d6afc12340cfbb4f",
+    "OTTO.pck": "b40675e2317a52e51cc0908b2a5d604097342de6ba8d15cdaab4254e378559c2",
+    "OTTO.json": "6fe7d391e8738a6d4eabfbdf81b7f41d7fd3357b8c60cca6f3e5379ecea5f6e6"
+  }
+}

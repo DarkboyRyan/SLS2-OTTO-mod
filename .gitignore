@@ -1,0 +1,33 @@
+# Godot 导入缓存与 .NET 构建产物
+.godot/
+bin/
+obj/
+/dist/
+
+# IDE 和本机配置
+.vs/
+.idea/
+*.user
+*.suo
+/local.props
+/Directory.Build.local.props
+
+# macOS 与临时文件
+.DS_Store
+._*
+*.log
+*.tmp
+*.bak
+__pycache__/
+*.py[cod]
+
+# 本机备份及上传工具工作区
+/.backups/
+/.work/
+/ModUploader-*/
+/OTTO-Workshop/
+
+# 本地凭据
+.env
+.env.*
+!.env.example

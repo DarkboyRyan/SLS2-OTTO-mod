@@ -1,0 +1,14 @@
+{
+  "version": "v0.6.49",
+  "card": "虚空卡比兽",
+  "asset": "OTTO/images/cards/void_snorlax.png",
+  "source_unchanged": true,
+  "packed_texture_loaded": true,
+  "build_errors": 0,
+  "installed_files_verified": true,
+  "files": {
+    "OTTO.dll": "233e6eef7139326029b1a39f25ac62ec4e4679c17d53413a0e03999e8fb84be9",
+    "OTTO.pck": "03bbd3222e8063ef52cff480f14d524703981270d0a918f8e3189049c30d9be3",
+    "OTTO.json": "9e976007ed7695a8a40f5c73c740cf17f56f3ea23ee7d324487339ca6492271c"
+  }
+}

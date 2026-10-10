@@ -1,0 +1,25 @@
+{
+  "version": "v0.6.11",
+  "card": "奥利安费",
+  "image": "/Users/ryanding/Desktop/SLS2 mod/OTTO/OTTO/images/cards/ao_li_an_fei.png",
+  "dimensions": [
+    172,
+    160
+  ],
+  "source_sha256": "91528c52ab3c079fd86ceb9e946ce94a64eb2d65569e140757cc5de6137dcc0d",
+  "checks": {
+    "source_unchanged": true,
+    "build_errors": 0,
+    "packed_texture_loaded": true,
+    "archive_verified": true,
+    "installed_files_verified": true
+  },
+  "files": {
+    "OTTO.dll": "a26d6739bdcbc1ba01d1d2c4c551cff343cff7630074f1c249d0f95a90d837d6",
+    "OTTO.pck": "483858797c11d3ddb53fd420daeb9eefe54ed94abee77886671f0473eb3fe50a",
+    "OTTO.json": "9bf7443264cc3aa2e8be38b6cb123a62df5aa36c67c0fef07890373bda4a2cf7"
+  },
+  "archive": "/Users/ryanding/Desktop/SLS2 mod/OTTO/dist/OTTO-v0.6.11.zip",
+  "archive_sha256": "2bf6a7a1927e0d57d101717efb687e088707220106e4a8928941726e5ea985cb",
+  "installed_backup": "/Users/ryanding/Desktop/SLS2 mod/.backups/installed-before-ao-li-an-fei-art-2026-10-09"
+}

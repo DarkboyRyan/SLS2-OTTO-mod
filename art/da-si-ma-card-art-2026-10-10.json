@@ -1,0 +1,14 @@
+{
+  "version": "v0.6.73",
+  "card": "芜湖大司马",
+  "asset": "OTTO/images/cards/da_si_ma.png",
+  "source_unchanged": true,
+  "packed_texture_loaded": true,
+  "build_errors": 0,
+  "installed_files_verified": true,
+  "files": {
+    "OTTO.dll": "38b7d2ff6a5e54d6f62ff3bf24a704deb327b91b396355d92c17c272a4e58582",
+    "OTTO.pck": "8c77a92e8f8001d102f93bb49ca2ff80ab9199634a411822e250c2df23fe50bc",
+    "OTTO.json": "6f898fbaf5d693bed6f96a80be6a00a0f2a60e688eef2c83b41eb0ce4b629814"
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "version": "v0.6.8",
+  "card": "呼朋唤友",
+  "image": "OTTO/images/cards/call_friends.png",
+  "dimensions": [
+    496,
+    228
+  ],
+  "image_sha256": "1baf6cfb799c5f2d5610ddea6ffae0121cea95928c9bce4b382f02791c0b75ba",
+  "checks": [
+    "Source PNG copied unchanged",
+    "Build succeeded, zero errors",
+    "Texture loaded successfully from exported PCK",
+    "ZIP contents verified against staged DLL, PCK and manifest"
+  ],
+  "sha256": {
+    "OTTO.dll": "68085e49a09e44c98c403805301eb7e994b6956f2adc15ba1f02928b73c7b20c",
+    "OTTO.pck": "2c7ab9bea3967d23da080d0818d9bd0ea72698de9ae8b9dd8c234592fc8c4e26",
+    "OTTO.json": "8996728643495c5638f43ba5b54e13ef56bac37be16a0bb1ab7beb911bf55934"
+  },
+  "archive_sha256": "c00e2d542beb0784ecedd6d100b19143da7346fc0985b3eb0a79ea11e628b238",
+  "backup": "/Users/ryanding/Desktop/SLS2 mod/.backups/installed-before-call-friends-art-2026-10-09"
+}

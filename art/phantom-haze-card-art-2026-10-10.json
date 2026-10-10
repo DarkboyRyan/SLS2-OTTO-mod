@@ -1,0 +1,14 @@
+{
+  "version": "v0.6.65",
+  "card": "犹如幻翳",
+  "asset": "OTTO/images/cards/phantom_haze.png",
+  "source_unchanged": true,
+  "packed_texture_loaded": true,
+  "build_errors": 0,
+  "installed_files_verified": true,
+  "files": {
+    "OTTO.dll": "6afb8d7c87d16a4d48c1853921d395e75196c7210845dca352da24de7c8dbf42",
+    "OTTO.pck": "9af4a1b1720ec78f3dfe62ba067bf63d47de7b8c719426970a4507ad9fc91827",
+    "OTTO.json": "259811acd96122192a1bc733e600e32c4739983612361d212130aa3da1d69073"
+  }
+}

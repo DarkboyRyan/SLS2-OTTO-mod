@@ -1,0 +1,22 @@
+{
+  "version": "v0.6.89",
+  "clips": [
+    "ai_ya_mi_no",
+    "ham",
+    "one_hand",
+    "spoken_reason",
+    "wawo"
+  ],
+  "triggers": "AncientCard first play in series; AncientFormPower applied/removed/combat end; NCreature ready restore",
+  "continuous_mode": "random sequential, no adjacent repeats; next AncientCard replaces current speech",
+  "volume": "master * sfx, squared to match game",
+  "build_errors": 0,
+  "audio_finish_restart_stop_cleanup_verified": true,
+  "installed_files_verified": true,
+  "zip": "dist/v1.0.0.zip",
+  "files": {
+    "OTTO.dll": "edd132ea960b10d6be25e52d0f45b8c343c31bd545d034c0ecc45446b647af58",
+    "OTTO.pck": "9a45be99e014309fecefda4b11e852c3864018cbdc39e44964237bd21dfe0971",
+    "OTTO.json": "bc39095db2726c9e93a277e4cd3014fb404e56731f2b5dd8775b7e82a7f269a5"
+  }
+}

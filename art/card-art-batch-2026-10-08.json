@@ -1,0 +1,88 @@
+{
+  "version": "v0.6.6",
+  "assets": [
+    {
+      "key": "blue_candy",
+      "card": "蓝色M豆",
+      "source": "/var/folders/j0/1zgwylvj0_5c7ndz4wvq7ntr0000gn/T/codex-clipboard-2c639179-27dc-4124-915c-be1e93409aaf.png",
+      "dimensions": [
+        348,
+        228
+      ],
+      "sha256": "1f8a4a4b727f1150c0d9e55397d4a25d60a2aafe017b525a016bb3f5c1d25a04"
+    },
+    {
+      "key": "chive_pocket",
+      "card": "韭菜盒子",
+      "source": "/var/folders/j0/1zgwylvj0_5c7ndz4wvq7ntr0000gn/T/codex-clipboard-a82951a0-47c1-4f19-b027-e7610558205b.png",
+      "dimensions": [
+        192,
+        154
+      ],
+      "sha256": "9004cb8c7a6a4adbea9c713babd751832cc5f7c38b09b2209775161eb7c600a9"
+    },
+    {
+      "key": "silver_terminal",
+      "card": "白银就是癌症晚期",
+      "source": "/var/folders/j0/1zgwylvj0_5c7ndz4wvq7ntr0000gn/T/codex-clipboard-d7bd28c6-c9f2-49d4-bbc0-d9784fb1344a.png",
+      "dimensions": [
+        434,
+        336
+      ],
+      "sha256": "9ef68e7ef18aad9c2e98e9cd411320929ab636fbf723915819c2dfe07cb64169"
+    },
+    {
+      "key": "ha_bi_xia",
+      "card": "哈比下",
+      "source": "/var/folders/j0/1zgwylvj0_5c7ndz4wvq7ntr0000gn/T/codex-clipboard-0c091521-175d-4ea5-938d-68240de99017.png",
+      "dimensions": [
+        256,
+        162
+      ],
+      "sha256": "72e883af425affe5ea69b695194c18064a459321d5d1394b3071e9ce595704d8"
+    },
+    {
+      "key": "your_youth",
+      "card": "你的青春，无限复活",
+      "source": "/var/folders/j0/1zgwylvj0_5c7ndz4wvq7ntr0000gn/T/codex-clipboard-d2a1a213-0a07-491c-a226-60824b0f393e.png",
+      "dimensions": [
+        484,
+        238
+      ],
+      "sha256": "28a83b35dfc82ec62ffd08f82b8cd0447321bb1e6673c35d1a6f043a22440655"
+    },
+    {
+      "key": "wawo",
+      "card": "哇沃！",
+      "source": "/var/folders/j0/1zgwylvj0_5c7ndz4wvq7ntr0000gn/T/codex-clipboard-6851e205-52b1-47a4-8809-2a0d82ad7352.png",
+      "dimensions": [
+        1530,
+        884
+      ],
+      "sha256": "e70b374f66572e95a8c55523ca7fd33be3682884a8d9bf0ae1121f685e2b3cd5"
+    },
+    {
+      "key": "wheelchair",
+      "card": "轮椅",
+      "source": "/var/folders/j0/1zgwylvj0_5c7ndz4wvq7ntr0000gn/T/codex-clipboard-d61c71d8-ddd8-4096-9fe0-05980a3618f3.png",
+      "dimensions": [
+        372,
+        252
+      ],
+      "sha256": "2c7fd62709cc0be2844583030fe42fd59463a33a1e19ca2defaeec09bc26f5cc"
+    }
+  ],
+  "checks": [
+    "All seven original PNG files copied unchanged",
+    "Build succeeded, zero errors",
+    "All seven textures loaded from exported PCK",
+    "ZIP contains exactly DLL, PCK and manifest; matches staged files"
+  ],
+  "sha256": {
+    "OTTO.dll": "eb334a21848347de7ace1494749a99f0e479bde0a97ed0248250c2caf6a4c77a",
+    "OTTO.pck": "7e349f52a77dc0dbb9d9673a32bcbcf2fca087d8b2e261c946ccfbc515c63f72",
+    "OTTO.json": "0833eb58b8689fda776bbb85f8666d8fa795452b4dba4ae1a63d1199408c0e50"
+  },
+  "archive_sha256": "fae1128f0e48a51466233a3904e16e4dd66a89436e3f9b6f262e32eccba68745",
+  "backup": "/Users/ryanding/Desktop/SLS2 mod/.backups/installed-before-card-art-batch-2026-10-08"
+}

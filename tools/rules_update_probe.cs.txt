@@ -1,0 +1,91 @@
+using MegaCrit.Sts2.Core.Combat;
+using Godot;
+using System.Reflection;
+using BaseLib.Utils.NodeFactories;
+using MegaCrit.Sts2.Core.CardSelection;
+using MegaCrit.Sts2.Core.Commands;
+using MegaCrit.Sts2.Core.Entities.Cards;
+using MegaCrit.Sts2.Core.Entities.Creatures;
+using MegaCrit.Sts2.Core.Models;
+using MegaCrit.Sts2.Core.Nodes.Events.Custom;
+using MegaCrit.Sts2.Core.Nodes.Screens.Shops;
+using MegaCrit.Sts2.Core.Saves;
+using MegaCrit.Sts2.Core.TestSupport;
+using OttoMod;
+public static partial class Probe
+{
+    private static async Task Select(CardModel card, params int[] indices)
+    {
+        var selector=new TestCardSelector(); selector.PrepareToSelect(indices);
+        using var scope=CardSelectCmd.UseSelector(selector); await Play(card);
+    }
+    private static async void Check()
+    {
+        var tree=(SceneTree)Engine.GetMainLoop();
+        try {
+            for(int i=0;i<40;i++) await tree.ToSignal(tree,SceneTree.SignalName.ProcessFrame);
+            TestMode.IsOn=true; SaveManager.Instance.MarkFtueAsComplete("shuffle_ftue");
+            foreach(bool up in new[]{false,true}) {
+                Fresh(); var t=New<TakamatsuTomori>(up); New<OttoDefend>();
+                var band=New<KanameRana>(true,PileType.Discard); var normal=New<OttoStrike>(pile:PileType.Discard);
+                var extra=New<ToyokawaSakiko>(pile:PileType.Discard); var exhausted=New<ChihayaAnon>(pile:PileType.Exhaust);
+                await PlayerCmd.SetEnergy(0,owner);
+                await Select(t,up?new[]{0,1,2}:new[]{0,1});
+                Verify(t.DynamicVars.Cards.IntValue==(up?3:2),"Tomori selection count");
+                Verify(band.Pile?.Type==PileType.Hand&&normal.Pile?.Type==PileType.Hand&&band.IsUpgraded,"discard originals returned");
+                Verify(exhausted.Pile?.Type==PileType.Exhaust,"exhaust pile untouched");
+                Verify(owner.PlayerCombatState!.Energy==(up?2:1),"one energy per band chosen");
+                Verify(normal.EnergyCost.GetWithModifiers(CostModifiers.All)==1&&extra.EnergyCost.GetWithModifiers(CostModifiers.All)==2,"no free cost");
+                Verify(owner.PlayerCombatState.AllPiles.Sum(p=>p.Cards.Count(c=>c is KanameRana))==1,"no band copy");
+                Verify(t.Pile?.Type==PileType.Exhaust&&t.Keywords.Contains(OttoKeywords.Can),"Tomori exhaust and Can");
+                Fresh(); await PlayerCmd.SetEnergy(0,owner); await Select(New<TakamatsuTomori>(up)); Verify(owner.PlayerCombatState!.Energy==0,"empty discard safe");
+            }
+            Fresh(); New<OttoDefend>(); var sakiko=New<ToyokawaSakiko>(); New<OttoStrike>();
+            await PlayerCmd.SetEnergy(0,owner); await Play(sakiko);
+            Verify(owner.PlayerCombatState!.Energy==1,"Sakiko middle play grants energy without edge");
+            Verify(owner.Creature.GetPower<OttoCardRulesPower>()!.CanTriggersThisTurn==0,"middle still does not trigger Can draw");
+            var can=New<ChopAgain>(); await Play(can,enemy); Verify(owner.PlayerCombatState.Energy==1,"second Can no energy");
+            await StartTurn(); await Play(New<ChopAgain>(),enemy,auto:true); Verify(owner.PlayerCombatState.Energy==1,"automatic Can does not consume opportunity");
+            await Play(New<ChopAgain>(),enemy); Verify(owner.PlayerCombatState.Energy==2,"next turn manual Can grants again");
+            await Play(New<ToyokawaSakiko>()); Verify(owner.PlayerCombatState.Energy==2,"stack does not refresh");
+            await StartTurn(); await Play(New<ChopAgain>(),enemy); Verify(owner.PlayerCombatState.Energy==4,"existing stacking preserved");
+            Fresh(); var source=New<SpokenReason>();
+            foreach(int threshold in new[]{100,125,150}) {
+                Verify(AncientForm.RequiredValue(owner.Creature)==threshold,"threshold before entry "+threshold);
+                await AncientForm.Gain(Ctx,source,threshold-1); Verify(!owner.Creature.HasPower<AncientFormPower>(),"below threshold");
+                await AncientForm.Gain(Ctx,source,2); Verify(owner.Creature.GetPowerAmount<AncientFormPower>()==1&&!owner.Creature.HasPower<AncientMeterPower>(),"one turn and clear overflow");
+                Verify(AncientForm.RequiredValue(owner.Creature)==threshold+25,"threshold increment25");
+                await AncientForm.Gain(Ctx,source,99); Verify(!owner.Creature.HasPower<AncientMeterPower>(),"no gain in form");
+                await AncientForm.Enter(Ctx,source); Verify(AncientForm.RequiredValue(owner.Creature)==threshold+25,"refresh no increment");
+                await owner.Creature.GetPower<AncientFormPower>()!.AfterSideTurnStart(CombatSide.Enemy,[enemy],state);
+                Verify(owner.Creature.HasPower<AncientFormPower>(),"covers enemy turn");
+                await StartTurn(); Verify(!owner.Creature.HasPower<AncientFormPower>(),"next own turn expires");
+            }
+            Fresh(); await Play(New<Aminos>()); await AncientForm.Enter(Ctx,New<AncientHam>());
+            Verify(owner.Creature.GetPowerAmount<AncientFormPower>()==2,"Aminos still extends base1");
+            await StartTurn(); Verify(owner.Creature.GetPowerAmount<AncientFormPower>()==1,"extended form one remaining");
+            await StartTurn(); Verify(!owner.Creature.HasPower<AncientFormPower>(),"extended form expires");
+            Fresh(); Verify(AncientForm.RequiredValue(owner.Creature)==100,"new battle resets");
+            await Play(New<Nanami>()); await AncientForm.Enter(Ctx,New<AncientHam>());
+            Verify(AncientForm.RequiredValue(owner.Creature)==100,"Nanami remains fixed100");
+            var character=ModelDb.Character<OttoCharacter>();
+            var visuals=character.CreateVisuals(); tree.Root.AddChild(visuals);
+            Verify(visuals.HasNode("Visuals/Body/Sprite"),"character CreateVisuals returns OTTO");
+            var fake=new NFakeMerchant();
+            typeof(NFakeMerchant).GetMethod("StartCharacterAnimation",BindingFlags.NonPublic|BindingFlags.Instance)!.Invoke(fake,[visuals]);
+            Verify(visuals.GetNode<AnimationPlayer>("AnimationPlayer").CurrentAnimation=="idle","actual fake merchant method plays OTTO idle without Spine");
+            visuals.QueueFree(); fake.Free();
+            var shop=MegaCrit.Sts2.Core.Assets.PreloadManager.Cache.GetScene(character.MerchantAnimPath).Instantiate<NMerchantCharacter>(); tree.Root.AddChild(shop);
+            shop.PlayAnimation("relaxed_loop",true);
+            Verify(shop.GetNode<Sprite2D>("OttoMerchantVisuals/Visuals/Body/Sprite").Texture.ResourcePath=="res://OTTO/images/character/otto_combat.png","merchant uses OTTO image");
+            Verify(shop.GetNode<AnimationPlayer>("OttoMerchantVisuals/AnimationPlayer").CurrentAnimation=="idle","merchant relaxed animation maps to idle");
+            shop.QueueFree();
+            foreach(var card in new CardModel[]{ModelDb.Card<Aug>(),ModelDb.Card<PerfectHeader>(),ModelDb.Card<TakamatsuTomori>(),ModelDb.Card<ToyokawaSakiko>()}) {
+                Verify(ResourceLoader.Exists(card.PortraitPath),"portrait "+card.Id);
+                Fresh(); var c=state.CreateCard(card,owner); var text=c.GetDescriptionForPile(PileType.Hand);
+                Verify(!text.Contains("???")&&!text.Contains("{"),"localized text "+card.Id);
+            }
+            GD.Print("OTTO_RULES_UPDATE_OK: "+assertions); tree.Quit(0);
+        } catch(Exception e) { GD.PrintErr("OTTO_RULES_UPDATE_FAILED: "+e); tree.Quit(1); }
+    }
+}

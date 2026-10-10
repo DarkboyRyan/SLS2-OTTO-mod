@@ -1,0 +1,12 @@
+{
+  "version": "v0.6.103",
+  "campfire_scale_multiplier": 2,
+  "body_height": 500,
+  "companion_sizes_unchanged": true,
+  "rest_site_checks_passed": 13,
+  "sha256": {
+    "OTTO.dll": "340e4db7306d37edb51ea94bff8893022f6ba35f2643e9b3dd4e962ca4055a38",
+    "OTTO.pck": "2ce3791b55639acc15b64420463477bcd01124d81a6069563d24e13dc26783c4",
+    "OTTO.json": "6cb445f3300f5fdd2f5b345027eaf652cd82b8c0e26d94f3577bb3de353bdf26"
+  }
+}

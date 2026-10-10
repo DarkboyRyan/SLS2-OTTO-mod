@@ -1,0 +1,25 @@
+{
+  "version": "v0.6.23",
+  "card": "啊，哥我错了",
+  "image": "/Users/ryanding/Desktop/SLS2 mod/OTTO/OTTO/images/cards/bro_sorry.png",
+  "dimensions": [
+    878,
+    672
+  ],
+  "source_sha256": "00501a26a7075eddc182f49bf2a0eeaf2b47eb3776ead4fd16a2021e747d5777",
+  "checks": {
+    "source_unchanged": true,
+    "build_errors": 0,
+    "packed_texture_loaded": true,
+    "archive_verified": true,
+    "installed_files_verified": true
+  },
+  "files": {
+    "OTTO.dll": "5f349505dfd24e3a5011a6f59440eb50361b110f7df1c47ed111f9d315ade3c3",
+    "OTTO.pck": "f5807dfef92d3fb4f9c2f9e7906863c05f3cd4725da833d0dd7be8f7719a8adb",
+    "OTTO.json": "4b7951b6ba390032d6ce396e098daa92df9d4d911b461b086834a861133c503b"
+  },
+  "archive": "/Users/ryanding/Desktop/SLS2 mod/OTTO/dist/OTTO-v0.6.23.zip",
+  "archive_sha256": "35c0014184a79a2147d14dc9829dcf6c60af808d923f537a0f7b60822cef7e35",
+  "installed_backup": "/Users/ryanding/Desktop/SLS2 mod/.backups/installed-before-bro-sorry-art-2026-10-09"
+}

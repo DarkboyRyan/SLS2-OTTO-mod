@@ -1,0 +1,69 @@
+using Godot;
+using MegaCrit.Sts2.Core.Modding;
+using MegaCrit.Sts2.Core.Models;
+using MegaCrit.Sts2.Core.Nodes;
+using MegaCrit.Sts2.Core.Nodes.Rooms;
+using MegaCrit.Sts2.Core.Nodes.Combat;
+using MegaCrit.Sts2.Core.Combat;
+using MegaCrit.Sts2.Core.Runs;
+using MegaCrit.Sts2.Core.Rooms;
+using MegaCrit.Sts2.Core.Entities.Cards;
+using MegaCrit.Sts2.Core.Commands;
+using MegaCrit.Sts2.Core.Saves;
+using MegaCrit.Sts2.Core.TestSupport;
+using OttoMod;
+
+// 完整场景验收：保留真实UI、动画、能量支付、动作队列，且关闭TestMode。
+[ModInitializer(nameof(Initialize))]
+public static class SceneProbe
+{
+    public static void Initialize() => Callable.From(Check).CallDeferred();
+    private static async Task Step(string name, Task task)
+    {
+        GD.Print("OTTO_SCENE_BEGIN " + name);
+        if (await Task.WhenAny(task, Task.Delay(30000)) != task) throw new TimeoutException(name);
+        await task;
+        GD.Print("OTTO_SCENE_END " + name);
+    }
+    private static async Task Until(string name, Func<bool> condition)
+    {
+        var start=DateTime.UtcNow;
+        var tree=(SceneTree)Engine.GetMainLoop();
+        while(!condition())
+        {
+            if ((DateTime.UtcNow-start).TotalSeconds>20) throw new TimeoutException(name);
+            await tree.ToSignal(tree,SceneTree.SignalName.ProcessFrame);
+        }
+    }
+    private static async void Check()
+    {
+        var tree=(SceneTree)Engine.GetMainLoop();
+        try
+        {
+            for(int i=0;i<240;i++) await tree.ToSignal(tree,SceneTree.SignalName.ProcessFrame);
+            TestMode.IsOn=false;
+            foreach(var key in new[]{"shuffle_ftue","combat_rules_ftue","combat_energy_ftue","card_play_ftue"}) SaveManager.Instance.MarkFtueAsComplete(key);
+            var acts=ModelDb.ActsByIndex.Select(a=>a[0]).ToArray();
+            var runTask=NGame.Instance!.StartNewSingleplayerRun(ModelDb.Character<OttoCharacter>(),false,acts,[],"OTTO-PLAY-FREEZE",default);
+            await Step("start real run",runTask);
+            var run=await runTask;
+            await Step("enter combat",RunManager.Instance.EnterRoomDebug(RoomType.Monster,showTransition:false));
+            await Until("combat play phase",()=>CombatManager.Instance.IsInProgress && run.Players[0].PlayerCombatState!.Hand.Cards.Count>=5);
+            var owner=run.Players[0]; var state=owner.Creature.CombatState!;
+            await Until("queue idle",()=>!RunManager.Instance.ActionExecutor.IsRunning);
+            var enemy=state.HittableEnemies.First();
+            var card=owner.PlayerCombatState!.Hand.Cards.OfType<OttoStrike>().FirstOrDefault();
+            if(card is null) { card=state.CreateCard<OttoStrike>(owner); await CardPileCmd.AddGeneratedCardToCombat(card,PileType.Hand,owner); }
+            int hp=enemy.CurrentHp; int energy=owner.PlayerCombatState.Energy;
+            GD.Print($"OTTO_SCENE_STRIKE allowed={card.CanPlay(out var why,out var preventer)} reason={why} preventer={preventer} target={card.IsValidTarget(enemy)} energy={energy}");
+            bool finished=false; card.Played+=()=>finished=true;
+            if(!card.TryManualPlay(enemy)) throw new Exception("Strike manual enqueue refused");
+            await Until("strike played callback",()=>finished);
+            GD.Print($"OTTO_SCENE_STRIKE_OK damage={hp-enemy.CurrentHp} energySpent={energy-owner.PlayerCombatState.Energy} pile={card.Pile?.Type}");
+            if(hp-enemy.CurrentHp!=6||energy-owner.PlayerCombatState.Energy!=1||card.Pile?.Type!=PileType.Discard) throw new Exception("Unexpected strike result");
+            GD.Print("OTTO_SCENE_OK");
+        }
+        catch(Exception e) { GD.PrintErr("OTTO_SCENE_FAILED: "+e); }
+        finally { tree.Quit(); }
+    }
+}

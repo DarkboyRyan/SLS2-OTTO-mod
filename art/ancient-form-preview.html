@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>OTTO · 古神形态</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#15151d;color:#ece4d5;font:16px system-ui}main{max-width:1000px;margin:30px auto;padding:0 24px}small{color:#ba96dc;letter-spacing:.12em}h1{font-size:32px;font-weight:550;margin:12px 0}p{color:#bcb6bd;line-height:1.7}canvas{display:block;width:100%;border:1px solid #51455b;border-radius:12px;margin:24px 0}nav{display:flex;gap:10px;flex-wrap:wrap}button{font:inherit;color:#ede5d8;background:#292430;border:1px solid #655071;border-radius:8px;padding:10px 18px;cursor:pointer}button[aria-pressed=true]{background:#755483;border-color:#b495c3}#state{color:#dcc1ec;min-height:30px}.note{font-size:13px;color:#938b98}
+</style>
+<main><small>OTTO · v0.4.0</small><h1>古神降临</h1><p>进入时清空古神值，形态期间免疫伤害、伤害翻倍，并持续左右摆动。</p><nav><button id="ancient" aria-pressed="true">古神形态</button><button id="normal" aria-pressed="false">普通形态</button><button id="companions" aria-pressed="true">显示伙伴</button><button id="pause" aria-pressed="false">暂停摆动</button></nav><canvas width="952" height="460" aria-label="OTTO古神与普通形态的动画预览"></canvas><p id="state">持续当前与下个自己的回合，覆盖这两次敌方行动；机制直接击杀仍有效。</p><p class="note">素材及动作预览，并非实战截图。读取游戏同一份透明图片和裁切范围，主体高304像素，左右位移各12像素。</p></main>
+<script>
+// 图片只在画布中按游戏同一组参数呈现，不另行改写原图。
+const c=document.querySelector('canvas'),g=c.getContext('2d'),images={};let form=true,pets=true,paused=false,phase=0,last=0,report;
+async function load(k,path){const image=new Image();image.src=path;await image.decode();images[k]=image;}
+const keys=['xuan_dog','shan_ni_ruo','huo_xing_bao'];
+Promise.all([load('ancient','../OTTO/images/character/otto_ancient_form.png'),load('normal','../OTTO/images/character/otto_combat.png'),...keys.map(k=>load(k,`../OTTO/images/companions/${k}.png`)),fetch('zoo-asset-report.json').then(r=>r.json()).then(r=>report=r)]).then(()=>requestAnimationFrame(draw));
+function setForm(value){form=value;document.querySelector('#ancient').setAttribute('aria-pressed',value);document.querySelector('#normal').setAttribute('aria-pressed',!value);document.querySelector('#state').textContent=value?'持续当前与下个自己的回合，覆盖这两次敌方行动；机制直接击杀仍有效。':'形态结束后恢复黑金队服形象，可以重新积攒古神值。';}
+document.querySelector('#ancient').onclick=()=>setForm(true);document.querySelector('#normal').onclick=()=>setForm(false);
+document.querySelector('#companions').onclick=e=>{pets=!pets;e.target.setAttribute('aria-pressed',pets)};
+document.querySelector('#pause').onclick=e=>{paused=!paused;e.target.setAttribute('aria-pressed',paused);e.target.textContent=paused?'继续摆动':'暂停摆动'};
+function draw(now){if(last&&!paused)phase+=(now-last)/1000;last=now;
+ const bg=g.createLinearGradient(0,0,0,460);bg.addColorStop(0,'#302936');bg.addColorStop(1,'#17151e');g.fillStyle=bg;g.fillRect(0,0,952,460);
+ g.strokeStyle='#5b4c63';g.beginPath();g.moveTo(60,383);g.lineTo(890,383);g.stroke();g.fillStyle='#0d0b12aa';g.beginPath();g.ellipse(340,386,90,12,0,0,Math.PI*2);g.fill();
+ if(form){const s=-Math.cos(phase*Math.PI*2/1.3);g.save();g.translate(340+s*12,382);g.rotate(s*.055);g.drawImage(images.ancient,10,165,1095,1055,-1095*304/1055/2,-304,1095*304/1055,304);g.restore();}
+ else g.drawImage(images.normal,271,25,508,1492,288,78,104,304);
+ if(pets)keys.forEach((k,i)=>{const [x,y,w,h]=report[k].body_region,height=146,scale=height/h,foot=382+(i===1?0:10);g.drawImage(images[k],x,y,w,h,340+94+i*88-w*scale/2,foot-height,w*scale,height)});
+ requestAnimationFrame(draw);
+}
+</script></html>

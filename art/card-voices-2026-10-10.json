@@ -1,0 +1,42 @@
+{
+  "version": "v0.6.97",
+  "installed": "/Users/ryanding/Library/Application Support/Steam/steamapps/common/Slay the Spire 2/SlayTheSpire2.app/Contents/MacOS/mods/OTTO",
+  "sha256": {
+    "OTTO.dll": "ddcff2168151c3bc0a58155c3c93f280caf96571bbfd537fe4d6c747998f11d6",
+    "OTTO.pck": "7c83449e41906242edb135ed38b4626198654d4574de630063969575b58882c3",
+    "OTTO.json": "8db33cb7ecb0a84d848ff814a0d39eabc932ca73b57a316a277169210c7e675d"
+  },
+  "audio": {
+    "ji_bai": {
+      "source": "/Users/ryanding/Movies/鸡掰.mp3",
+      "lufs": "-9.80",
+      "true_peak_db": "-1.70"
+    },
+    "silver_terminal": {
+      "source": "/Users/ryanding/Movies/癌症白银.mp3",
+      "lufs": "-10.32",
+      "true_peak_db": "-1.80"
+    },
+    "pig_go": {
+      "source": "/Users/ryanding/Movies/猪鼻吧.mp3",
+      "lufs": "-8.84",
+      "true_peak_db": "-1.96"
+    },
+    "rush": {
+      "source": "/Users/ryanding/Movies/冲刺冲刺冲刺.mp3",
+      "lufs": "-8.64",
+      "true_peak_db": "-1.82"
+    },
+    "chive_pocket": {
+      "source": "/Users/ryanding/Movies/韭菜盒子.mp3",
+      "lufs": "-9.78",
+      "true_peak_db": "-2.06"
+    },
+    "halilu_tornado": {
+      "source": "/Users/ryanding/Movies/哈利路大旋风.mp3",
+      "lufs": "-6.62",
+      "true_peak_db": "-2.35"
+    }
+  },
+  "checks": "Build 0 warnings/errors; six packed clips load, finish, restart, stop, cleanup; ZIP and installed files match."
+}

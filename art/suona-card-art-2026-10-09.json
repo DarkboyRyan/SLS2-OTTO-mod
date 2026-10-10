@@ -1,0 +1,25 @@
+{
+  "version": "v0.6.17",
+  "card": "吹唢呐，嘟嘟嘟",
+  "image": "/Users/ryanding/Desktop/SLS2 mod/OTTO/OTTO/images/cards/suona.png",
+  "dimensions": [
+    768,
+    668
+  ],
+  "source_sha256": "fa3e67f5fc094cf8e1ad5dfe8d3cb8f3f4d5a07998881b37baf3890186fe925d",
+  "checks": {
+    "source_unchanged": true,
+    "build_errors": 0,
+    "packed_texture_loaded": true,
+    "archive_verified": true,
+    "installed_files_verified": true
+  },
+  "files": {
+    "OTTO.dll": "dde03d7501d3ca40fe152bd132afeaa59f411b3e749ab5376da7b1adf7bc1baf",
+    "OTTO.pck": "73b6bd124dc8532ed0c146c750c3309e4dfbbb2d58561744ac734836883a3dad",
+    "OTTO.json": "e9048a083bb8f30aa1805cff5a62d8231202966010902c3dba255877bde6c525"
+  },
+  "archive": "/Users/ryanding/Desktop/SLS2 mod/OTTO/dist/OTTO-v0.6.17.zip",
+  "archive_sha256": "f23346f6d99751a97ed1015e8d0df42bf2f1414c65559d8c40eacc08d1c8e05a",
+  "installed_backup": "/Users/ryanding/Desktop/SLS2 mod/.backups/installed-before-suona-art-2026-10-09"
+}

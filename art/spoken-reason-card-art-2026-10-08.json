@@ -1,0 +1,23 @@
+{
+  "version": "v0.6.4",
+  "card": "说的道理",
+  "image": "OTTO/images/cards/spoken_reason.png",
+  "dimensions": [
+    414,
+    368
+  ],
+  "image_sha256": "828123839ff85c9381bccc414b6db633cb2aa3afe28a1e68e7d90063505b52c9",
+  "checks": [
+    "Source PNG copied unchanged",
+    "Build succeeded, zero errors",
+    "Texture loaded successfully from exported PCK",
+    "ZIP contents verified against staged DLL, PCK and manifest"
+  ],
+  "sha256": {
+    "OTTO.dll": "74bbda47bc4d7a1169f6e68cc8c0cf9c14ed020d7d017fc878eb1e5cf886829b",
+    "OTTO.pck": "0b829e678f8eef4173493f225e2562ee6c1329de687af9640ccbb3251f306149",
+    "OTTO.json": "444f82e1a7463e83565c43b9eb292f1ac328bcec85fd9ff093bb5ed4cdb4a21f"
+  },
+  "archive_sha256": "b7a4189728721f20556f247f61bc157c7ad6e7c313090288781893e566a87d0f",
+  "backup": "/Users/ryanding/Desktop/SLS2 mod/.backups/installed-before-spoken-reason-art-2026-10-08"
+}

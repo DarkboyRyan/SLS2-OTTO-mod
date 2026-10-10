@@ -1,0 +1,23 @@
+{
+  "version": "v0.4.0",
+  "files": {
+    "OTTO.dll": {
+      "sha256": "4f4ca9fb8dc7a2867bc14bb97101a67e253adfb00605f40ac0282d7028261be3",
+      "bytes": 145920,
+      "installed_identical": true
+    },
+    "OTTO.pck": {
+      "sha256": "8bd543888d74545e769a4adce86e8cc3b2766969776f54a5d3b14d6434486a89",
+      "bytes": 6795956,
+      "installed_identical": true
+    },
+    "OTTO.json": {
+      "sha256": "decca07c5d6589712449eb2a2f4a4d095cbd2a1985d6b4339a7240d15a3d14b2",
+      "bytes": 428,
+      "installed_identical": true
+    }
+  },
+  "archive": "OTTO-v0.4.0.zip",
+  "archive_sha256": "d4d6bfa0675b580e04d7db4e0ce3c05bcad43117c85d40c18648692ccb2c8de1",
+  "temporary_probe_removed": true
+}

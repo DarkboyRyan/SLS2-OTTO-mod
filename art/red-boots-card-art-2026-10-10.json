@@ -1,0 +1,14 @@
+{
+  "version": "v0.6.54",
+  "card": "下跪的红靴子",
+  "asset": "OTTO/images/cards/kneeling_red_boots.png",
+  "source_unchanged": true,
+  "packed_texture_loaded": true,
+  "build_errors": 0,
+  "installed_files_verified": true,
+  "files": {
+    "OTTO.dll": "081f6a9ea45e6ebd09c1389227e5299d60cf9c5583c4f69e606bf57d69928369",
+    "OTTO.pck": "6b6064d1a708c2a6eb35cc116fe9327b73e64cb1770bf35b79bdf564f12b70eb",
+    "OTTO.json": "450bd0117e905f66777ea469c1fc746103c84a6877d4bba51f32163ec0b5363f"
+  }
+}

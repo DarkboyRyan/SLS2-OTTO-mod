@@ -1,0 +1,21 @@
+{
+  "version": "v0.6.52",
+  "card": "兵线进塔了",
+  "base_damage": 3,
+  "upgraded_damage": 4,
+  "build_errors": 0,
+  "engine_assertions": 20,
+  "checks": [
+    "base and upgraded damage",
+    "localized descriptions",
+    "damage to both enemies",
+    "Huo Xing Bao with 2 Dexterity: 3 hits",
+    "Dexterity not consumed"
+  ],
+  "installed_files_verified": true,
+  "files": {
+    "OTTO.dll": "b43a63e33185c845ae035c10d0bb1fc172755519d9e8b224fb2cffa39768e1dc",
+    "OTTO.pck": "917b37da43e8a7efff537deb0fdfe4f7fd2551bbe30472e7c8653d04f4a47c5a",
+    "OTTO.json": "da86fa7a9a4aa8f5eb502f0c320cab7e5b30eab70cad18aadff0f8d919ea9905"
+  }
+}

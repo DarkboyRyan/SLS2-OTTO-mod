@@ -1,0 +1,14 @@
+{
+  "version": "v0.6.66",
+  "card": "消逝の天堂，参上！",
+  "asset": "OTTO/images/cards/lost_paradise.png",
+  "source_unchanged": true,
+  "packed_texture_loaded": true,
+  "build_errors": 0,
+  "installed_files_verified": true,
+  "files": {
+    "OTTO.dll": "8bebce3d9da3e76f1c8cb91ab9cb1a5e782adf2556b925cc724ad3aa96e03b00",
+    "OTTO.pck": "547d9a7790cc9b3216e9dc3274beee571798cb21d080dd577a4127a2afc5bed1",
+    "OTTO.json": "f37797afa0d34d16d64523811881b67dc2b48a9e4dda49eafd3943869544f46f"
+  }
+}

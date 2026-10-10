@@ -1,0 +1,14 @@
+{
+  "version": "v0.6.79",
+  "card": "CCB",
+  "asset": "OTTO/images/cards/ccb.png",
+  "source_unchanged": true,
+  "packed_texture_loaded": true,
+  "build_errors": 0,
+  "installed_files_verified": true,
+  "files": {
+    "OTTO.dll": "5fca0f5bd508b6bd1290b8b67064300068f4215320a60e913f17cb672f5d1868",
+    "OTTO.pck": "ea4a7d3f8e6f11c80408b74d630c86ce1145ff6f9794e51a4cae6c4e1e189896",
+    "OTTO.json": "8dce3b352bad41c28f612faa8d045349e61f785a7f17adf5e22e9d02479e45bb"
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "version": "v0.6.21",
+  "checks": {
+    "build_errors": 0,
+    "engine_assertions": {
+      "zhs": 64,
+      "eng": 64
+    },
+    "source_images_unchanged": true,
+    "packed_textures_loaded": true,
+    "archive_verified": true,
+    "installed_files_verified": true
+  },
+  "files": {
+    "OTTO.dll": "45c4044e68843bac8fe6775e0027643dfa4375dabc56fa0cc02734d86d3c56bb",
+    "OTTO.pck": "5d540ae461e476eda8613ee63d89979797bf9aaf935513b221af1d1d123cdef9",
+    "OTTO.json": "66a668d5866bfc53c21a630ecb0fcc0778c58e891be9159fcbd832474065fbc1"
+  },
+  "archive": "/Users/ryanding/Desktop/SLS2 mod/OTTO/dist/OTTO-v0.6.21.zip",
+  "archive_sha256": "76781b435b2d7fad809760c89e5e683127a735f3cb35ddcee14c9fa9ae4dc445",
+  "installed_backup": "/Users/ryanding/Desktop/SLS2 mod/.backups/installed-before-rules-update-2026-10-09"
+}

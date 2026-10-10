@@ -1,0 +1,16 @@
+{
+  "version": "v0.6.46",
+  "asset": "OTTO/images/powers/ancient_meter.png",
+  "source": "user-provided image",
+  "sha256": "86485281a81f10437099f8f113086686ccc99c5100e86f94642c617cda4dca98",
+  "edits": "none; source bytes preserved",
+  "usage": [
+    "AncientMeterPower combat status icon",
+    "AncientMeterPower hover icon"
+  ],
+  "verification": [
+    "build: 0 warnings, 0 errors",
+    "PCK: texture loads at 1367x1150 with alpha",
+    "installed files match dist"
+  ]
+}

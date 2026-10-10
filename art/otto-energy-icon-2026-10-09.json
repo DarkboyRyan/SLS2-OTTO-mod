@@ -1,0 +1,18 @@
+{
+  "version": "v0.6.43",
+  "asset": "OTTO/images/ui/otto_energy.png",
+  "source": "user-provided clipboard image",
+  "source_sha256": "86485281a81f10437099f8f113086686ccc99c5100e86f94642c617cda4dca98",
+  "source_width": 1367,
+  "source_height": 1150,
+  "output_sha256": "1ecd9abf03dd45d2eb1fc362d1b6ab7efb203fa6891b4d9e013faffc3bb70a88",
+  "output_width": 512,
+  "output_height": 430,
+  "edits": "proportional downscale only; transparency preserved",
+  "usage": [
+    "card cost icon",
+    "inline card energy icon",
+    "inline relic energy icon",
+    "combat energy counter"
+  ]
+}

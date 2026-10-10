@@ -1,0 +1,15 @@
+{
+  "tool": "built-in image_gen",
+  "source": "用户提供的三张参考图；2026-09-22 为 OTTO Mod 生成和编辑",
+  "assets": {
+    "xuan_dog": "exec-3e989904-b174-427c-ab49-60387c2daf89.png",
+    "shan_ni_ruo": "exec-57a943e3-78c6-40e3-a55a-5bed62dee0e0.png",
+    "huo_xing_bao": "exec-8fdbfb6b-2ac8-4fce-b6b2-3ae217323420.png"
+  },
+  "notes": "火星包按用户补充要求保留卫生胡，帽子正面使用白底红圆的日本国旗；中间草稿不进入发布包。",
+  "prompts": {
+    "dog": "Use case: stylized-concept. Production transparent full-body 2D companion sprite for a dark fantasy card battler, an amusing small mascot called 炫狗. Image 1 is identity and costume/features reference, not a background to preserve. Create a squat standing tan dog mascot with the recognizable human face from the reference, thick straight eyebrows, short black hairstyle, tan long floppy dog ears and large black dog nose, small canine body and paws. Facing right in a readable three-quarter battle idle pose, full body from ears to feet visible. Hand-painted 2D game illustration, bold clean dark contour, warm desaturated tan colors, subtle cel-painted shading, clean readable silhouette at 170 pixels tall, friendly mischievous expression. Centered single character with generous empty margin, feet near bottom, portrait canvas. Truly transparent alpha background. No green background, no ground plane, no text, no logos, no frame, no extra characters. Preserve reference facial likeness, stylize as game mascot, consistent light from upper left.",
+    "pig": "Use case: stylized-concept. Production transparent full-body 2D companion sprite for the OTTO dark fantasy card battler. Image 1 is the subject identity reference: 山泥若, preserve recognizable face, short tousled black hair, amused shouting open mouth, big white headphones and playful pink pig snout. Image 2 is STYLE reference ONLY: match its hand-painted game mascot style, bold dark contour, subtle warm cel-painted shading, large head and small body, three-quarter right facing idle standing pose, silhouette and upper-left light. Create 山泥若 as a compact chibi human gamer companion wearing dark navy T-shirt, loose charcoal trousers and sneakers, white headphones, pink pig nose as in reference. Full body, both feet visible, raised cheerful hand. Same family as image 2, at 175px game height. Single character centered on a portrait canvas with generous blank margin. TRUE TRANSPARENT ALPHA background, no backdrop/groundplane, no scene, no labels/text/logo/frame. Use the subject face of image 1, not the dog face of image 2.",
+    "mars": "编辑第一张游戏伙伴立绘，第二张是用户提供的人物造型参考。用户明确要求：在鼻下添加一个短窄、方块状的黑色卫生胡，像第二张参考中的小方块胡子；给人物戴上一顶橄榄色有帽檐的帽子，帽子正前方是日本国旗图案，即白色矩形上的一个红色实心圆。帽子与黑色耳机自然共存，露出一些棕色刘海。保留第一张的脸、眼镜、黑色耳机、橄榄绿上衣、深裤、运动鞋、竖拇指、完整全身构图和暖色手绘游戏画风。单一人物，真正透明背景，不加任何文字或额外徽章，不能裁掉帽子、头或脚。只改胡子和帽子，其余尽量不变。"
+  }
+}

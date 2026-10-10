@@ -1,0 +1,11 @@
+{
+  "version": "v0.6.88",
+  "loop": false,
+  "finished_signal_verified": true,
+  "installed_files_verified": true,
+  "files": {
+    "OTTO.dll": "7d8ef8f999e002fc868a133b4840fe11202129c0b9f5c7936f5912cfb0bc808a",
+    "OTTO.pck": "30952c736b74491516e6c18c18589684069d9e196aa093342836202d900ec7f3",
+    "OTTO.json": "6933031feab4054758e0fbe671599b44885a461c73ef7ab9ad7657cfc16e785a"
+  }
+}

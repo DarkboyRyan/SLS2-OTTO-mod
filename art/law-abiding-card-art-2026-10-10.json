@@ -1,0 +1,14 @@
+{
+  "version": "v0.6.83",
+  "card": "主播是不会干违法的事的",
+  "asset": "OTTO/images/cards/law_abiding.png",
+  "source_unchanged": true,
+  "packed_texture_loaded": true,
+  "build_errors": 0,
+  "installed_files_verified": true,
+  "files": {
+    "OTTO.dll": "f2003ba59b783c91d951c388b5b3a1e33613733dc6f79977d9adaf99a8a2984b",
+    "OTTO.pck": "a4a8b1763066eb21cf783c0b81b5984536a9e6b9c9f81bd87a7b46e9634e5908",
+    "OTTO.json": "1e79ebc43aa98dd897288ca1cf44866b96930f738e096f7075bbdd294793f127"
+  }
+}

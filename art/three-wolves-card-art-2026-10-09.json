@@ -1,0 +1,25 @@
+{
+  "version": "v0.6.10",
+  "card": "B三狼",
+  "image": "/Users/ryanding/Desktop/SLS2 mod/OTTO/OTTO/images/cards/three_wolves.png",
+  "dimensions": [
+    516,
+    286
+  ],
+  "source_sha256": "5b32c6cfc5634a2d03c89d492fa70e430e41c0573c7b9d2c8e487f2566e48ee7",
+  "checks": {
+    "source_unchanged": true,
+    "build_errors": 0,
+    "packed_texture_loaded": true,
+    "archive_verified": true,
+    "installed_files_verified": true
+  },
+  "files": {
+    "OTTO.dll": "d26866246bf313e5bdb26a56613f7889af363b31f955ec231f3d0900caeb75bd",
+    "OTTO.pck": "7f913d7ff89b81cea79d55c3582098b11e2b51280ae50a8fb37af360f8d687eb",
+    "OTTO.json": "5033e1e89968bf70b24d4194ecd49a48aff5e978447c0e89dcfd7b65fa403e2f"
+  },
+  "archive": "/Users/ryanding/Desktop/SLS2 mod/OTTO/dist/OTTO-v0.6.10.zip",
+  "archive_sha256": "a2b3984c10806e16da83738bf636d620d28a42d60e9747e558e6ab63985b5ee7",
+  "installed_backup": "/Users/ryanding/Desktop/SLS2 mod/.backups/installed-before-three-wolves-art-2026-10-09"
+}

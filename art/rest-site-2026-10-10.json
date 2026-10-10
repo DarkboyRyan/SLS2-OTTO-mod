@@ -1,0 +1,12 @@
+{
+  "version": "v0.6.101",
+  "rest_model": "existing otto_ancient_body.tres (说的道理)",
+  "companions": "xuan_dog,shan_ni_ruo,huo_xing_bao below model",
+  "abandon_quote": "otto退役了",
+  "checks": "13 real engine assertions: native scene conversion, transparent texture, all companions, hitbox, flip, idle, end quote, history quote, other character unchanged; build zero warnings/errors",
+  "sha256": {
+    "OTTO.dll": "fdca54120d066499e88081e7a452849d7e2140dae2c00a70c0cf3881f2e73b0a",
+    "OTTO.pck": "a525e95f518ef9e6c0c83cb603abb39a1e66a3dfafb92c82d72ed0930f8d58a7",
+    "OTTO.json": "3f4a23621a846fd30aef86563dd56676f1ddfeb1f9a79210d3ad2560c5c652f0"
+  }
+}

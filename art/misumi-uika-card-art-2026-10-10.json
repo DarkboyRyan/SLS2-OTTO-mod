@@ -1,0 +1,14 @@
+{
+  "version": "v0.6.59",
+  "card": "三角初华-official",
+  "asset": "OTTO/images/cards/misumi_uika.png",
+  "source_unchanged": true,
+  "packed_texture_loaded": true,
+  "build_errors": 0,
+  "installed_files_verified": true,
+  "files": {
+    "OTTO.dll": "e9d97bb16dec8850048a021632a119e0c9ba429e4e728bd35e58ea624f9fe9c1",
+    "OTTO.pck": "202deeb62e9caf87585329fc770d0fed577382e00de6bcca0a4954a7d3730da8",
+    "OTTO.json": "d56bfbcf14bdd5a353b1ade022e72be06093ef8288a878e75c8b66221b0f3ef7"
+  }
+}

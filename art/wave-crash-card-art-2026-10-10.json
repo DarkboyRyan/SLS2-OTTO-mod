@@ -1,0 +1,16 @@
+{
+  "version": "v0.6.78",
+  "card": "兵线进塔了",
+  "asset": "OTTO/images/cards/wave_crash.png",
+  "source_unchanged": true,
+  "packed_texture_loaded": true,
+  "base_damage": 3,
+  "upgraded_damage": 4,
+  "build_errors": 0,
+  "installed_files_verified": true,
+  "files": {
+    "OTTO.dll": "23237e5e5c46e9914820b580b81dcd843bf26c3a2d9fd54040c8345881d41e78",
+    "OTTO.pck": "939f2491e37726c04bf6a11808441d38f5675fa3f60680533ce742f7141663bf",
+    "OTTO.json": "87888df19375007a7ddd6646745deb38cd73040689f978d9f06e9fb25d935d67"
+  }
+}

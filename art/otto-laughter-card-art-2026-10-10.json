@@ -1,0 +1,14 @@
+{
+  "version": "v0.6.82",
+  "card": "电棍笑传",
+  "asset": "OTTO/images/cards/otto_laughter.png",
+  "source_unchanged": true,
+  "packed_texture_loaded": true,
+  "build_errors": 0,
+  "installed_files_verified": true,
+  "files": {
+    "OTTO.dll": "03e27722f58323c9405e1885aeafe222e3455f0494c3cf43a5270f54e02e48da",
+    "OTTO.pck": "fa3f5ba31713657dc2e382105e82f57b59d35292e5378343d50cf556e7428422",
+    "OTTO.json": "052414d33d1ff816977a717033c730022e0c538f8a12293f4016eb599fcc3b77"
+  }
+}

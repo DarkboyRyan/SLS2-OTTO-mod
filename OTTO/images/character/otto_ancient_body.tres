@@ -1,0 +1,7 @@
+[gd_resource type="AtlasTexture" load_steps=2 format=3]
+
+[ext_resource type="Texture2D" path="res://OTTO/images/character/otto_ancient_form.png" id="1"]
+
+[resource]
+atlas = ExtResource("1")
+region = Rect2(10, 165, 1095, 1055)

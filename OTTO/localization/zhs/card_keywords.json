@@ -1,0 +1,8 @@
+{
+  "OTTOMOD-OTTO_CAN.title": "易拉罐",
+  "OTTOMOD-OTTO_CAN.description": "手动从手牌两端打出，结算后抽1张牌。自动出牌不触发。",
+  "OTTOMOD-OTTO_HAND.title": "手",
+  "OTTOMOD-OTTO_HAND.description": "两种不同名字的手互相触发本回合连招。同名手不会触发彼此。",
+  "OTTOMOD-OTTO_DELAYED.title": "下回合可用",
+  "OTTOMOD-OTTO_DELAYED.description": "本回合无法打出，直到你的下个回合开始。"
+}

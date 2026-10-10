@@ -1,0 +1,15 @@
+{
+  "version": "v0.6.86",
+  "card": "all in！all in!",
+  "asset": "OTTO/images/cards/all_in.png",
+  "source_unchanged": true,
+  "packed_texture_loaded": true,
+  "build_errors": 0,
+  "installed_files_verified": true,
+  "all_regular_cards_have_custom_art": true,
+  "files": {
+    "OTTO.dll": "a4089f5cd83be6a1e56362f5342314bf1825c94a87039953e8113910d085eea0",
+    "OTTO.pck": "40fb30f45954335ccda20c3261e41584e3d9def16450b080f30382a3f75a84d6",
+    "OTTO.json": "c341a399c2353ad5bbfe2ca00c0d67e50e3b21f1de46ee71f0453001a27c495a"
+  }
+}

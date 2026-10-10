@@ -1,0 +1,25 @@
+{
+  "version": "v0.6.22",
+  "card": "你马卖皮",
+  "image": "/Users/ryanding/Desktop/SLS2 mod/OTTO/OTTO/images/cards/ma_mai_pi.png",
+  "dimensions": [
+    88,
+    84
+  ],
+  "source_sha256": "6ad8a4fc5d6282102c6e952afd91a03d3ac5bd1cb03ff60501edc27860e5004b",
+  "checks": {
+    "source_unchanged": true,
+    "build_errors": 0,
+    "packed_texture_loaded": true,
+    "archive_verified": true,
+    "installed_files_verified": true
+  },
+  "files": {
+    "OTTO.dll": "21aee2c18b2b261dc5dd769906ee4c15b4dccbc5508f10c911b6905be801b08f",
+    "OTTO.pck": "79c130699c5a60804ff77aedc545e3cb081d4c834789acf27b1862d9451880c1",
+    "OTTO.json": "6d0257dd31f8a84de374ca0a7e59694b95b3c23160c9288ab874afd83503f62f"
+  },
+  "archive": "/Users/ryanding/Desktop/SLS2 mod/OTTO/dist/OTTO-v0.6.22.zip",
+  "archive_sha256": "87eb9f9cc339aec9957e66c90b76e65fcff02d3795cbdd1c1bc0632d94b3f5f0",
+  "installed_backup": "/Users/ryanding/Desktop/SLS2 mod/.backups/installed-before-ma-mai-pi-art-2026-10-09"
+}

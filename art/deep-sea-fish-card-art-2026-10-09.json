@@ -1,0 +1,15 @@
+{
+  "version": "v0.6.37",
+  "card": "深海鱼",
+  "asset": "OTTO/images/cards/deep_sea_fish.png",
+  "source": "user-provided clipboard image",
+  "source_sha256": "51b0991a558d40b4613cb5581c3f88f063126142a702720866af4bee8faf0f10",
+  "width": 1212,
+  "height": 798,
+  "edits": "none",
+  "usage": [
+    "normal card portrait",
+    "upgraded card portrait",
+    "enlarged card preview"
+  ]
+}

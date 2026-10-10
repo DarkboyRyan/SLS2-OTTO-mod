@@ -1,0 +1,22 @@
+{
+  "version": "v0.6.98",
+  "installed": "/Users/ryanding/Library/Application Support/Steam/steamapps/common/Slay the Spire 2/SlayTheSpire2.app/Contents/MacOS/mods/OTTO",
+  "sha256": {
+    "OTTO.dll": "b387a8a77cc6ae84f5412b6c9d9c1048ef14a251476ddc7156488fbc818f7cb5",
+    "OTTO.pck": "4616905e24b8cb47457a83d895465b73fb3e1a6fd9115841b8cc4cfb4a772255",
+    "OTTO.json": "3bb4dcaa9f11e880d6487d2cde72b721ccd42687ff59177d504242217a5d2b5c"
+  },
+  "audio": {
+    "input_i": "-8.09",
+    "input_tp": "-2.14",
+    "input_lra": "1.20",
+    "input_thresh": "-18.32",
+    "output_i": "-6.77",
+    "output_tp": "-1.50",
+    "output_lra": "0.00",
+    "output_thresh": "-16.94",
+    "normalization_type": "dynamic",
+    "target_offset": "-1.23"
+  },
+  "checks": "Build 0 warnings/errors; packed death animation held and revive reset; death clip finished once; isolated engine 52 rules assertions; installed and ZIP contents match."
+}

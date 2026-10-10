@@ -1,0 +1,14 @@
+{
+  "version": "v0.6.62",
+  "card": "安奈师傅",
+  "asset": "OTTO/images/cards/an_nai_master.png",
+  "source_unchanged": true,
+  "packed_texture_loaded": true,
+  "build_errors": 0,
+  "installed_files_verified": true,
+  "files": {
+    "OTTO.dll": "89bf9f701638dcf12e476352ca943bb5be9a0fb202a2ab954a1bba2ee61a12ca",
+    "OTTO.pck": "5988afa798792a39319cc1cc4ee33a6638ab9eadcd8f887e5ab6da3682894ef8",
+    "OTTO.json": "f4991f4e8719a1d652d14d289b2d4d61ef268a3f1f1e9691908b8cd698cb9bd4"
+  }
+}

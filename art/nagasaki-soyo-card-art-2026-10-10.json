@@ -1,0 +1,14 @@
+{
+  "version": "v0.6.60",
+  "card": "长崎素世-official",
+  "asset": "OTTO/images/cards/nagasaki_soyo.png",
+  "source_unchanged": true,
+  "packed_texture_loaded": true,
+  "build_errors": 0,
+  "installed_files_verified": true,
+  "files": {
+    "OTTO.dll": "d2121668a43271352caf6bca96ee4203a5d89e640da2525a31163c5df2ad999b",
+    "OTTO.pck": "e123b407d474e7cfae874d1ab3b36949375f1243003a5b47dd67d751df57b63a",
+    "OTTO.json": "011779c77852fc1f7b5e168ffdbcce589f68fd1d877f7284a53041fb68436b98"
+  }
+}

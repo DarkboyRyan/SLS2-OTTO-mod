@@ -1,0 +1,19 @@
+{
+  "version": "v0.6.94",
+  "cards": [
+    "OTTO_RUSH",
+    "OTTO_ONE_HAND",
+    "OTTO_AMINO_HAND"
+  ],
+  "languages": [
+    "zhs",
+    "eng"
+  ],
+  "packed_text_verified": true,
+  "installed_files_verified": true,
+  "files": {
+    "OTTO.dll": "f996f04a958d34d9109e860e0ba518b1f83288f595c80c8ebb8a52dd4f9dcc93",
+    "OTTO.pck": "d631bc21572863eb0810acc7b67b388d3d6804dd18a7c44e889678fbe86291d1",
+    "OTTO.json": "e9e2562a6985c61cd2958847b206effa7a17f0ce5a4b19172ca96e82ddb948c9"
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "version": "v0.6.87",
+  "asset": "OTTO/audio/otto_select.ogg",
+  "duration_seconds": 6.078667,
+  "source": "2026-10-10 12-25-53.mp3 (MP4 container / AAC audio)",
+  "packed_audio_loop_stop_cleanup_checked": true,
+  "build_errors": 0,
+  "installed_files_verified": true,
+  "zip": "dist/v1.0.0.zip",
+  "files": {
+    "OTTO.dll": "df13dc4d1ed50c705e9a40c4920f29d23cf5c7a3eb3ca1a9d7ac247d354bc626",
+    "OTTO.pck": "7c349a4e9a1a84d3eb1da205ddb94733e8bd3f1fa1991817e46a8f90dad5cdd2",
+    "OTTO.json": "2cc8a4545aaacc054b1fa0bcb2276389730f18bd0cda1a87656f1b5f4989eab2"
+  }
+}

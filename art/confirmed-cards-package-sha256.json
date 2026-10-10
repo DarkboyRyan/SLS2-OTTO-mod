@@ -1,0 +1,27 @@
+{
+  "version": "v0.5.0",
+  "files": {
+    "OTTO.dll": {
+      "sha256": "b9b04d3c0575f31f8fa620d930dd6ae10b7db84d69e0f40f9488fb2b9b40b901",
+      "bytes": 164864,
+      "installedMatches": true
+    },
+    "OTTO.pck": {
+      "sha256": "384b0edf8fb9460121e92c4278202c0a63e14ae064c339ba28517c873084a7b5",
+      "bytes": 6801796,
+      "installedMatches": true
+    },
+    "OTTO.json": {
+      "sha256": "7f14e7506441d9bf94de767e33f9b540ad40e5d667e3742444219b261f9dda9a",
+      "bytes": 440,
+      "installedMatches": true
+    }
+  },
+  "zip": {
+    "file": "OTTO-v0.5.0.zip",
+    "sha256": "fc53b70e10b332c24ab24fec0a635f9f0aa8ad727c34cf3ae3d3670d2dc6baba",
+    "integrity": "OK"
+  },
+  "installedDirectory": "/Users/ryanding/Library/Application Support/Steam/steamapps/common/Slay the Spire 2/SlayTheSpire2.app/Contents/MacOS/mods/OTTO",
+  "backupDirectory": "/Users/ryanding/Desktop/SLS2 mod/.backups/mod-v0.4.0/installed"
+}

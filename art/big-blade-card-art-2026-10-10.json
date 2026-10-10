@@ -1,0 +1,14 @@
+{
+  "version": "v0.6.72",
+  "card": "她的大刀我很怕！",
+  "asset": "OTTO/images/cards/big_blade.png",
+  "source_unchanged": true,
+  "packed_texture_loaded": true,
+  "build_errors": 0,
+  "installed_files_verified": true,
+  "files": {
+    "OTTO.dll": "3f7f5ccb777a6ccf3c12c94ba1f59e105e58b5ab5b4237fcde8dc2bdb0029c29",
+    "OTTO.pck": "601470e3dad717cb6e72adf4915e182511d7b6655990043d465d66ce9941b4af",
+    "OTTO.json": "1d37b1ab56f3b90edd6ba229b8552096c34a84e307422983b81f47e591029567"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "version": "v0.6.32",
+  "card": "永远的神",
+  "checks": {
+    "build_errors": 0,
+    "source_unchanged": true,
+    "packed_texture_loaded": true,
+    "archive_verified": true,
+    "installed_files_verified": true
+  },
+  "files": {
+    "OTTO.dll": "ddf098f7a47e5903b182d18b1d47e2d794ed2cbb249a8d02f62669526d30b6a3",
+    "OTTO.pck": "f785c24f6505a3e91c21d6dd046050c21a65c092cff42311d8acd69c4a9f7b23",
+    "OTTO.json": "3d641cc65641b1577d21d845a76882a7e95715d61765e607b6f3d359393bd9f9"
+  },
+  "installed_backup": "/Users/ryanding/Desktop/SLS2 mod/.backups/installed-before-eternal-god-art-2026-10-09"
+}

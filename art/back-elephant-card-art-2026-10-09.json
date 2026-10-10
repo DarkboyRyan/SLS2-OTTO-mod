@@ -1,0 +1,17 @@
+{
+  "version": "v0.6.28",
+  "card": "踩背大象",
+  "checks": {
+    "build_errors": 0,
+    "source_unchanged": true,
+    "packed_texture_loaded": true,
+    "archive_verified": true,
+    "installed_files_verified": true
+  },
+  "files": {
+    "OTTO.dll": "6e8f9ee2fce91b17ba8cee93ee1b97610c8ed9f9eef5c5353e5de8b76bec61b8",
+    "OTTO.pck": "79c8570f104d54e3aa9569368cdf3eb40d9c7d9b6dbb7bc8aa98a4c3db64ca4e",
+    "OTTO.json": "386bf2ec787d87494118cc74129f1f63cbe14a19c14e3568292eb6a7d35e2393"
+  },
+  "installed_backup": "/Users/ryanding/Desktop/SLS2 mod/.backups/installed-before-back-elephant-art-2026-10-09"
+}
