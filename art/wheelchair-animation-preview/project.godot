@@ -1,0 +1,11 @@
+config_version=5
+[application]
+config/name="OTTO 轮椅动作预览"
+[display]
+window/size/viewport_width=1280
+window/size/viewport_height=820
+window/size/window_width_override=1280
+window/size/window_height_override=820
+[rendering]
+renderer/rendering_method="gl_compatibility"
+textures/default_filters/use_nearest_mipmap_filter=false

@@ -77,8 +77,18 @@ internal static class OttoSelectMusicSelectionPatch
 {
     [HarmonyPostfix]
     private static void Postfix(NCharacterSelectScreen __instance,
-        NCharacterSelectButton charSelectButton, CharacterModel characterModel) =>
-        OttoSelectMusic.Select(__instance, characterModel is OttoCharacter &&
+        NCharacterSelectButton charSelectButton
+#if !STS2_BETA
+        , CharacterModel characterModel
+#endif
+        ) =>
+        // beta 从选人按钮读取角色，正式版仍使用原回调参数。
+        OttoSelectMusic.Select(__instance,
+#if STS2_BETA
+            charSelectButton.Character is OttoCharacter &&
+#else
+            characterModel is OttoCharacter &&
+#endif
             !charSelectButton.IsLocked && !charSelectButton.IsRandom);
 }
 

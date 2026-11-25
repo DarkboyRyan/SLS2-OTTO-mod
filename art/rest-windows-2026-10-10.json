@@ -1,0 +1,11 @@
+{
+  "version": "v0.6.104",
+  "automatic_scene_conversion_disabled_for_test": true,
+  "real_engine_checks_passed": 17,
+  "native_windows_tested": false,
+  "sha256": {
+    "OTTO.dll": "1c2a9db1f9db6e80997e078b7406054f5b20fedeaad21d137d6a863708527bc6",
+    "OTTO.pck": "0535700816b94e2a6b12adaa0a97510efae36c52e30143757fa1158ae928e333",
+    "OTTO.json": "0622006439a35ac83795d6591cae72016376be4fe1c8f4d622b1725e63ccc44c"
+  }
+}

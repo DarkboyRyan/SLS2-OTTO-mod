@@ -119,7 +119,7 @@ public static class OttoIntentCopy
             .Select(i => (Damage: i.DamageCalc!(), Hits: i.Repeats)).ToArray();
         var effects = SupportEffects(target.Monster);
         foreach (var attack in attacks)
-            await DamageCmd.Attack(attack.Damage).FromCard(card).WithHitCount(attack.Hits).Targeting(target).Execute(ctx);
+            await DamageCmd.Attack(attack.Damage).FromOttoCard(card, play).WithHitCount(attack.Hits).Targeting(target).Execute(ctx);
         if (effects is null) return;
         if (effects.Block > 0) await CreatureCmd.GainBlock(card.Owner.Creature, effects.Block, ValueProp.Move, play);
         if (effects.Strength != 0) await PowerCmd.Apply<StrengthPower>(ctx, card.Owner.Creature, effects.Strength, card.Owner.Creature, card);

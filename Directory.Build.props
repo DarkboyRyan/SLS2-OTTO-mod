@@ -1,6 +1,7 @@
 <Project>
+  <!-- 本机配置不提交；可复制 Directory.Build.local.props.example 后修改。 -->
+  <Import Project="Directory.Build.local.props" Condition="Exists('Directory.Build.local.props')" />
   <PropertyGroup>
-    <!-- 本机 MegaDot 4.5.1 的可执行文件；换电脑时修改此路径。 -->
-    <GodotPath>/Users/ryanding/Applications/MegaDot.app/Contents/MacOS/Godot</GodotPath>
+    <GodotPath Condition="'$(GodotPath)' == ''">$(OTTO_GODOT_PATH)</GodotPath>
   </PropertyGroup>
 </Project>

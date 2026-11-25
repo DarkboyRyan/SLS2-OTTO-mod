@@ -1,0 +1,60 @@
+using Godot;
+using MegaCrit.Sts2.Core.Combat;
+using MegaCrit.Sts2.Core.Commands;
+using MegaCrit.Sts2.Core.Entities.Cards;
+using MegaCrit.Sts2.Core.Models;
+using MegaCrit.Sts2.Core.Models.Powers;
+using MegaCrit.Sts2.Core.MonsterMoves.Intents;
+using MegaCrit.Sts2.Core.ValueProps;
+using OttoMod;
+public static partial class Probe
+{
+    private static async Task ExtraCheck()
+    {
+        Fresh();
+        var all = ModelDb.CardPool<OttoCardPool>().AllCards.ToArray();
+        GD.Print("OTTO_BETA_CARD_COUNT="+all.Length);
+        Verify(all.Length==87,"87 registered cards");
+        foreach(var canonical in all) {
+            var c=state.CreateCard(canonical,owner);
+            Verify(!c.Title.Contains("OTTO_"),"title "+c.Id);
+            Verify(ResourceLoader.Exists(c.PortraitPath),"portrait "+c.Id);
+            foreach(bool up in new[]{false,true}) {
+                if(up && c.MaxUpgradeLevel>0) c.UpgradeInternal();
+                var d=c.GetDescriptionForPile(PileType.Hand);
+                Verify(!d.Contains("???")&&!d.Contains("{"),"description "+c.Id);
+            }
+        }
+        Fresh(); await AncientForm.Enter(Ctx,New<AncientHam>());
+        int hp=enemy.CurrentHp; await Play(New<OttoStrike>(),enemy);
+        Verify(hp-enemy.CurrentHp==12,"ancient actual doubled Strike");
+        hp=owner.Creature.CurrentHp;
+        await DamageCmd.Attack(12).FromMonster(enemy.Monster!).WithHitCount(3).Execute(Ctx);
+        Verify(owner.Creature.CurrentHp==hp,"ancient blocks all attack hits");
+        await StartTurn(); await DamageCmd.Attack(7).FromMonster(enemy.Monster!).Execute(Ctx);
+        Verify(owner.Creature.CurrentHp==hp-7,"ancient expires damage cap");
+        Fresh(); await Zoo.Summon(Ctx,New<CallFriends>(),1); await Play(New<TengYangWorld>());
+        hp=owner.Creature.CurrentHp;
+        await DamageCmd.Attack(12).FromMonster(enemy.Monster!).WithHitCount(3).Execute(Ctx);
+        Verify(owner.Creature.CurrentHp==hp,"pig guard blocks all three hits");
+        Verify(owner.Creature.HasPower<PigPrisonPower>()&&!owner.Creature.HasPower<ShanNiRuoPower>(),"pig imprisoned after guard");
+        await DamageCmd.Attack(7).FromMonster(enemy.Monster!).Execute(Ctx);
+        Verify(owner.Creature.CurrentHp==hp-7,"pig guard consumed");
+        Fresh(); var original=enemy.Monster!.NextMove.Intents.ToArray();
+        SetMove(enemy,original.Concat(new AbstractIntent[]{new BuffIntent()}).ToArray());
+        Verify(OttoIntentCopy.CanCopy(enemy),"mixed attack and unknown buff selectable with two enemies");
+        hp=enemy.CurrentHp; var otherHp=enemy2.CurrentHp;
+        await Play(New<TheirOwnWay>(),enemy);
+        Verify(enemy.CurrentHp<hp&&enemy2.CurrentHp==otherHp,"intent copy affects selected target only");
+        Fresh(); await Play(New<OttoLaughter>());
+        var strike=New<OttoStrike>(); strike.AddKeyword(OttoKeywords.Can); DrawPile(5);
+        hp=enemy.CurrentHp; await Play(strike,enemy);
+        Verify(hp-enemy.CurrentHp==12&&strike.Pile?.Type==PileType.Discard,"Can attack replay twice and original discarded");
+        Fresh(); await Zoo.Summon(Ctx,New<CallFriends>(),0); await Zoo.Summon(Ctx,New<CallFriends>(),2);
+        Verify(Zoo.Count(owner.Creature)==1&&owner.Creature.HasPower<HuoXingBaoPower>(),"normal summon replaces pet");
+        await Play(New<ZooBond>()); Verify(Zoo.Count(owner.Creature)==3,"bond coexists three pets");
+        // 正常死亡走游戏的死亡钩子，验证 beta 新增来源牌参数不会中断清理。
+        await CreatureCmd.Kill(owner.Creature); Verify(owner.Creature.IsDead,"death callback completes");
+        GD.Print("OTTO_BETA_EXTRA_OK");
+    }
+}

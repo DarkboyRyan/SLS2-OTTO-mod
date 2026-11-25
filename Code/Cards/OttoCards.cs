@@ -20,7 +20,7 @@ public sealed class OttoStrike() : OttoCard(1, CardType.Attack, CardRarity.Basic
     protected override HashSet<CardTag> CanonicalTags => [CardTag.Strike];
     protected override IEnumerable<DynamicVar> CanonicalVars => [new DamageVar(6, ValueProp.Move)];
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play) =>
-        await DamageCmd.Attack(DynamicVars.Damage.BaseValue).FromCard(this).Targeting(play.Target!).Execute(ctx);
+        await DamageCmd.Attack(DynamicVars.Damage.BaseValue).FromOttoCard(this, play).Targeting(play.Target!).Execute(ctx);
     protected override void OnUpgrade() => DynamicVars.Damage.UpgradeValueBy(3);
 }
 
@@ -66,7 +66,7 @@ public sealed class OttoRush() : OttoCard(1, CardType.Attack, CardRarity.Common,
     protected override IEnumerable<IHoverTip> ExtraHoverTips => Zoo.HoverTips;
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
     {
-        await DamageCmd.Attack(DynamicVars.CalculatedDamage).FromCard(this).Targeting(play.Target!).Execute(ctx);
+        await DamageCmd.Attack(DynamicVars.CalculatedDamage).FromOttoCard(this, play).Targeting(play.Target!).Execute(ctx);
     }
     protected override void OnUpgrade() => DynamicVars.ExtraDamage.UpgradeValueBy(3);
 }
@@ -111,7 +111,7 @@ public sealed class ThreeWolves() : OttoCard(2, CardType.Attack, CardRarity.Comm
     public override IEnumerable<CardKeyword> CanonicalKeywords => [CardKeyword.Retain];
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play) =>
         await DamageCmd.Attack(DynamicVars.Damage.BaseValue).WithHitCount(DynamicVars.Repeat.IntValue)
-            .FromCard(this).TargetingRandomOpponents(CombatState!).Execute(ctx);
+            .FromOttoCard(this, play).TargetingRandomOpponents(CombatState!).Execute(ctx);
     protected override void OnUpgrade() => DynamicVars.Damage.UpgradeValueBy(3);
 }
 

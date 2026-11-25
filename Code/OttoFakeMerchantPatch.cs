@@ -15,7 +15,8 @@ internal static class OttoFakeMerchantPatch
     {
         // 按人物贴图识别，只处理 OTTO，不干扰同场其他职业和商人的骨骼动画。
         var sprite = visuals.GetNodeOrNull<Sprite2D>("Visuals/Body/Sprite");
-        if (sprite?.Texture?.ResourcePath != "res://OTTO/images/character/otto_combat.png") return true;
+        if (sprite?.Texture?.ResourcePath != "res://OTTO/images/character/otto_combat.png" &&
+            !visuals.HasNode("Visuals/Body/WheelchairPresentation")) return true;
         visuals.GetNodeOrNull<AnimationPlayer>("AnimationPlayer")?.Play("idle");
         return false;
     }

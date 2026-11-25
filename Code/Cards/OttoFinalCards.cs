@@ -47,7 +47,7 @@ public sealed class AoLiAnFei() : AncientCard(1, CardType.Attack, CardRarity.Unc
     {
         bool inForm = Owner.Creature.HasPower<AncientFormPower>();
         if (inForm) await PowerCmd.Apply<VulnerablePower>(ctx, play.Target!, 2, Owner.Creature, this);
-        await DamageCmd.Attack(DynamicVars.Damage.BaseValue).FromCard(this).Targeting(play.Target!).Execute(ctx);
+        await DamageCmd.Attack(DynamicVars.Damage.BaseValue).FromOttoCard(this, play).Targeting(play.Target!).Execute(ctx);
         if (!inForm) await AncientForm.Gain(ctx, this, DynamicVars["Ancient"].BaseValue);
     }
     protected override void OnUpgrade() { DynamicVars.Damage.UpgradeValueBy(3); DynamicVars["Ancient"].UpgradeValueBy(10); }
@@ -136,7 +136,7 @@ public sealed class WaveCrash() : OttoCard(1, CardType.Attack, CardRarity.Uncomm
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
     {
         int hits = 1 + (Owner.Creature.HasPower<HuoXingBaoPower>() ? Math.Max(0, Owner.Creature.GetPowerAmount<DexterityPower>()) : 0);
-        await DamageCmd.Attack(DynamicVars.Damage.BaseValue).FromCard(this).TargetingAllOpponents(CombatState!).WithHitCount(hits).Execute(ctx);
+        await DamageCmd.Attack(DynamicVars.Damage.BaseValue).FromOttoCard(this, play).TargetingAllOpponents(CombatState!).WithHitCount(hits).Execute(ctx);
     }
     protected override void OnUpgrade() => DynamicVars.Damage.UpgradeValueBy(1);
 }
@@ -184,7 +184,7 @@ public sealed class KoreanHand() : AncientCard(2, CardType.Attack, CardRarity.Un
     protected override IEnumerable<DynamicVar> CanonicalVars => [new DamageVar(20, ValueProp.Move)];
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
     {
-        var attack = DamageCmd.Attack(DynamicVars.Damage.BaseValue).FromCard(this).Targeting(play.Target!);
+        var attack = DamageCmd.Attack(DynamicVars.Damage.BaseValue).FromOttoCard(this, play).Targeting(play.Target!);
         await attack.Execute(ctx);
         if (!attack.Results.SelectMany(r => r).Any(r => r.Receiver == play.Target && r.WasTargetKilled)) return;
         await AncientForm.Gain(ctx, this, 50);
@@ -237,7 +237,7 @@ public sealed class AtomicBomb() : OttoCard(3, CardType.Attack, CardRarity.Rare,
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
     {
         if (Zoo.Companion(Owner.Creature, 1) is not ShanNiRuoPower pig) return;
-        await DamageCmd.Attack(pig.HealAmount * DynamicVars["Multiplier"].BaseValue).FromCard(this).TargetingAllOpponents(CombatState!).Execute(ctx);
+        await DamageCmd.Attack(pig.HealAmount * DynamicVars["Multiplier"].BaseValue).FromOttoCard(this, play).TargetingAllOpponents(CombatState!).Execute(ctx);
         await Zoo.Imprison(ctx, Owner.Creature, 1, this);
     }
     protected override void OnUpgrade() => DynamicVars["Multiplier"].UpgradeValueBy(10);
@@ -312,7 +312,7 @@ public sealed class JiBai() : AncientCard(2, CardType.Attack, CardRarity.Rare, T
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
     {
         int hits = 1 + Owner.Creature.GetPowerAmount<AncientFormPower>();
-        await DamageCmd.Attack(DynamicVars.Damage.BaseValue).FromCard(this).Targeting(play.Target!).WithHitCount(hits).Execute(ctx);
+        await DamageCmd.Attack(DynamicVars.Damage.BaseValue).FromOttoCard(this, play).Targeting(play.Target!).WithHitCount(hits).Execute(ctx);
         await AncientForm.Exit(Owner.Creature);
     }
     protected override void OnUpgrade() => DynamicVars.Damage.UpgradeValueBy(10);

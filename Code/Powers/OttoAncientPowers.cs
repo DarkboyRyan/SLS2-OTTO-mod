@@ -54,7 +54,11 @@ public sealed class PigGuardPower : OttoBuff
         if (Covers(target, dealer)) intercepted = true;
         return Task.CompletedTask;
     }
+#if STS2_BETA
+    public override decimal ModifyDamageCap(Creature? target, ValueProp props, Creature? dealer, CardModel? source, CardPlay? cardPlay) =>
+#else
     public override decimal ModifyDamageCap(Creature? target, ValueProp props, Creature? dealer, CardModel? source) =>
+#endif
         Covers(target, dealer) ? 0 : decimal.MaxValue;
     public override async Task AfterAttack(PlayerChoiceContext ctx, AttackCommand command)
     {

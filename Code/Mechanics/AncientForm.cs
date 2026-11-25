@@ -1,3 +1,4 @@
+using MegaCrit.Sts2.Core.Entities.Cards;
 using BaseLib.Utils.Attributes;
 using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Commands;
@@ -103,10 +104,18 @@ public sealed class AncientFormPower : OttoBuff
         if (side == Owner.Side && participants.Contains(Owner)) await PowerCmd.Decrement(this);
     }
     // 免疫伤害在正式伤害计算阶段处理，不覆盖死亡判定，因此沙虫等直接击杀仍然有效。
+#if STS2_BETA
+    public override decimal ModifyDamageCap(Creature? target, ValueProp props, Creature? dealer, CardModel? source, CardPlay? cardPlay) =>
+#else
     public override decimal ModifyDamageCap(Creature? target, ValueProp props, Creature? dealer, CardModel? source) =>
+#endif
         target == Owner ? 0 : decimal.MaxValue;
     public override decimal ModifyHpLostAfterOstyLate(Creature target, decimal amount, ValueProp props, Creature? dealer, CardModel? source) =>
         target == Owner ? 0 : amount;
+#if STS2_BETA
+    public override decimal ModifyDamageMultiplicative(Creature? target, decimal amount, ValueProp props, Creature? dealer, CardModel? source, CardPlay? cardPlay) =>
+#else
     public override decimal ModifyDamageMultiplicative(Creature? target, decimal amount, ValueProp props, Creature? dealer, CardModel? source) =>
+#endif
         dealer == Owner && target != Owner ? 2 : 1;
 }

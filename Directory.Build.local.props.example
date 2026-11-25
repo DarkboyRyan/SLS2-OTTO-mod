@@ -1,0 +1,6 @@
+<Project>
+  <PropertyGroup>
+    <!-- 替换为本机 MegaDot 可执行文件的完整路径。 -->
+    <GodotPath>/path/to/MegaDot</GodotPath>
+  </PropertyGroup>
+</Project>

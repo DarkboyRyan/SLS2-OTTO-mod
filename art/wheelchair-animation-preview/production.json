@@ -1,0 +1,18 @@
+{
+  "status": "preview_only",
+  "game_files_modified": false,
+  "image_tool": "built-in image_gen",
+  "animation_tool": "Godot AnimationPlayer and sprite frame sequencing",
+  "design": "A",
+  "motions": {
+    "attack": "seated wheelchair windup, lift, brief airborne pause, downward slam and bounce",
+    "defend": "four hand-rim stroke poses, grip high/rear, push forward/down, release, recover"
+  },
+  "video_fps": 48,
+  "duration_seconds": 3,
+  "image_prompts_summary": {
+    "invariants": "A design face and black gold esports outfit, same chrome manual wheelchair, three quarter right facing, transparent background",
+    "attack": "lean back slightly in seat, hands grip wheel push rims, whole chair level and uncropped",
+    "defense": "4 equal aligned cells; hand near rim 11 oclock, 1 oclock, 3 oclock, release and recover; far arm follows"
+  }
+}

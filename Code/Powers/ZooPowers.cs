@@ -118,7 +118,12 @@ public abstract class ZooCompanionPower : CustomPowerModel
         ZooVisuals.Clear(Owner);
         return Task.CompletedTask;
     }
+// beta 新增死亡来源参数，清理逻辑仍只作用于真正死亡的主人。
+#if STS2_BETA
+    public override Task AfterDeath(PlayerChoiceContext ctx, Creature creature, CardModel? source, bool wasRemovalPrevented, float deathAnimLength)
+#else
     public override Task AfterDeath(PlayerChoiceContext ctx, Creature creature, bool wasRemovalPrevented, float deathAnimLength)
+#endif
     {
         if (creature == Owner && !wasRemovalPrevented) ZooVisuals.Clear(Owner);
         return Task.CompletedTask;

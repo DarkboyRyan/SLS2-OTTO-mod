@@ -48,7 +48,7 @@
   "OTTO_HALILU_TORNADO.title": "Halilu Tornado",
   "OTTO_HALILU_TORNADO.description": "Add X random {IfUpgraded:show:upgraded |}Attacks from all character pools to your Hand. They cost 0 this turn.",
   "OTTO_NONEXISTENT.title": "What Does Not Exist",
-  "OTTO_NONEXISTENT.description": "Trigger your Gun Mu or Lao Gun and Gun Mu {Repeat:diff()} times, gaining 1 or 2 Intangible per trigger respectively.",
+  "OTTO_NONEXISTENT.description": "Trigger your starting Relic {Repeat:diff()} times.",
   "OTTO_ZOO_BOND_CARD.title": "Zoo Bond",
   "OTTO_ZOO_BOND_CARD.description": "Summon all free companions.\nDifferent companions can coexist this combat, one of each kind.",
   "OTTO_SECOND_STREAM_GOAT.title": "Second-Stream GOAT",

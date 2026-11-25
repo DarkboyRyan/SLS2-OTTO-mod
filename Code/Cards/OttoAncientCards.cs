@@ -32,7 +32,7 @@ public sealed class SpokenReason() : AncientCard(1, CardType.Attack, CardRarity.
     protected override IEnumerable<DynamicVar> CanonicalVars => [new DamageVar(6, ValueProp.Move), new DynamicVar("Ancient", 10)];
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
     {
-        await DamageCmd.Attack(DynamicVars.Damage.BaseValue).FromCard(this).Targeting(play.Target!).Execute(ctx);
+        await DamageCmd.Attack(DynamicVars.Damage.BaseValue).FromOttoCard(this, play).Targeting(play.Target!).Execute(ctx);
         await AncientForm.Gain(ctx, this, DynamicVars["Ancient"].BaseValue);
     }
     protected override void OnUpgrade() => DynamicVars["Ancient"].UpgradeValueBy(10);
@@ -60,7 +60,7 @@ public sealed class ChopAgain() : OttoCard(1, CardType.Attack, CardRarity.Common
     public override IEnumerable<CardKeyword> CanonicalKeywords => [OttoKeywords.Can];
     protected override IEnumerable<DynamicVar> CanonicalVars => [new DamageVar(6, ValueProp.Move), new RepeatVar(2)];
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play) =>
-        await DamageCmd.Attack(DynamicVars.Damage.BaseValue).FromCard(this).Targeting(play.Target!).WithHitCount(DynamicVars.Repeat.IntValue).Execute(ctx);
+        await DamageCmd.Attack(DynamicVars.Damage.BaseValue).FromOttoCard(this, play).Targeting(play.Target!).WithHitCount(DynamicVars.Repeat.IntValue).Execute(ctx);
     protected override void OnUpgrade() => DynamicVars.Damage.UpgradeValueBy(3);
 }
 /// <summary>OTTO-021：必须真正消耗一张其他手牌，才会获得可叠加的炫狗强化。</summary>
@@ -93,7 +93,7 @@ public sealed class PerfectHeader() : OttoCard(1, CardType.Attack, CardRarity.Co
     protected override IEnumerable<IHoverTip> ExtraHoverTips => [HoverTipFactory.FromPower<PigBoostPower>()];
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
     {
-        await DamageCmd.Attack(DynamicVars.Damage.BaseValue).FromCard(this).Targeting(play.Target!).Execute(ctx);
+        await DamageCmd.Attack(DynamicVars.Damage.BaseValue).FromOttoCard(this, play).Targeting(play.Target!).Execute(ctx);
         await PowerCmd.Apply<PigBoostPower>(ctx, Owner.Creature, DynamicVars["Boost"].BaseValue, Owner.Creature, this);
     }
     protected override void OnUpgrade() => DynamicVars["Boost"].UpgradeValueBy(1);
@@ -242,7 +242,7 @@ public sealed class HaBiXia() : AncientCard(2, CardType.Attack, CardRarity.Uncom
     protected override IEnumerable<DynamicVar> CanonicalVars => [new DamageVar(15, ValueProp.Move)];
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
     {
-        var attack = DamageCmd.Attack(DynamicVars.Damage.BaseValue).FromCard(this).TargetingAllOpponents(CombatState!);
+        var attack = DamageCmd.Attack(DynamicVars.Damage.BaseValue).FromOttoCard(this, play).TargetingAllOpponents(CombatState!);
         await attack.Execute(ctx);
         await AncientForm.Gain(ctx, this, attack.Results.SelectMany(r => r).Sum(r => Math.Max(0, r.UnblockedDamage)));
     }
@@ -271,7 +271,7 @@ public sealed class KneelingRedBoots() : RequiresCompanionCard(0, CardType.Attac
     {
         if (!HasCompanion) return;
         await Zoo.Imprison(ctx, Owner.Creature, 0, this);
-        var attack = DamageCmd.Attack(DynamicVars.Damage.BaseValue).FromCard(this).TargetingAllOpponents(CombatState!);
+        var attack = DamageCmd.Attack(DynamicVars.Damage.BaseValue).FromOttoCard(this, play).TargetingAllOpponents(CombatState!);
         await attack.Execute(ctx);
         decimal lost = attack.Results.SelectMany(r => r).Sum(r => Math.Max(0, r.UnblockedDamage));
         await CreatureCmd.GainBlock(Owner.Creature, lost, ValueProp.Unpowered, play);

@@ -69,7 +69,7 @@ public sealed class AminoHand() : OttoHandCard(CardType.Attack, TargetType.AnyEn
         [new CalculationBaseVar(8), new ExtraDamageVar(8),
          new CalculatedDamageVar(ValueProp.Move).WithMultiplier((card, _) => ((AminoHand)card).HasOtherHand ? 1 : 0)];
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play) =>
-        await DamageCmd.Attack(DynamicVars.CalculatedDamage).FromCard(this).Targeting(play.Target!).Execute(ctx);
+        await DamageCmd.Attack(DynamicVars.CalculatedDamage).FromOttoCard(this, play).Targeting(play.Target!).Execute(ctx);
     protected override void OnUpgrade()
     {
         DynamicVars.CalculationBase.UpgradeValueBy(4);
@@ -119,7 +119,7 @@ public sealed class BackElephant() : OttoCard(5, CardType.Attack, CardRarity.Unc
     public override string CustomPortraitPath => "res://OTTO/images/cards/back_elephant.png";
     protected override IEnumerable<DynamicVar> CanonicalVars => [new DamageVar(120, ValueProp.Move)];
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play) =>
-        await DamageCmd.Attack(DynamicVars.Damage.BaseValue).FromCard(this).Targeting(play.Target!).Execute(ctx);
+        await DamageCmd.Attack(DynamicVars.Damage.BaseValue).FromOttoCard(this, play).Targeting(play.Target!).Execute(ctx);
     protected override void OnUpgrade() => DynamicVars.Damage.UpgradeValueBy(30);
 }
 
@@ -167,7 +167,7 @@ public sealed class SpongeEkko() : OttoCard(1, CardType.Attack, CardRarity.Uncom
     protected override IEnumerable<IHoverTip> ExtraHoverTips => [HoverTipFactory.FromPower<FreeCanPower>()];
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
     {
-        await DamageCmd.Attack(DynamicVars.Damage.BaseValue).FromCard(this).Targeting(play.Target!).Execute(ctx);
+        await DamageCmd.Attack(DynamicVars.Damage.BaseValue).FromOttoCard(this, play).Targeting(play.Target!).Execute(ctx);
         await PowerCmd.Apply<FreeCanPower>(ctx, Owner.Creature, 1, Owner.Creature, this);
     }
     protected override void OnUpgrade() => DynamicVars.Damage.UpgradeValueBy(5);
@@ -220,6 +220,7 @@ public sealed class HaliluTornado() : OttoCard(0, CardType.Attack, CardRarity.Ra
 [CustomID("OTTO_NONEXISTENT")]
 public sealed class NonexistentThing() : OttoCard(3, CardType.Skill, CardRarity.Rare, TargetType.Self)
 {
+    public override IEnumerable<CardKeyword> CanonicalKeywords => [CardKeyword.Exhaust];
     // 使用用户提供的照片，普通版、升级版及放大预览共用该卡面。
     public override string CustomPortraitPath => "res://OTTO/images/cards/nonexistent_thing.png";
     protected override IEnumerable<DynamicVar> CanonicalVars => [new RepeatVar(2)];

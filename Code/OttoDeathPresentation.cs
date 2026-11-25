@@ -62,7 +62,7 @@ internal static class OttoDeathPresentation
 
     // 原版无 Spine 的临时复活动画会调用 SpineAnimation；使用自己的起身动画。
     [HarmonyPatch(typeof(NCreature), "AnimTempRevive")]
-    [HarmonyPrefix]
+    [HarmonyPrefix, HarmonyPriority(Priority.First)]
     private static bool Revive(NCreature __instance)
     {
         if (!IsOtto(__instance)) return true;

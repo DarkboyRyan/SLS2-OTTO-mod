@@ -1,0 +1,26 @@
+{
+  "version": "v1.0.5-wheelchair-test.1",
+  "installed": true,
+  "previous_install_backup": "/Users/ryanding/Desktop/SLS2 mod/.backups/installed-before-wheelchair-test-2026-11-24",
+  "package": "/Users/ryanding/Desktop/SLS2 mod/OTTO/dist-test/OTTO-v1.0.5-wheelchair-test.1.zip",
+  "runtime_tests": {
+    "stable": "passed",
+    "beta": "passed",
+    "windows": "not run"
+  },
+  "changes": [
+    "A wheelchair idle",
+    "0.42s wheelchair slam attack",
+    "manual hand-rim push on block skills",
+    "upright sleeping death",
+    "wake-up and death audio reset",
+    "extra companion spacing"
+  ],
+  "file_sha256": {
+    "OTTO.dll": "427b1442eadeefea47ebb2a076fc4e3b9c0b77ad3c7da4aef26563f66a78b2e5",
+    "OTTO.json": "ddd1830c6a92da8e6515e47374a80652c8a845802b1115a237dc2da8d295ba1c",
+    "OTTO.pck": "740e72e6ee6921fd74539616c7291f8b4fa9e86e3b48fa3eebdb43982688aade",
+    "assemblies/stable/OTTO.Content.dll": "a06cc43c8e3a5efa8a7d743c57d4f2e22b6df083e2d31429e17cc8cae81376e7",
+    "assemblies/beta/OTTO.Content.dll": "f36d82acec7732d80e9b3a2a1eb146b9cacbeac03ad121f42e40148f7d87799b"
+  }
+}

@@ -9,7 +9,12 @@ namespace OttoMod;
 public static class ZooVisuals
 {
     private const string NodeName = "OttoZooCompanion";
-    private static readonly Vector2 Home = new(112, 0);
+#if OTTO_WHEELCHAIR_TEST
+    private const int CompanionOffset = 70; // 为轮椅前轮与脚踏留出空间。
+#else
+    private const int CompanionOffset = 0;
+#endif
+    private static readonly Vector2 Home = new(112 + CompanionOffset, 0);
 
     public static void Sync(Creature owner)
     {
@@ -38,7 +43,7 @@ public static class ZooVisuals
         var group = new Node2D { Name = NodeName };
         visuals.AddChild(group);
         for (int i = 0; i < keys.Length; i++)
-            AddBody(group, keys[i], keys[i], new Vector2(94 + i * 88, i == 1 ? 0 : 10), 146);
+            AddBody(group, keys[i], keys[i], new Vector2(94 + CompanionOffset + i * 88, i == 1 ? 0 : 10), 146);
         return group;
     }
 

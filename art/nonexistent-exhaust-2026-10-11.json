@@ -1,0 +1,10 @@
+{
+  "version": "v0.6.105",
+  "normal_and_upgrade_exhaust_verified": true,
+  "native_checks": 15,
+  "sha256": {
+    "OTTO.dll": "4d01361d8c4d0e81c7d343f2ce31693fda2f63ae63e265dad0cdd81a444469e1",
+    "OTTO.pck": "e9dcc3c5b0f0ec6edbf3d364cfb1772de24c93ea8ee5a31f8f48f00808b2849f",
+    "OTTO.json": "49684292ec784bb8c46b4e82b2302950cbb2aec3133a12068bbaccc20aaecfd9"
+  }
+}

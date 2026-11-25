@@ -23,7 +23,11 @@ public sealed class OttoCharacter : PlaceholderCharacterModel
     public const string CharacterId = "OTTO_CHARACTER";
     public const string PortraitPath = "res://OTTO/images/charui/otto.png";
     public const string SelectBackgroundPath = "res://OTTO/scenes/otto_select_bg.tscn";
+#if OTTO_WHEELCHAIR_TEST
+    public const string CombatVisualPath = "res://OTTO/scenes/otto_wheelchair_combat.tscn";
+#else
     public const string CombatVisualPath = "res://OTTO/scenes/otto_combat.tscn";
+#endif
     public const string OttoEnergyCounterScenePath = "res://OTTO/scenes/otto_energy_counter.tscn";
 
     // 获取游戏原有的铁甲战士模型。这里只读取它的配置，不修改原版角色。
@@ -62,9 +66,15 @@ public sealed class OttoCharacter : PlaceholderCharacterModel
     public override Color RemoteTargetingLineColor => Original.RemoteTargetingLineColor;
     public override Color RemoteTargetingLineOutline => Original.RemoteTargetingLineOutline;
 
-    // 攻击在 0.15 秒完全伸拳，与原版伤害等待时间同步；施放仍使用原版节奏。
+#if OTTO_WHEELCHAIR_TEST
+    // 伤害与轮椅砸地帧对齐；格挡在手推动轮圈时获得。
+    public override float AttackAnimDelay => 0.42f;
+    public override float CastAnimDelay => 0.26f;
+#else
+    // 正式版仍使用原有出拳节奏。
     public override float AttackAnimDelay => Original.AttackAnimDelay;
     public override float CastAnimDelay => Original.CastAnimDelay;
+#endif
 
     // 声明资源路径，让游戏能预加载这份战斗场景。
     // 场景使用透明人物 PNG 和 AnimationPlayer，不需要 Spine 骨骼或 MegaSprite。

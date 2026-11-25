@@ -59,7 +59,7 @@ public sealed class OuXiGei() : AncientCard(1, CardType.Attack, CardRarity.Commo
     public override string CustomPortraitPath => "res://OTTO/images/cards/ou_xi_gei.png";
     protected override IEnumerable<DynamicVar> CanonicalVars => [new DamageVar(9, ValueProp.Move)];
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play) =>
-        await DamageCmd.Attack(DynamicVars.Damage.BaseValue).FromCard(this).Targeting(play.Target!)
+        await DamageCmd.Attack(DynamicVars.Damage.BaseValue).FromOttoCard(this, play).Targeting(play.Target!)
             .WithHitCount(Owner.Creature.HasPower<AncientFormPower>() ? 2 : 1).Execute(ctx);
     protected override void OnUpgrade() => DynamicVars.Damage.UpgradeValueBy(3);
 }
@@ -96,7 +96,7 @@ public sealed class PigGo() : OttoCard(1, CardType.Attack, CardRarity.Uncommon, 
     protected override IEnumerable<IHoverTip> ExtraHoverTips => [HoverTipFactory.FromPower<ShanNiRuoPower>()];
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
     {
-        await DamageCmd.Attack(DynamicVars.Damage.BaseValue).FromCard(this).Targeting(play.Target!).Execute(ctx);
+        await DamageCmd.Attack(DynamicVars.Damage.BaseValue).FromOttoCard(this, play).Targeting(play.Target!).Execute(ctx);
         if (Zoo.Companion(Owner.Creature, 1) is ShanNiRuoPower pig) await pig.ActivateEffect(ctx);
     }
     protected override void OnUpgrade() => DynamicVars.Damage.UpgradeValueBy(4);
@@ -207,7 +207,7 @@ public sealed class Karasu() : OttoCard(2, CardType.Attack, CardRarity.Uncommon,
     protected override IEnumerable<DynamicVar> CanonicalVars => [new DamageVar(12, ValueProp.Move)];
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
     {
-        await DamageCmd.Attack(DynamicVars.Damage.BaseValue).FromCard(this).TargetingAllOpponents(CombatState!).Execute(ctx);
+        await DamageCmd.Attack(DynamicVars.Damage.BaseValue).FromOttoCard(this, play).TargetingAllOpponents(CombatState!).Execute(ctx);
         var eligible = PileType.Draw.GetPile(Owner).Cards.Where(c => c.Keywords.Contains(OttoKeywords.Can)).ToList();
         var selected = new List<CardModel>();
         while (selected.Count < 2 && eligible.Count > 0)
@@ -235,7 +235,7 @@ public sealed class PhantomHaze() : OttoCard(1, CardType.Attack, CardRarity.Unco
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
     {
         bool qualified = OttoEdgeSnapshotPatch.PriorTriggers.Get(this) >= DynamicVars["Threshold"].BaseValue;
-        await DamageCmd.Attack(DynamicVars.Damage.BaseValue).FromCard(this).Targeting(play.Target!).Execute(ctx);
+        await DamageCmd.Attack(DynamicVars.Damage.BaseValue).FromOttoCard(this, play).Targeting(play.Target!).Execute(ctx);
         if (qualified) await PowerCmd.Apply<IntangiblePower>(ctx, Owner.Creature, 1, Owner.Creature, this);
     }
     protected override void OnUpgrade()
@@ -254,7 +254,7 @@ public sealed class KanameRana() : OttoCard(0, CardType.Attack, CardRarity.Uncom
     public override IEnumerable<CardKeyword> CanonicalKeywords => [OttoKeywords.Can];
     protected override IEnumerable<DynamicVar> CanonicalVars => [new DamageVar(6, ValueProp.Move)];
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play) =>
-        await DamageCmd.Attack(DynamicVars.Damage.BaseValue).FromCard(this).Targeting(play.Target!)
+        await DamageCmd.Attack(DynamicVars.Damage.BaseValue).FromOttoCard(this, play).Targeting(play.Target!)
             .WithHitCount(1 + OttoEdgeSnapshotPatch.PriorTriggers.Get(this)).Execute(ctx);
     protected override void OnUpgrade() => DynamicVars.Damage.UpgradeValueBy(2);
 }

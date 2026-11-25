@@ -4,7 +4,15 @@
   <PropertyGroup>
     <!-- 跟随游戏的 .NET 9 目标框架；本机 .NET 10 SDK 可以编译这个目标。 -->
     <TargetFramework>net9.0</TargetFramework>
-    <Version>0.6.103</Version>
+    <Version>1.0.2</Version>
+    <Version Condition="'$(BetaBuild)' == 'true'">1.0.3-beta</Version>
+    <!-- beta 独立编译和分发，避免覆盖正式版安装包。 -->
+    <DefineConstants Condition="'$(BetaBuild)' == 'true'">$(DefineConstants);STS2_BETA</DefineConstants>
+    <ModStageDir Condition="'$(BetaBuild)' == 'true' and '$(ModStageDir)' == ''">dist-beta/OTTO</ModStageDir>
+    <ModStageDir Condition="'$(ModStageDir)' == ''">dist/OTTO</ModStageDir>
+    <AssemblyName Condition="'$(UniversalBuild)' == 'true'">OTTO.Content</AssemblyName>
+    <Version Condition="'$(UniversalBuild)' == 'true'">1.0.4</Version>
+    <DefineConstants Condition="'$(WheelchairTestBuild)' == 'true'">$(DefineConstants);OTTO_WHEELCHAIR_TEST</DefineConstants>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <GodotDisabledSourceGenerators>GodotPluginsInitializer</GodotDisabledSourceGenerators>
@@ -15,11 +23,18 @@
     <Reference Include="sts2" HintPath="$(Sts2DataDir)/sts2.dll" Private="false" />
     <Reference Include="0Harmony" HintPath="$(Sts2DataDir)/0Harmony.dll" Private="false" />
     <!-- 与本机创意工坊安装的 BaseLib 版本保持一致，避免自动升级带来接口变化。 -->
-    <PackageReference Include="Alchyr.Sts2.BaseLib" Version="3.4.7" PrivateAssets="All" />
+    <PackageReference Include="Alchyr.Sts2.BaseLib" Version="3.4.7" PrivateAssets="All" Condition="'$(BetaBuild)' != 'true'" />
+    <Reference Include="BaseLib" HintPath="$(BetaBaseLibPath)" Private="false" Condition="'$(BetaBuild)' == 'true'" />
+  </ItemGroup>
+  <ItemGroup>
+    <!-- 加载器是独立程序集，不编入角色实现。 -->
+    <Compile Remove="Loader/**/*.cs" />
   </ItemGroup>
   <Target Name="StageMod" AfterTargets="Build">
     <!-- 普通编译只更新工作目录中的分发包；安装由 build.sh 的安装选项执行。 -->
-    <MakeDir Directories="$(MSBuildProjectDirectory)/dist/OTTO" />
-    <Copy SourceFiles="$(TargetPath);OTTO.json" DestinationFolder="$(MSBuildProjectDirectory)/dist/OTTO" />
+    <MakeDir Directories="$(MSBuildProjectDirectory)/$(ModStageDir)" />
+    <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(MSBuildProjectDirectory)/$(ModStageDir)" />
+    <Copy SourceFiles="OTTO.json" DestinationFolder="$(MSBuildProjectDirectory)/$(ModStageDir)" Condition="'$(BetaBuild)' != 'true' and '$(UniversalBuild)' != 'true'" />
+    <Copy SourceFiles="OTTO.beta.json" DestinationFiles="$(MSBuildProjectDirectory)/$(ModStageDir)/OTTO.json" Condition="'$(BetaBuild)' == 'true' and '$(UniversalBuild)' != 'true'" />
   </Target>
 </Project>

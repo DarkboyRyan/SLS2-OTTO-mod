@@ -31,3 +31,9 @@ __pycache__/
 .env
 .env.*
 !.env.example
+
+# 所有分支发行产物与美术预览生成缓存
+/dist-*/
+/art/wheelchair-animation-preview/frames/
+/art/wheelchair-animation-preview/preview.mp4
+/art/wheelchair-animation-preview/preview.gif

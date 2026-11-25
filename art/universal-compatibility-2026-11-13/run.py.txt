@@ -1,0 +1,21 @@
+from pathlib import Path
+import shutil, subprocess, json, sys
+root=Path(__file__).resolve().parents[2];work=Path(__file__).resolve().parent
+branch=sys.argv[1];mode=sys.argv[2] if len(sys.argv)>2 else 'scene'
+assert branch in ('stable','beta')
+app=root/('.work/engine/SlayTheSpire2.app' if branch=='stable' else '.work/beta-2026-11-13/SlayTheSpire2.app')/'Contents/MacOS'
+settings=root/'.work/probe-run/userdata/default/1/settings.save'
+data=json.loads(settings.read_text());data['language']='zhs';data['mod_settings']['mods_enabled']=True;settings.write_text(json.dumps(data))
+shutil.rmtree(app/'mods/OTTO');shutil.copytree(root/'OTTO/dist-universal/OTTO',app/'mods/OTTO')
+shutil.copytree('/Users/ryanding/Library/Application Support/Steam/steamapps/workshop/content/2868840/3737335127/BaseLib',app/'mods/BaseLib',dirs_exist_ok=True)
+shutil.copy2(work/branch/'bin/Debug/net9.0/OTTOConfirmedProbe.dll',app/'mods/OTTOConfirmedProbe/OTTOConfirmedProbe.dll')
+log=work/f'{branch}-{mode}.log'
+with log.open('w') as output:
+ result=subprocess.run([str(app/'Slay the Spire 2'),'--headless','--path',str(root/'.work/probe-run'),'--force-steam=off','--log-file',str(work/f'{branch}-{mode}-engine.log')],stdout=output,stderr=subprocess.STDOUT,timeout=120)
+lines=log.read_text(errors='replace').splitlines()
+for i,line in enumerate(lines):
+ if '[OTTO Loader]' in line or ('OTTO_' in line and ('_OK' in line or '_FAILED' in line)):
+  print('\n'.join(lines[i:i+8]) if '_FAILED' in line else line)
+assert result.returncode==0
+assert any(('OTTO_SCENE_OK' if mode=='scene' else 'OTTO_RULES_UPDATE_OK:') in l for l in lines),'Test failed, see '+str(log)
+assert not any('Exception thrown when calling mod' in l for l in lines)
